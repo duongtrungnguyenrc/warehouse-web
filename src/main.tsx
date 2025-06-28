@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 
 import { ProtectedLayout, RootLayout } from "@/layouts";
-import { DashboardPage, ForgotPasswordPage, LoginPage, ProductsPage, ResetPasswordPage, WarehousesPage } from "@/pages";
+import { DashboardPage, ForgotPasswordPage, LoginPage, ProductsPage, ResetPasswordPage, UserPage, WarehousesPage } from "@/pages";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +36,10 @@ export const router = createBrowserRouter([
           {
             path: "/products",
             Component: ProductsPage,
+          },
+          {
+            path: "/users",
+            Component: UserPage,
           },
         ],
       },

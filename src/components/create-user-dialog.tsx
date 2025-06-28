@@ -1,164 +1,156 @@
-import type React from "react";
-import { useState } from "react";
+import { Formik } from "formik";
+import { type ReactNode, useCallback } from "react";
+import * as Yup from "yup";
 
 import { Button } from "@/components/shadcn/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
+import { useAsync } from "@/hooks";
+import { AccountService } from "@/services";
+import { ROLE_PERMISSIONS } from "@/lib";
 
-interface CreateUserDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+type CreateUserDialogProps = {
+  children: ReactNode;
+  onUserCreated: (user: User) => void;
+};
 
-export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    role: "",
-    department: "",
-    warehouse: "",
-    password: "",
-    confirmPassword: "",
-  });
+type FormValues = {
+  fullName: string;
+  address: string;
+  phone: string;
+  dob: string;
+  gender: Gender;
+  email: string;
+  role: Role;
+};
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const initialValues: FormValues = {
+  fullName: "",
+  email: "",
+  phone: "",
+  role: Object.keys(ROLE_PERMISSIONS)[0] as Role,
+  address: "",
+  dob: new Date().toISOString().substring(0, 10),
+  gender: "MALE",
+};
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp!");
-      return;
-    }
+const validationSchema = Yup.object({
+  fullName: Yup.string().required("Full name is required").min(2, "Full name must be at least 2 characters"),
+  email: Yup.string().email("Please enter a valid email address").required("Email is required"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9()+-\\s]+$/, "Phone number can only contain digits, spaces, parentheses, plus or minus signs"),
+  role: Yup.string().required("Please select a role"),
+  address: Yup.string().required("Address is required").min(5, "Address must be at least 5 characters"),
+  dob: Yup.string()
+    .required("Date of birth is required")
+    .test("dob", "Date of birth must be in the past", (value) => {
+      if (!value) return false;
+      return new Date(value) < new Date();
+    }),
+  gender: Yup.string().oneOf(["MALE", "FEMALE"], "Please select a valid gender").required("Gender is required"),
+});
 
-    // Xử lý tạo người dùng mới
-    console.log("Creating user:", formData);
-    onOpenChange(false);
+export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogProps) {
+  const handleSubmit = useCallback(
+    async (values: FormValues) => {
+      const createdUser = await AccountService.register(values);
+      onUserCreated(createdUser);
+    },
+    [onUserCreated],
+  );
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      role: "",
-      department: "",
-      warehouse: "",
-      password: "",
-      confirmPassword: "",
-    });
-  };
+  const { call } = useAsync(handleSubmit);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Thêm Người Dùng Mới</DialogTitle>
-          <DialogDescription>Nhập thông tin chi tiết để tạo tài khoản người dùng mới trong hệ thống</DialogDescription>
+          <DialogTitle>Add New User</DialogTitle>
+          <DialogDescription>Enter user information to create a new account in the system.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Họ và Tên *</Label>
-              <Input id="name" placeholder="VD: Nguyễn Văn An" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Số Điện Thoại *</Label>
-              <Input id="phone" placeholder="VD: 0901234567" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
-            </div>
-          </div>
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={call}>
+          {({ values, handleChange, handleSubmit, setFieldValue, errors, touched }) => (
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Input id="fullName" name="fullName" value={values.fullName} onChange={handleChange} placeholder="e.g. John Doe" />
+                  {touched.fullName && errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input id="phone" name="phone" value={values.phone} onChange={handleChange} placeholder="e.g. 0901234567" />
+                  {touched.phone && errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="VD: nguyen.van.an@company.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address *</Label>
+                <Input id="email" name="email" type="email" value={values.email} onChange={handleChange} placeholder="e.g. john.doe@company.com" />
+                {touched.email && errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="role">Vai Trò *</Label>
-              <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn vai trò" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Quản trị viên</SelectItem>
-                  <SelectItem value="warehouse_manager">Quản lý kho</SelectItem>
-                  <SelectItem value="inventory_staff">Nhân viên kho</SelectItem>
-                  <SelectItem value="documentation_staff">Nhân viên chứng từ</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="department">Phòng Ban *</Label>
-              <Select value={formData.department} onValueChange={(value) => setFormData({ ...formData, department: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn phòng ban" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="IT">IT</SelectItem>
-                  <SelectItem value="Warehouse">Warehouse</SelectItem>
-                  <SelectItem value="Documentation">Documentation</SelectItem>
-                  <SelectItem value="Management">Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address *</Label>
+                <Input id="address" name="address" value={values.address} onChange={handleChange} placeholder="e.g. 123 Main St" />
+                {touched.address && errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="warehouse">Kho Phụ Trách</Label>
-            <Select value={formData.warehouse} onValueChange={(value) => setFormData({ ...formData, warehouse: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn kho phụ trách" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Tất cả kho</SelectItem>
-                <SelectItem value="WH001">WH001 - Kho Miền Bắc</SelectItem>
-                <SelectItem value="WH002">WH002 - Kho Miền Nam</SelectItem>
-                <SelectItem value="WH003">WH003 - Kho Miền Trung</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Date of Birth *</Label>
+                  <Input id="dob" name="dob" type="date" value={values.dob} onChange={handleChange} max={new Date().toISOString().substring(0, 10)} />
+                  {touched.dob && errors.dob && <p className="text-red-500 text-sm">{errors.dob}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender *</Label>
+                  <Select value={values.gender} onValueChange={(value) => setFieldValue("gender", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MALE">Male</SelectItem>
+                      <SelectItem value="FEMALE">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {touched.gender && errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">Mật Khẩu *</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Nhập mật khẩu"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Xác Nhận Mật Khẩu *</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Nhập lại mật khẩu"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                required
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label>Role *</Label>
+                <Select value={values.role} onValueChange={(value) => setFieldValue("role", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(ROLE_PERMISSIONS).map(([role, info]) => (
+                      <SelectItem key={`register:role:${role}`} value={role}>
+                        {info.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {touched.role && errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+              </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Hủy
-            </Button>
-            <Button type="submit">Tạo Người Dùng</Button>
-          </DialogFooter>
-        </form>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit">Create User</Button>
+              </DialogFooter>
+            </form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

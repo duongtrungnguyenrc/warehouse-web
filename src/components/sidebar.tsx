@@ -5,13 +5,13 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Quản Lý Kho", href: "/warehouses", icon: Warehouse },
-  { name: "Quản Lý Hàng Hóa", href: "/products", icon: Package },
-  { name: "Nhập Kho", href: "/inbound", icon: ArrowDownToLine },
-  { name: "Xuất Kho", href: "/outbound", icon: ArrowUpFromLine },
-  { name: "Báo Cáo", href: "/reports", icon: BarChart3 },
-  { name: "Người Dùng", href: "/users", icon: Users },
-  { name: "Cài Đặt", href: "/settings", icon: Settings },
+  { name: "Warehouses", href: "/warehouses", icon: Warehouse },
+  { name: "Products", href: "/products", icon: Package },
+  { name: "Inbound", href: "/inbound", icon: ArrowDownToLine },
+  { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine },
+  { name: "Reports", href: "/reports", icon: BarChart3 },
+  { name: "Users", href: "/users", icon: Users },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -23,7 +23,7 @@ export function Sidebar() {
       <div className="flex flex-col h-full">
         <div className="p-6">
           <h1 className="text-xl font-bold text-gray-900">WMS System</h1>
-          <p className="text-sm text-gray-500">Quản Lý Kho Hàng</p>
+          <p className="text-sm text-gray-500">Warehouse Management System</p>
         </div>
 
         <nav className="flex-1 px-4">

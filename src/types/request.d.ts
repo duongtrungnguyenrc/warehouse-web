@@ -1,3 +1,12 @@
+declare type PaginationQuery<T> = {
+  page: number;
+  limit: number;
+  sort?: {
+    [key: keyof T]: "ASC" | "DESC";
+  }[];
+  search?: string;
+};
+
 declare type LoginRequest = {
   email: string;
   password: string;
@@ -16,6 +25,17 @@ declare type VerifyResetPasswordTokenRequest = {
 };
 
 declare type ResetPasswordRequest = {
-  oldPassword: string;
+  token: string;
   newPassword: string;
+  confirmPassword: string;
+};
+
+declare type RegisterUserRequest = {
+  fullName: string;
+  address: string;
+  phone: string;
+  dob: string;
+  gender: Gender;
+  email: string;
+  role: Role;
 };

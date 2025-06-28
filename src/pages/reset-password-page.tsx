@@ -1,12 +1,24 @@
 import { Formik } from "formik";
 import { AlertCircle, ArrowLeft, Loader2, Warehouse } from "lucide-react";
-import { useCallback, useEffect } from "react";
-import { Link, useSearchParams } from "react-router";
+import { useCallback, useEffect, useMemo } from "react";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import * as Yup from "yup";
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
 import { useAsync } from "@/hooks";
 import { AccountService } from "@/services";
+import { toastOnError } from "@/lib";
+import toast from "react-hot-toast";
+
+type FormValues = {
+  newPassword: string;
+  confirmPassword: string;
+};
+
+const initialValues: FormValues = {
+  newPassword: "",
+  confirmPassword: "",
+};
 
 const validationSchema = Yup.object({
   newPassword: Yup.string().required("Please enter a new password").min(6, "Password must be at least 6 characters"),
@@ -17,7 +29,9 @@ const validationSchema = Yup.object({
 
 export const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+  const navigate = useNavigate();
+
+  const token = useMemo(() => searchParams.get("token"), [searchParams]);
 
   const verifySession = useCallback(() => AccountService.verifyResetPasswordToken({ token }), []);
   const { loading: verifying, result: tokenValid, error: verifyError, call } = useAsync(verifySession);
@@ -26,14 +40,24 @@ export const ResetPasswordPage = () => {
     call();
   }, [call]);
 
-  const handleSubmit = useCallback(async (values: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
-    try {
-      // Call your API: await AuthService.resetPassword({ ...values });
-      console.log("Resetting password with values:", values);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const handleSubmit = useCallback(
+    async (values: FormValues) => {
+      try {
+        await AccountService.resetPassword({
+          ...values,
+          token: token!,
+        });
+
+        toast.success("Password reset successfully.");
+        navigate("/login", { replace: true });
+      } catch (e) {
+        toastOnError(e);
+      }
+    },
+    [token],
+  );
+
+  if (!token) return <Navigate to="login" />;
 
   if (verifying) {
     return (
@@ -43,7 +67,7 @@ export const ResetPasswordPage = () => {
     );
   }
 
-  if (!token || !tokenValid || verifyError) {
+  if (!tokenValid || verifyError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-4">
         <div className="w-full max-w-md space-y-6 text-center">
@@ -52,7 +76,7 @@ export const ResetPasswordPage = () => {
               <AlertCircle className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Invalid or Missing Token</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Invalid session</h1>
           <p className="text-gray-600">The reset password link is invalid or has expired. Please request a new one.</p>
           <Link to="/forgot-password">
             <Button className="mt-4">Request New Link</Button>
@@ -75,15 +99,7 @@ export const ResetPasswordPage = () => {
           <p className="text-gray-600">Enter your current and new password to proceed</p>
         </div>
 
-        <Formik
-          initialValues={{
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ handleSubmit, getFieldProps, touched, errors }) => (
             <Card className="shadow-lg border-0">
               <CardHeader className="space-y-1 pb-4">

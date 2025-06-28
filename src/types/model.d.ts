@@ -9,9 +9,10 @@ declare type User = {
   address: string;
   phone: string;
   dob: Date;
-  gender: string;
+  gender: boolean;
   email: string;
-  role: string;
+  role: Role;
+  status: "active" | "inactive";
 };
 
 declare type Warehouse = {

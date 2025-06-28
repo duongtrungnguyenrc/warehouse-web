@@ -18,7 +18,7 @@ type LoginForm = {
 
 const initialValues: LoginForm = {
   email: "52100824@student.tdtu.edu.vn",
-  password: "jP3kQVvzKM",
+  password: "abc@123",
   showPassword: false,
   rememberPassword: false,
 };

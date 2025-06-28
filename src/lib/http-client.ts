@@ -1,6 +1,6 @@
 import axios, { type AxiosError } from "axios";
 
-import { REFRESH_TOKEN_ROUTE } from "./constants";
+import { NO_REFRESH_ROUTES } from "./constants";
 
 import { getAuthorizationToken, getAuthToken } from "@/lib/utils.ts";
 import { AccountService } from "@/services";
@@ -24,7 +24,7 @@ httpClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
-    if (!originalRequest || originalRequest.url?.includes(REFRESH_TOKEN_ROUTE)) {
+    if (!originalRequest || NO_REFRESH_ROUTES.some((route) => originalRequest.url?.includes(route))) {
       return Promise.reject(error);
     }
 
