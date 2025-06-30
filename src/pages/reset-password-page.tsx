@@ -1,14 +1,14 @@
 import { Formik } from "formik";
 import { AlertCircle, ArrowLeft, Loader2, Warehouse } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import * as Yup from "yup";
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
 import { useAsync } from "@/hooks";
-import { AccountService } from "@/services";
 import { toastOnError } from "@/lib";
-import toast from "react-hot-toast";
+import { AccountService } from "@/services";
 
 type FormValues = {
   newPassword: string;
@@ -29,11 +29,11 @@ const validationSchema = Yup.object({
 
 export const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const navigator = useNavigate();
 
   const token = useMemo(() => searchParams.get("token"), [searchParams]);
 
-  const verifySession = useCallback(() => AccountService.verifyResetPasswordToken({ token }), []);
+  const verifySession = useCallback(() => AccountService.verifyResetPasswordToken({ token }), [token]);
   const { loading: verifying, result: tokenValid, error: verifyError, call } = useAsync(verifySession);
 
   useEffect(() => {
@@ -49,12 +49,12 @@ export const ResetPasswordPage = () => {
         });
 
         toast.success("Password reset successfully.");
-        navigate("/login", { replace: true });
+        navigator("/login", { replace: true });
       } catch (e) {
         toastOnError(e);
       }
     },
-    [token],
+    [navigator, token],
   );
 
   if (!token) return <Navigate to="login" />;

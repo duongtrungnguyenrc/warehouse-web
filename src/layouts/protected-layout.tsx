@@ -1,9 +1,8 @@
+import toast from "react-hot-toast";
 import { Navigate, Outlet } from "react-router";
 
 import { Header, Sidebar } from "@/components";
 import { useAuth } from "@/hooks";
-import toast from "react-hot-toast";
-import { ShieldIcon } from "lucide-react";
 
 export const ProtectedLayout = () => {
   const { loading, user } = useAuth();
@@ -17,10 +16,8 @@ export const ProtectedLayout = () => {
   }
 
   if (!user) {
-    toast.custom("Session already expired!", {
-      icon: <ShieldIcon />,
-      className: "text-yellow-500",
-    });
+    toast.error("Session already expired!");
+
     return <Navigate to="/login" replace />;
   }
 

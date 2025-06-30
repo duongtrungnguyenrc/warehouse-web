@@ -1,5 +1,6 @@
 import { Formik } from "formik";
 import { type ReactNode, useCallback } from "react";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 import { Button } from "@/components/shadcn/button";
@@ -8,8 +9,8 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 import { useAsync } from "@/hooks";
-import { AccountService } from "@/services";
 import { ROLE_PERMISSIONS } from "@/lib";
+import { AccountService } from "@/services";
 
 type CreateUserDialogProps = {
   children: ReactNode;
@@ -55,9 +56,13 @@ const validationSchema = Yup.object({
 
 export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogProps) {
   const handleSubmit = useCallback(
-    async (values: FormValues) => {
+    async (values: FormValues, { resetForm }: { resetForm: VoidFunction }) => {
       const createdUser = await AccountService.register(values);
+
       onUserCreated(createdUser);
+      resetForm();
+
+      toast.success("User created successfully.");
     },
     [onUserCreated],
   );

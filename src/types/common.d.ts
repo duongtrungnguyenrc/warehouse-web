@@ -1,5 +1,6 @@
 declare type Role = "ADMIN" | "MANAGER" | "INVENTORY_STAFF" | "DOCUMENT_STAFF";
-
+declare type WarehouseStatus = "ACTIVE" | "MAINTENANCE" | "CLOSED";
+declare type WarehouseType = "DC" | "CW";
 declare type Gender = "MALE" | "FEMALE";
 
 declare type Permission =

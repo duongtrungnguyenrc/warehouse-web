@@ -18,7 +18,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setState((prev) => ({ ...prev, loading: true }));
     try {
       await AccountService.login(request);
-      const user = await AccountService.getMe();
+      const user = await AccountService.get();
       setState({ user, loading: false });
     } catch (e) {
       setState((prev) => ({ ...prev, loading: false }));
@@ -33,7 +33,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const auth = useCallback(async () => {
     try {
-      const user = await AccountService.getMe();
+      const user = await AccountService.get();
       setState({ user, loading: false });
     } catch {
       clearAuthToken();
@@ -42,7 +42,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    auth();
+    auth().then((res) => res);
   }, [auth]);
 
   return <AuthContext.Provider value={{ ...state, login, logout }}>{children}</AuthContext.Provider>;

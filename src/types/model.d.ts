@@ -12,46 +12,36 @@ declare type User = {
   gender: boolean;
   email: string;
   role: Role;
-  status: "active" | "inactive";
+  enabled: boolean;
 };
 
 declare type Warehouse = {
   id: string;
   name: string;
   address: string;
-  area: number;
+  areaSize: number;
   capacity: number;
   used: number;
-  status: "active" | "warning" | "inactive";
-  zones: Zone[];
-  manager: string;
-  phone: string;
-  email: string;
-  createdDate: string;
-  lastInspection: string;
+  status: WarehouseStatus;
+  type: WarehouseType;
+  createAt: Date;
+  createdBy: Partial<User>;
+  manager: Partial<User>;
 };
 
 declare type Zone = {
   id: string;
   name: string;
-  type: "cold" | "dry" | "hazardous" | "normal";
-  capacity: number;
-  used: number;
-  temperature?: string;
-  humidity?: string;
-  products: number;
-  shelves: number;
-  status: "active" | "maintenance" | "inactive";
-  hasTemperatureControl: boolean;
-  hasHumidityControl: boolean;
-  hasFireSafety: boolean;
-  hasSecuritySystem: boolean;
-  allowedProductTypes: string[];
-  description: string;
-  maxWeight?: number;
-  ventilationRate?: string;
-  lightingType?: string;
-  floorType?: string;
+  maxCapacity: number;
+  envSettings: string;
+  warehouseName: string;
+  storageTypeName: string;
+};
+
+declare type Category = {
+  id: string;
+  name: string;
+  price: number;
 };
 
 declare type ProductBatch = {
@@ -77,15 +67,9 @@ declare type Product = {
   id: string;
   sku: string;
   name: string;
-  category: string;
+  category: Category;
   unit: string;
   packaging: string;
-  dimensions: {
-    length: number;
-    width: number;
-    height: number;
-    weight: number;
-  };
   supplier: string;
   description: string;
   status: "active" | "inactive";

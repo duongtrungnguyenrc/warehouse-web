@@ -1,12 +1,8 @@
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, Filter, Plus, Search, User, UserCheck, UserX } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Plus, Search, User as UserIcon } from "lucide-react";
 import { type ChangeEvent, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
   Button,
   Card,
   CardContent,
@@ -14,13 +10,6 @@ import {
   CardHeader,
   CardTitle,
   CreateUserDialog,
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   Input,
   Table,
   TableBody,
@@ -29,8 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components";
+import { FilterDropdown } from "@/components/filter-dropdown";
+import { RolePermissionsCard } from "@/components/role-permission-card";
+import { UserTableRow } from "@/components/user-table-row";
 import { useListing } from "@/hooks";
-import { ROLE_PERMISSIONS } from "@/lib";
 import { AccountService } from "@/services";
 
 const DEFAULT_COLUMNS: ColumnConfig<User>[] = [
@@ -41,36 +32,8 @@ const DEFAULT_COLUMNS: ColumnConfig<User>[] = [
   { key: "dob", label: "Date of Birth", visible: true, sortable: true },
   { key: "address", label: "Address", visible: true, sortable: false },
   { key: "role", label: "Role", visible: true, sortable: true },
-  { key: "status", label: "Status", visible: true, sortable: true },
+  { key: "enabled", label: "Status", visible: true, sortable: true },
 ];
-
-const STATUS_CONFIG = {
-  active: {
-    color: "bg-green-50 text-green-700",
-    text: "Active",
-    icon: UserCheck,
-  },
-  inactive: {
-    color: "bg-red-50 text-red-700",
-    text: "Inactive",
-    icon: UserX,
-  },
-  pending: {
-    color: "bg-yellow-50 text-yellow-700",
-    text: "Pending",
-    icon: User,
-  },
-} as const;
-
-const getStatusConfig = (status: string) => {
-  return (
-    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || {
-      color: "bg-gray-50 text-gray-700",
-      text: "Unknown",
-      icon: User,
-    }
-  );
-};
 
 const sortUsers = (users: User[], sortConfig: SortConfig<User>): User[] => {
   if (!sortConfig.field) return users;
@@ -79,7 +42,7 @@ const sortUsers = (users: User[], sortConfig: SortConfig<User>): User[] => {
     const aValue = a[sortConfig.field!];
     const bValue = b[sortConfig.field!];
 
-    let comparison = 0;
+    let comparison: number;
 
     if (sortConfig.field === "dob") {
       comparison = new Date(aValue as string).getTime() - new Date(bValue as string).getTime();
@@ -95,149 +58,11 @@ const sortUsers = (users: User[], sortConfig: SortConfig<User>): User[] => {
   });
 };
 
-const FilterDropdown = ({
-  sortConfig,
-  onSort,
-  columns,
-  onColumnToggle,
-}: {
-  sortConfig: SortConfig<User>;
-  onSort: (field: keyof User) => void;
-  columns: ColumnConfig<User>[];
-  onColumnToggle: (key: keyof User) => void;
-}) => {
-  const getSortIcon = (field: keyof User) => {
-    if (sortConfig.field !== field) return <ArrowUpDown className="h-3 w-3" />;
-    return sortConfig.direction === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">
-          <Filter className="mr-2 h-4 w-4" />
-          Filters
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Sort Options</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {columns
-          .filter((col) => col.sortable)
-          .map((column) => (
-            <DropdownMenuItem key={column.key} onClick={() => onSort(column.key)} className="flex items-center justify-between">
-              <span>Sort by {column.label}</span>
-              {getSortIcon(column.key)}
-            </DropdownMenuItem>
-          ))}
-
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Column Visibility</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {columns.map((column) => (
-          <DropdownMenuCheckboxItem key={column.key} checked={column.visible} onCheckedChange={() => onColumnToggle(column.key)}>
-            <span>{column.label}</span>
-          </DropdownMenuCheckboxItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
-
-const UserTableRow = ({ user }: { user: User }) => {
-  const roleInfo = ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS];
-  const RoleIcon = roleInfo?.icon;
-  const statusConfig = getStatusConfig(user.status);
-  const StatusIcon = statusConfig.icon;
-
-  return (
-    <TableRow key={user.userId}>
-      <TableCell>
-        <div className="flex items-center space-x-3">
-          <Avatar>
-            <AvatarImage src="/placeholder.svg" alt={user.fullName} />
-            <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium">{user.fullName}</div>
-            <div className="text-sm text-muted-foreground">{user.phone}</div>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell>{user.phone}</TableCell>
-      <TableCell>{user.email}</TableCell>
-      <TableCell>{user.gender ? "Male" : "Female"}</TableCell>
-      <TableCell>{new Date(user.dob).toLocaleDateString("en-GB")}</TableCell>
-      <TableCell className="max-w-xs truncate">{user.address}</TableCell>
-      <TableCell>
-        <Badge className={roleInfo?.color}>
-          <div className="flex items-center space-x-1">
-            {RoleIcon && <RoleIcon className="h-3 w-3" />}
-            <span>{roleInfo?.name}</span>
-          </div>
-        </Badge>
-      </TableCell>
-      <TableCell>
-        <Badge className={statusConfig.color}>
-          <div className="flex items-center space-x-1">
-            <StatusIcon className="h-3 w-3" />
-            <span>{statusConfig.text}</span>
-          </div>
-        </Badge>
-      </TableCell>
-      <TableCell>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="sm">
-            Edit
-          </Button>
-          <Button variant="outline" size="sm" className={user.status === "active" ? "text-red-600 hover:text-red-700" : "text-green-600 hover:text-green-700"}>
-            {user.status === "active" ? "Disable" : "Enable"}
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-};
-
-const RolePermissionsCard = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Role Permissions</CardTitle>
-      <CardDescription>Detailed permissions for each role in the system</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {Object.entries(ROLE_PERMISSIONS).map(([key, role]) => {
-          const RoleIcon = role.icon;
-          return (
-            <div key={key} className="border rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-3">
-                <RoleIcon className="h-5 w-5" />
-                <h3 className="font-semibold">{role.name}</h3>
-                <Badge className={role.color}>{key}</Badge>
-              </div>
-              <ul className="space-y-1 text-sm text-muted-foreground">
-                {role.permissions.map((permission, index) => (
-                  <li key={index} className="flex items-center space-x-2">
-                    <div className="w-1 h-1 bg-gray-400 rounded-full" />
-                    <span>{permission}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-    </CardContent>
-  </Card>
-);
-
 export const UserPage = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig<User>>({ field: null, direction: "asc" });
   const [columns, setColumns] = useState<ColumnConfig<User>[]>(DEFAULT_COLUMNS);
 
-  const { data, setQuery, append } = useListing({
+  const { data, setQuery, append, update } = useListing({
     fetcher: AccountService.list,
     initialQuery: {
       page: 0,
@@ -246,7 +71,7 @@ export const UserPage = () => {
     enableCache: true,
   });
 
-  const users = data?.content ?? [];
+  const users = useMemo(() => data?.content ?? [], [data?.content]);
 
   const sortedUsers = useMemo(() => {
     return sortUsers(users, sortConfig);
@@ -268,6 +93,13 @@ export const UserPage = () => {
   };
 
   const onSearchChange = useDebouncedCallback((e: ChangeEvent<HTMLInputElement>) => setQuery({ search: e.target.value }), 500);
+
+  const handleDeactivatedUser = (id: string) => {
+    update(
+      (curr) => curr.userId === id,
+      (curr) => ({ ...curr, enabled: false }),
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -291,7 +123,7 @@ export const UserPage = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input placeholder="Search by name, email or user ID..." onChange={onSearchChange} className="pl-10" />
         </div>
-        <FilterDropdown sortConfig={sortConfig} onSort={handleSort} columns={columns} onColumnToggle={handleColumnToggle} />
+        <FilterDropdown<User> sortConfig={sortConfig} onSort={handleSort} columns={columns} onColumnToggle={handleColumnToggle} />
       </div>
 
       {/* User Table */}
@@ -340,13 +172,13 @@ export const UserPage = () => {
                   <TableRow>
                     <TableCell colSpan={visibleColumns.length + 1} className="text-center py-8">
                       <div className="flex flex-col items-center space-y-2">
-                        <User className="h-8 w-8 text-gray-400" />
+                        <UserIcon className="h-8 w-8 text-gray-400" />
                         <p className="text-muted-foreground">No users found</p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  sortedUsers.map((user) => <UserTableRow key={user.userId} user={user} />)
+                  sortedUsers.map((user) => <UserTableRow onDeactivated={() => handleDeactivatedUser(user.userId)} key={user.userId} user={user} />)
                 )}
               </TableBody>
             </Table>

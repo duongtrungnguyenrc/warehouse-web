@@ -39,3 +39,18 @@ declare type RegisterUserRequest = {
   email: string;
   role: Role;
 };
+
+/* warehouse */
+
+declare type CreateWarehouseRequest = {
+  name: string;
+  address: string;
+  areaSize: number;
+  capacity: number;
+  status: WarehouseStatus;
+  type: WarehouseType;
+  createdBy: Partial<User>;
+  manager: Partial<User>;
+};
+
+declare type UpdateWarehouseRequest = Partial<Warehouse>;

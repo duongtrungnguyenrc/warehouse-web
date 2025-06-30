@@ -95,6 +95,20 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
     });
   };
 
+  const update = (predicate: (item: R) => boolean, updater: (item: R) => R) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      const currentItems = prev.content ?? [];
+      const updatedItems = currentItems.map((item) => (predicate(item) ? updater(item) : item));
+
+      return {
+        ...prev,
+        content: updatedItems,
+      };
+    });
+  };
+
   return {
     data,
     loading,
@@ -105,5 +119,6 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
     clearCache,
     append,
     remove,
+    update,
   };
 }

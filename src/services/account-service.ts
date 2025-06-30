@@ -61,13 +61,23 @@ const register = async (request: RegisterUserRequest): Promise<User> => {
   return httpClient.post<User>("/admin/account/register", request).then((res) => res.data);
 };
 
+const active = async (id: string): Promise<void> => {
+  await httpClient.put(`/admin/account/reactivate/${id}`);
+};
+
+const deactive = async (id: string): Promise<void> => {
+  await httpClient.put(`/admin/account/deactivate/${id}`);
+};
+
 export const AccountService = {
   login,
   refreshToken,
   list,
-  getMe: get,
+  get,
   forgotPassword,
   verifyResetPasswordToken,
   resetPassword,
   register,
+  reactive: active,
+  deactive,
 };

@@ -25,9 +25,7 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Xử lý tạo kho mới
     console.log("Creating warehouse:", formData);
-    // Reset form
     setFormData({
       code: "",
       name: "",
@@ -44,42 +42,42 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Tạo Kho Mới</DialogTitle>
-          <DialogDescription>Nhập thông tin chi tiết để tạo kho hàng mới trong hệ thống</DialogDescription>
+          <DialogTitle>Create New Warehouse</DialogTitle>
+          <DialogDescription>Fill in the details to create a new warehouse in the system</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="code">Mã Kho *</Label>
-              <Input id="code" placeholder="VD: WH001" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required />
+              <Label htmlFor="code">Warehouse Code *</Label>
+              <Input id="code" placeholder="e.g., WH001" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Loại Kho *</Label>
+              <Label htmlFor="type">Warehouse Type *</Label>
               <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Chọn loại kho" />
+                  <SelectValue placeholder="Select warehouse type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="normal">Kho thường</SelectItem>
-                  <SelectItem value="cold">Kho lạnh</SelectItem>
-                  <SelectItem value="dry">Kho khô</SelectItem>
-                  <SelectItem value="hazardous">Kho hàng nguy hiểm</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="cold">Cold</SelectItem>
+                  <SelectItem value="dry">Dry</SelectItem>
+                  <SelectItem value="hazardous">Hazardous</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Tên Kho *</Label>
-            <Input id="name" placeholder="VD: Kho Trung Tâm Miền Bắc" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+            <Label htmlFor="name">Warehouse Name *</Label>
+            <Input id="name" placeholder="e.g., Northern Central Warehouse" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Địa Chỉ *</Label>
+            <Label htmlFor="address">Address *</Label>
             <Textarea
               id="address"
-              placeholder="Nhập địa chỉ đầy đủ của kho"
+              placeholder="Enter full address of the warehouse"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
@@ -88,15 +86,15 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="area">Diện Tích (m²) *</Label>
-              <Input id="area" type="number" placeholder="VD: 5000" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} required />
+              <Label htmlFor="area">Area Size (m²) *</Label>
+              <Input id="area" type="number" placeholder="e.g., 5000" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="capacity">Sức Chứa (m³) *</Label>
+              <Label htmlFor="capacity">Capacity (m³) *</Label>
               <Input
                 id="capacity"
                 type="number"
-                placeholder="VD: 10000"
+                placeholder="e.g., 10000"
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
                 required
@@ -105,10 +103,10 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Mô Tả</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              placeholder="Mô tả thêm về kho (tùy chọn)"
+              placeholder="Additional notes or description (optional)"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
@@ -117,10 +115,10 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Hủy
+                Cancel
               </Button>
             </DialogClose>
-            <Button type="submit">Tạo Kho</Button>
+            <Button type="submit">Create Warehouse</Button>
           </DialogFooter>
         </form>
       </DialogContent>
