@@ -3,6 +3,8 @@ declare type TokenPair = {
   refreshToken: string;
 };
 
+declare type Role = string; // Declared the Role variable
+
 declare type User = {
   userId: string;
   fullName: string;
@@ -15,18 +17,27 @@ declare type User = {
   enabled: boolean;
 };
 
+declare type WarehouseType = "DC" | "CW";
+declare type WarehouseStatus = "ACTIVE" | "MAINTENANCE" | "CLOSED";
+
 declare type Warehouse = {
   id: string;
   name: string;
   address: string;
   areaSize: number;
-  capacity: number;
-  used: number;
   status: WarehouseStatus;
   type: WarehouseType;
   createAt: Date;
-  createdBy: Partial<User>;
-  manager: Partial<User>;
+  createdBy: string;
+  manager: string;
+  totalInboundBatches: number;
+  totalOutboundBatches: number;
+  totalProducts: number;
+  usedCapacity: number;
+  totalCapacity: number;
+  usagePercentage: number;
+  totalStorageRacks: number;
+  availableStorageRacks: number;
 };
 
 declare type Zone = {
@@ -34,14 +45,14 @@ declare type Zone = {
   name: string;
   maxCapacity: number;
   envSettings: string;
-  warehouseName: string;
+  warehouse: string;
   storageTypeName: string;
 };
 
 declare type Category = {
   id: string;
   name: string;
-  price: number;
+  description: string;
 };
 
 declare type ProductBatch = {
@@ -66,19 +77,12 @@ declare type ProductMovement = {
 declare type Product = {
   id: string;
   sku: string;
+  slug: string;
   name: string;
+  price: number;
+  unitOfMeasure: string;
+  packageSize: string;
+  weight: number;
+  stockQuantity: number;
   category: Category;
-  unit: string;
-  packaging: string;
-  supplier: string;
-  description: string;
-  status: "active" | "inactive";
-  totalStock: number;
-  availableStock: number;
-  reservedStock: number;
-  minStock: number;
-  maxStock: number;
-  batches: ProductBatch[];
-  movements: ProductMovement[];
-  image?: string;
 };

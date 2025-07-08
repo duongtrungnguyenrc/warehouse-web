@@ -5,6 +5,7 @@ declare type PaginationQuery<T> = {
     [key: keyof T]: "ASC" | "DESC";
   }[];
   search?: string;
+  [key: string]: any;
 };
 
 declare type LoginRequest = {
@@ -42,15 +43,41 @@ declare type RegisterUserRequest = {
 
 /* warehouse */
 
+declare type WarehouseFilters = {
+  name?: string;
+  address?: string;
+  type?: WarehouseType;
+  status?: WarehouseStatus;
+  minAreaSize?: number;
+  maxAreaSize?: number;
+};
+
 declare type CreateWarehouseRequest = {
   name: string;
   address: string;
+  status?: WarehouseStatus;
   areaSize: number;
-  capacity: number;
-  status: WarehouseStatus;
   type: WarehouseType;
-  createdBy: Partial<User>;
-  manager: Partial<User>;
+  createBy?: string;
+  manager: string;
 };
 
-declare type UpdateWarehouseRequest = Partial<Warehouse>;
+declare type UpdateWarehouseRequest = {
+  name?: string;
+  address?: string;
+  areaSize?: number;
+  type?: WarehouseType;
+  createBy?: string;
+  manager?: string;
+  status?: WarehouseStatus;
+};
+
+declare type CreateProductRequest = {
+  name: string;
+  price: number;
+  unitOfMeasure: string;
+  packageSize: string;
+  weight: number;
+  categoryId: string;
+  sku: string;
+};

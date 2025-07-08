@@ -1,20 +1,15 @@
 import axios, { type AxiosError } from "axios";
 
-import { NO_REFRESH_ROUTES } from "./constants";
-
-import { getAuthorizationToken, getAuthToken } from "@/lib/utils.ts";
+import { getAuthorizationToken, getAuthToken, NO_REFRESH_ROUTES } from "@/lib";
 import { AccountService } from "@/services";
 
 const httpClient = axios.create({
   baseURL: import.meta.env.VITE_SERVER_BASE_URL,
+  withCredentials: true,
 });
 
 httpClient.interceptors.request.use((config) => {
-  const authToken = getAuthorizationToken();
-
-  if (authToken) {
-    config.headers.authorization = authToken;
-  }
+  config.headers.authorization = getAuthorizationToken();
 
   return config;
 });
@@ -28,7 +23,8 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401) {
+    console.log(error.response);
+    if (error.status === 401) {
       const tokens = getAuthToken();
 
       if (tokens.refreshToken) {

@@ -6,7 +6,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import * as Yup from "yup";
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
-import { useAsync } from "@/hooks";
+import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
 import { AccountService } from "@/services";
 
@@ -34,7 +34,7 @@ export const ResetPasswordPage = () => {
   const token = useMemo(() => searchParams.get("token"), [searchParams]);
 
   const verifySession = useCallback(() => AccountService.verifyResetPasswordToken({ token }), [token]);
-  const { loading: verifying, result: tokenValid, error: verifyError, call } = useAsync(verifySession);
+  const { loading: verifying, result: tokenValid, error: verifyError, call } = useQuery(verifySession);
 
   useEffect(() => {
     call();

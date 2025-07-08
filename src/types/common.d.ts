@@ -36,7 +36,13 @@ type ColumnConfig<T> = {
   key: keyof T;
   label: string;
   visible: boolean;
-  sortable: boolean;
+  sortable?: boolean;
+  searchable?: boolean;
+};
+
+type SearchConfig<T> = {
+  field: keyof T;
+  value: string;
 };
 
 type UsePaginationProps<Q, R> = {

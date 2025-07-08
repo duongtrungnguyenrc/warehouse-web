@@ -29,9 +29,9 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdate }: UpdateW
         name: warehouse.name,
         address: warehouse.address,
         areaSize: warehouse.areaSize.toString(),
-        capacity: warehouse.capacity.toString(),
+        capacity: warehouse.usedCapacity.toString(),
         status: warehouse.status,
-        managerName: warehouse.manager.fullName!,
+        managerName: warehouse.manager!,
       });
     }
   }, [warehouse]);
@@ -45,9 +45,9 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdate }: UpdateW
       name: formData.name,
       address: formData.address,
       areaSize: parseInt(formData.areaSize),
-      capacity: parseInt(formData.capacity),
+      usedCapacity: parseInt(formData.capacity),
       status: formData.status,
-      manager: { ...warehouse.manager, fullName: formData.managerName },
+      manager: "",
     };
 
     onUpdate(updatedWarehouse);

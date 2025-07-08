@@ -1,4 +1,4 @@
-import { Activity, Edit, MapPin, Package, Pen, Plus, Trash2, Users } from "lucide-react";
+import { Activity, Edit, Package, Pen, Plus, Trash2, Users } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { ConfirmDialog } from "./confirm-dialog";
@@ -45,8 +45,6 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
     }
   };
 
-  const usagePercentage = Math.round((warehouse.used / warehouse.capacity) * 100);
-
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -82,26 +80,23 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
 
                 <div>
                   <label className="text-sm font-medium text-gray-500">Address</label>
-                  <p className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                    {warehouse.address}
-                  </p>
+                  <p className="flex items-center">{warehouse.address}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-500">Area Size</label>
-                    <p>{warehouse.areaSize.toLocaleString()} m²</p>
+                    <p>{warehouse.areaSize?.toLocaleString()} m²</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-500">Capacity</label>
-                    <p>{warehouse.capacity.toLocaleString()} m³</p>
+                    <p>{warehouse.usedCapacity?.toLocaleString()} m³</p>
                   </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-500">Manager</label>
-                  <p>{warehouse.manager.fullName}</p>
+                  <p>{warehouse.manager}</p>
                 </div>
               </CardContent>
             </Card>
@@ -113,24 +108,24 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold">{usagePercentage}%</div>
+                  <div className="text-3xl font-bold">{warehouse.usagePercentage}%</div>
                   <p className="text-sm text-gray-500">Used</p>
                 </div>
 
-                <Progress value={usagePercentage} className="h-3" />
+                <Progress value={warehouse.usagePercentage} className="h-3" />
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Used:</span>
-                    <span className="font-medium">{warehouse.used.toLocaleString()} m³</span>
+                    <span className="font-medium">{warehouse.usedCapacity} m³</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Available:</span>
-                    <span className="font-medium">{(warehouse.capacity - warehouse.used).toLocaleString()} m³</span>
+                    <span className="font-medium">{(warehouse.totalCapacity - warehouse.usedCapacity).toLocaleString()} m³</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Total:</span>
-                    <span className="font-medium">{warehouse.capacity.toLocaleString()} m³</span>
+                    <span className="font-medium">{warehouse.usedCapacity} m³</span>
                   </div>
                 </div>
               </CardContent>
@@ -163,7 +158,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
                         <p className="text-xs text-gray-500">{zone.storageTypeName}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <UpdateZoneDialog zone={zone} warehouseId={warehouse.id} onUpdate={() => console.log("Update", zone.id)}>
+                        <UpdateZoneDialog onUpdatedSuccess={(_) => {}} zone={zone}>
                           <Badge className="text-black bg-gray-50">
                             <Pen className="h-4 w-4" />
                           </Badge>
@@ -204,7 +199,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
                 </div>
                 <div>
                   <label className="text-sm font-medium">Created By</label>
-                  <p className="text-sm text-gray-600">{warehouse.createdBy.fullName}</p>
+                  <p className="text-sm text-gray-600">{warehouse.createdBy}</p>
                 </div>
               </div>
 

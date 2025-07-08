@@ -37,10 +37,8 @@ export const getAuthToken = (): Partial<TokenPair> => {
   };
 };
 
-export const getAuthorizationToken = (): string | undefined => {
+export const getAuthorizationToken = (): string => {
   const token = getAuthToken();
-
-  if (!token.accessToken) return undefined;
 
   return `${import.meta.env.VITE_TOKEN_TYPE} ${token.accessToken}`;
 };

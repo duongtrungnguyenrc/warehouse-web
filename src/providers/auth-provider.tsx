@@ -36,7 +36,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       const user = await AccountService.get();
       setState({ user, loading: false });
     } catch {
-      clearAuthToken();
+      // clearAuthToken();
       setState({ user: undefined, loading: false });
     }
   }, []);

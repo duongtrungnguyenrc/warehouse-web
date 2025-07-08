@@ -8,7 +8,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
-import { useAsync } from "@/hooks";
+import { useQuery } from "@/hooks";
 import { ROLE_PERMISSIONS } from "@/lib";
 import { AccountService } from "@/services";
 
@@ -67,7 +67,7 @@ export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogPr
     [onUserCreated],
   );
 
-  const { call } = useAsync(handleSubmit);
+  const { call } = useQuery(handleSubmit);
 
   return (
     <Dialog>

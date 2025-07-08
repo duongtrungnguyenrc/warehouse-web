@@ -1,5 +1,4 @@
-import type React from "react";
-import { useState } from "react";
+import { type FormEvent, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
@@ -7,38 +6,48 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 import { Textarea } from "@/components/shadcn/textarea";
+import { WarehouseService } from "@/services";
 
 interface CreateWarehouseDialogProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  onSuccess?: (warehouse: Warehouse) => void;
 }
 
-export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) {
-  const [formData, setFormData] = useState({
-    code: "",
+export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDialogProps) {
+  const [formData, setFormData] = useState<CreateWarehouseRequest>({
     name: "",
     address: "",
-    area: "",
-    capacity: "",
-    type: "",
-    description: "",
+    areaSize: 0,
+    type: "DC",
+    manager: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Creating warehouse:", formData);
-    setFormData({
-      code: "",
-      name: "",
-      address: "",
-      area: "",
-      capacity: "",
-      type: "",
-      description: "",
-    });
+    setLoading(true);
+
+    try {
+      const warehouse = await WarehouseService.create(formData);
+      onSuccess?.(warehouse);
+      setOpen(false);
+      setFormData({
+        name: "",
+        address: "",
+        areaSize: 0,
+        type: "DC",
+        manager: "",
+      });
+    } catch (error) {
+      console.error("Failed to create warehouse:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
@@ -49,28 +58,21 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="code">Warehouse Code *</Label>
-              <Input id="code" placeholder="e.g., WH001" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required />
+              <Label htmlFor="name">Warehouse Name *</Label>
+              <Input id="name" placeholder="e.g., Northern Central Warehouse" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="type">Warehouse Type *</Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
+              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value as WarehouseType })}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select warehouse type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="normal">Normal</SelectItem>
-                  <SelectItem value="cold">Cold</SelectItem>
-                  <SelectItem value="dry">Dry</SelectItem>
-                  <SelectItem value="hazardous">Hazardous</SelectItem>
+                  <SelectItem value="DC">Distribution Center</SelectItem>
+                  <SelectItem value="CW">Cold Storage</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="name">Warehouse Name *</Label>
-            <Input id="name" placeholder="e.g., Northern Central Warehouse" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
           </div>
 
           <div className="space-y-2">
@@ -86,39 +88,31 @@ export function CreateWarehouseDialog({ children }: CreateWarehouseDialogProps) 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="area">Area Size (m²) *</Label>
-              <Input id="area" type="number" placeholder="e.g., 5000" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="capacity">Capacity (m³) *</Label>
+              <Label htmlFor="areaSize">Area Size (m²) *</Label>
               <Input
-                id="capacity"
+                id="areaSize"
                 type="number"
-                placeholder="e.g., 10000"
-                value={formData.capacity}
-                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                placeholder="e.g., 5000"
+                value={formData.areaSize || ""}
+                onChange={(e) => setFormData({ ...formData, areaSize: Number(e.target.value) })}
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              placeholder="Additional notes or description (optional)"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="manager">Manager ID *</Label>
+              <Input id="manager" placeholder="Manager UUID" value={formData.manager} onChange={(e) => setFormData({ ...formData, manager: e.target.value })} required />
+            </div>
           </div>
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={loading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit">Create Warehouse</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Warehouse"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

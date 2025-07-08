@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import ErrorAnim from "@/assets/lotties/anim-error.json";
 import SuccessAnim from "@/assets/lotties/anim-success.json";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
-import { useAsync } from "@/hooks";
+import { useQuery } from "@/hooks";
 import { AccountService } from "@/services";
 
 type FormValues = { email: string };
@@ -29,7 +29,7 @@ export const ForgotPasswordPage = () => {
     return true;
   };
 
-  const { call, loading, result, error } = useAsync(handleSubmit);
+  const { call, loading, result, error } = useQuery(handleSubmit);
 
   const renderStatusView = () => {
     const isSuccess = result && !error;

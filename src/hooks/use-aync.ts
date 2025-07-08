@@ -11,7 +11,7 @@ type UseAsyncReturn<T, A extends unknown[]> = AsyncState<T> & {
   reset: () => void;
 };
 
-export function useAsync<T = any, A extends unknown[] = any[]>(asyncFn: (...args: A) => Promise<T>, defaultResult: T | null = null): UseAsyncReturn<T, A> {
+export function useQuery<T = any, A extends unknown[] = any[]>(asyncFn: (...args: A) => Promise<T>, defaultResult: T | null = null): UseAsyncReturn<T, A> {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<T | null>(defaultResult);
   const [error, setError] = useState<Error | null>(null);

@@ -1,7 +1,7 @@
 import { httpClient, saveAuthToken } from "@/lib";
 
 const login = async (request: LoginRequest): Promise<LoginResponse> => {
-  const tokens = await httpClient.post<LoginResponse>("/account/login", request).then((res) => res.data);
+  const tokens = await httpClient.post<LoginResponse>("/auth/account/login", request).then((res) => res.data);
 
   saveAuthToken({
     accessToken: tokens.accessToken,
@@ -12,7 +12,7 @@ const login = async (request: LoginRequest): Promise<LoginResponse> => {
 };
 
 const refreshToken = async (request: RefreshTokenRequest): Promise<RefreshTokenResponse> => {
-  const tokens = await httpClient.post<RefreshTokenResponse>("/account/refresh", request).then((res) => res.data);
+  const tokens = await httpClient.post<RefreshTokenResponse>("/auth/account/refresh", request).then((res) => res.data);
 
   saveAuthToken({
     accessToken: tokens.accessToken,
@@ -23,19 +23,19 @@ const refreshToken = async (request: RefreshTokenRequest): Promise<RefreshTokenR
 };
 
 const get = async (): Promise<User> => {
-  return await httpClient.get<User>("/account/me").then((res) => res.data);
+  return await httpClient.get<User>("/auth/account/me").then((res) => res.data);
 };
 
 const list = async (params: PaginationQuery<User>): Promise<PaginationResponse<User>> => {
   return await httpClient
-    .get<PaginationResponse<User>>("/admin/account/list", {
+    .get<PaginationResponse<User>>("/auth/admin/account/list", {
       params: params,
     })
     .then((response) => response.data);
 };
 
 const forgotPassword = async (request: ForgotPasswordRequest): Promise<void> => {
-  await httpClient.post("/account/forgot-password", request);
+  await httpClient.post("/auth/account/forgot-password", request);
 };
 
 const verifyResetPasswordToken = async (params: VerifyResetPasswordTokenRequest): Promise<boolean> => {
@@ -43,7 +43,7 @@ const verifyResetPasswordToken = async (params: VerifyResetPasswordTokenRequest)
 
   try {
     await httpClient
-      .get("/account/verify-reset-token", {
+      .get("/auth/account/verify-reset-token", {
         params: params,
       })
       .then((res) => res.data);
@@ -54,19 +54,19 @@ const verifyResetPasswordToken = async (params: VerifyResetPasswordTokenRequest)
 };
 
 const resetPassword = async (request: ResetPasswordRequest): Promise<void> => {
-  await httpClient.post("/account/reset-password", request).then((res) => res.data);
+  await httpClient.post("/auth/account/reset-password", request).then((res) => res.data);
 };
 
 const register = async (request: RegisterUserRequest): Promise<User> => {
-  return httpClient.post<User>("/admin/account/register", request).then((res) => res.data);
+  return httpClient.post<User>("/auth/admin/account/register", request).then((res) => res.data);
 };
 
 const active = async (id: string): Promise<void> => {
-  await httpClient.put(`/admin/account/reactivate/${id}`);
+  await httpClient.put(`/auth/admin/account/reactivate/${id}`);
 };
 
 const deactive = async (id: string): Promise<void> => {
-  await httpClient.put(`/admin/account/deactivate/${id}`);
+  await httpClient.put(`/auth/admin/account/deactivate/${id}`);
 };
 
 export const AccountService = {
