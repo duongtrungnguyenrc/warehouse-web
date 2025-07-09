@@ -1,5 +1,6 @@
 import { Form, Formik, type FormikHelpers } from "formik";
 import { type ReactNode, useState } from "react";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 import { ManagerSelect } from "@/components/manager-select.tsx";
@@ -9,9 +10,8 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
 import { WarehouseStatusSelect } from "@/components/warehouse-status-select.tsx";
-import { WarehouseService } from "@/services";
-import toast from "react-hot-toast";
 import { catchError } from "@/lib";
+import { WarehouseService } from "@/services";
 
 interface UpdateWarehouseDialogProps {
   warehouse: Warehouse | null;

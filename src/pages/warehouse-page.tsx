@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { useCallback } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Button, WarehouseFilters } from "@/components";
@@ -6,7 +7,6 @@ import { CreateWarehouseDialog } from "@/components/create-warehouse-dialog";
 import { WarehouseCard } from "@/components/warehouse-card.tsx";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
-import { useCallback } from "react";
 
 export const WarehouseCardSkeleton = () => (
   <div className="animate-pulse rounded-lg border bg-white p-4 shadow-sm space-y-4">

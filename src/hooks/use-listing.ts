@@ -178,7 +178,7 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
         return updatedData;
       });
     },
-    [query.limit, enableCache, serializeQuery, query],
+    [enableCache, serializeQuery, query],
   );
 
   const update = useCallback(

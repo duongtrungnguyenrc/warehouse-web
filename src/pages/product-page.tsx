@@ -3,13 +3,13 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import {
-  CreateProductDialog,
   Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CreateProductDialog,
   Input,
   Table,
   TableBody,

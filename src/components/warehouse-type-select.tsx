@@ -1,5 +1,6 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn";
 import * as React from "react";
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn";
 
 type WarehouseTypeSelectProps = {
   handleChange: {

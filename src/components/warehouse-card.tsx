@@ -1,12 +1,12 @@
 import { AlertCircle, Edit, Eye, MapPin, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { UpdateWarehouseDialog } from "@/components/update-warehouse-dialog";
 import { WarehouseDetailDialog } from "@/components/warehouse-detail-dialog";
-import { WarehouseService } from "@/services";
-import toast from "react-hot-toast";
 import { catchError } from "@/lib";
+import { WarehouseService } from "@/services";
 
 type WarehouseCardProps = {
   warehouse: Warehouse;
@@ -121,12 +121,7 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
             </Button>
           </UpdateWarehouseDialog>
 
-          <ConfirmDialog
-            onConfirm={() => handleDeleteWarehouse(warehouse.id)}
-            title="Delete Warehouse"
-            description={`Are you sure you want to delete warehouse "${warehouse.name}"? This action cannot be undone.`}
-            itemName={warehouse.name}
-          >
+          <ConfirmDialog onConfirm={() => handleDeleteWarehouse(warehouse.id)} title="Delete Warehouse" itemName={warehouse.name}>
             <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 bg-transparent">
               <Trash2 className="h-4 w-4" />
             </Button>

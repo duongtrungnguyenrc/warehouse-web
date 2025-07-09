@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { type ChangeEvent, type ReactNode, useEffect, useState } from "react";
 import * as Yup from "yup";
 
+import { CategorySelect } from "@/components/category-select.tsx";
 import { FormSelect } from "@/components/form-select";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
@@ -11,7 +12,6 @@ import { Label } from "@/components/shadcn/label";
 import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
 import { ProductService } from "@/services";
-import { CategorySelect } from "@/components/category-select.tsx";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Product name is required").min(2).max(100),

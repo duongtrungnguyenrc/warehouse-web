@@ -163,12 +163,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
                             <Pen className="h-4 w-4" />
                           </Badge>
                         </UpdateZoneDialog>
-                        <ConfirmDialog
-                          onConfirm={() => console.log("Delete", zone.id)}
-                          title="Delete Zone"
-                          description={`Are you sure you want to delete zone "${zone.name}"?`}
-                          itemName={zone.name}
-                        >
+                        <ConfirmDialog onConfirm={() => console.log("Delete", zone.id)} title="Delete Zone" itemName={zone.name}>
                           <Badge className="text-red-500 bg-red-50">
                             <Trash2 className="h-4 w-4" />
                           </Badge>
