@@ -4,7 +4,7 @@ const create = async (request: CreateWarehouseRequest): Promise<Warehouse> => {
   return httpClient.post<Warehouse>("/warehouse/warehouses", request).then((response) => response.data);
 };
 
-const list = async (params: PaginationQuery<Warehouse> & WarehouseFilters): Promise<PaginationResponse<Warehouse>> => {
+const list = async (params: PaginationQuery<Warehouse> & WarehouseFilter): Promise<PaginationResponse<Warehouse>> => {
   const { page, limit, ...filters } = params;
 
   const queryParams = {
@@ -28,9 +28,14 @@ const update = async (id: string, update: UpdateWarehouseRequest): Promise<Wareh
   return httpClient.put<Warehouse>(`/warehouse/warehouses/${id}`, update).then((response) => response.data);
 };
 
+const del = async (id: string): Promise<string> => {
+  return httpClient.delete<string>(`/warehouse/warehouses/${id}`).then((response) => response.data);
+};
+
 export const WarehouseService = {
   create,
   list,
   get,
   update,
+  del,
 };

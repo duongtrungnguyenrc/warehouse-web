@@ -3,7 +3,7 @@ import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import {
-  AddProductDialog,
+  CreateProductDialog,
   Button,
   Card,
   CardContent,
@@ -130,7 +130,7 @@ export const ProductsPage = () => {
     enableCache: true,
   });
 
-  const products = useMemo(() => data?.data ?? [], [data?.data]);
+  const products = useMemo(() => data?.content ?? [], [data?.content]);
 
   const searchConfig = useMemo(
     () => ({
@@ -175,19 +175,17 @@ export const ProductsPage = () => {
             <h1 className="text-3xl font-bold">Product Management</h1>
             <p className="text-muted-foreground">Manage the list of products and stock in the warehouse</p>
           </div>
-          <AddProductDialog>
+          <CreateProductDialog>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               Add Product
             </Button>
-          </AddProductDialog>
+          </CreateProductDialog>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatsCard title="Total Products" value={stats.totalProducts} description="Items" loading={isInitialLoading} />
-        <StatsCard title="Low Stock" value={stats.lowStock} description="Need restocking" valueColor="text-yellow-600" loading={isInitialLoading} />
-        <StatsCard title="Out of Stock" value={stats.outOfStock} description="Urgent restocking" valueColor="text-red-600" loading={isInitialLoading} />
         <StatsCard title="Expiring Soon" value={stats.expiringSoon} description="Within 30 days" valueColor="text-orange-600" loading={isInitialLoading} />
       </div>
 

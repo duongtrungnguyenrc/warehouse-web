@@ -43,7 +43,7 @@ declare type RegisterUserRequest = {
 
 /* warehouse */
 
-declare type WarehouseFilters = {
+declare type WarehouseFilter = {
   name?: string;
   address?: string;
   type?: WarehouseType;
@@ -55,10 +55,9 @@ declare type WarehouseFilters = {
 declare type CreateWarehouseRequest = {
   name: string;
   address: string;
-  status?: WarehouseStatus;
-  areaSize: number;
+  status: WarehouseStatus;
   type: WarehouseType;
-  createBy?: string;
+  areaSize: number;
   manager: string;
 };
 

@@ -5,7 +5,6 @@ import { AccountService } from "@/services";
 
 const httpClient = axios.create({
   baseURL: import.meta.env.VITE_SERVER_BASE_URL,
-  withCredentials: true,
 });
 
 httpClient.interceptors.request.use((config) => {

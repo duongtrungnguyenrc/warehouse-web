@@ -8,9 +8,10 @@ import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
-import { useListing, useQuery } from "@/hooks";
+import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
-import { CategoryService, ProductService } from "@/services";
+import { ProductService } from "@/services";
+import { CategorySelect } from "@/components/category-select.tsx";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Product name is required").min(2).max(100),
@@ -56,32 +57,12 @@ const FormField = ({ label, name, required = false, description, children }: For
   </div>
 );
 
-const CategorySelect = ({ value, setFieldValue }: { value: string; setFieldValue: (field: string, value: any) => void }) => {
-  const { data } = useListing({
-    fetcher: CategoryService.list,
-    initialQuery: {
-      limit: 100,
-      page: 0,
-    },
-  });
-
-  return (
-    <FormSelect
-      name="categoryId"
-      placeholder="Select category"
-      options={(data?.data || []).map((cat) => ({ value: cat.id, label: cat.name }))}
-      setFieldValue={setFieldValue}
-      value={value}
-    />
-  );
-};
-
 interface AddProductDialogProps {
   onProductAdded?: (product: Product) => void;
   children?: ReactNode;
 }
 
-export function AddProductDialog({ onProductAdded, children }: AddProductDialogProps) {
+export function CreateProductDialog({ onProductAdded, children }: AddProductDialogProps) {
   const [open, setOpen] = useState(false);
   const { call, result: sku, loading } = useQuery(ProductService.getSKU);
 

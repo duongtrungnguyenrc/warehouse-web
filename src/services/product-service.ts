@@ -6,7 +6,7 @@ const getSKU = async (): Promise<string> => {
 
 const list = async (params: PaginationQuery<Product>): Promise<PaginationResponse<Product>> => {
   return await httpClient
-    .get<PaginationResponse<Product>>("/warehouse/products/search", {
+    .get<PaginationResponse<Product>>("/warehouse/products", {
       params: params,
     })
     .then((response) => response.data);

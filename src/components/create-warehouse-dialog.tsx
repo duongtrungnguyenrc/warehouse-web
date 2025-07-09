@@ -1,11 +1,14 @@
-import { type FormEvent, type ReactNode, useState } from "react";
+import { Form, Formik } from "formik";
+import { type ReactNode, useState } from "react";
+import * as Yup from "yup";
 
+import { ManagerSelect } from "@/components/manager-select.tsx";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 import { Textarea } from "@/components/shadcn/textarea";
+import { WarehouseTypeSelect } from "@/components/warehouse-type-select.tsx";
 import { WarehouseService } from "@/services";
 
 interface CreateWarehouseDialogProps {
@@ -13,38 +16,25 @@ interface CreateWarehouseDialogProps {
   onSuccess?: (warehouse: Warehouse) => void;
 }
 
+const CreateWarehouseSchema = Yup.object().shape({
+  name: Yup.string().required("Required"),
+  address: Yup.string().required("Required"),
+  areaSize: Yup.number().required("Required").min(1),
+  type: Yup.string().oneOf(["DC", "CW"]).required("Required"),
+  manager: Yup.string().required("Required"),
+});
+
+const initialFormValues: CreateWarehouseRequest = {
+  name: "",
+  address: "",
+  areaSize: 0,
+  type: "DC",
+  status: "ACTIVE",
+  manager: "",
+};
+
 export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDialogProps) {
-  const [formData, setFormData] = useState<CreateWarehouseRequest>({
-    name: "",
-    address: "",
-    areaSize: 0,
-    type: "DC",
-    manager: "",
-  });
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const warehouse = await WarehouseService.create(formData);
-      onSuccess?.(warehouse);
-      setOpen(false);
-      setFormData({
-        name: "",
-        address: "",
-        areaSize: 0,
-        type: "DC",
-        manager: "",
-      });
-    } catch (error) {
-      console.error("Failed to create warehouse:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -55,66 +45,64 @@ export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDi
           <DialogDescription>Fill in the details to create a new warehouse in the system</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Warehouse Name *</Label>
-              <Input id="name" placeholder="e.g., Northern Central Warehouse" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">Warehouse Type *</Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value as WarehouseType })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select warehouse type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="DC">Distribution Center</SelectItem>
-                  <SelectItem value="CW">Cold Storage</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        <Formik
+          initialValues={initialFormValues}
+          validationSchema={CreateWarehouseSchema}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            try {
+              const warehouse = await WarehouseService.create(values);
+              onSuccess?.(warehouse);
+              resetForm();
+              setOpen(false);
+            } catch (error) {
+              console.error("Failed to create warehouse:", error);
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+        >
+          {({ values, handleChange, isSubmitting, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Warehouse Name *</Label>
+                  <Input id="name" name="name" placeholder="e.g., Northern Central Warehouse" value={values.name} onChange={handleChange} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="type">Warehouse Type *</Label>
+                  <WarehouseTypeSelect value={values.type} handleChange={handleChange} />
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="address">Address *</Label>
-            <Textarea
-              id="address"
-              placeholder="Enter full address of the warehouse"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              required
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address *</Label>
+                <Textarea id="address" name="address" placeholder="Enter full address of the warehouse" value={values.address} onChange={handleChange} required />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="areaSize">Area Size (m²) *</Label>
-              <Input
-                id="areaSize"
-                type="number"
-                placeholder="e.g., 5000"
-                value={formData.areaSize || ""}
-                onChange={(e) => setFormData({ ...formData, areaSize: Number(e.target.value) })}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="manager">Manager ID *</Label>
-              <Input id="manager" placeholder="Manager UUID" value={formData.manager} onChange={(e) => setFormData({ ...formData, manager: e.target.value })} required />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="areaSize">Area Size (m²) *</Label>
+                  <Input id="areaSize" name="areaSize" type="number" placeholder="e.g., 5000" value={values.areaSize} onChange={handleChange} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="manager">Manager *</Label>
+                  <ManagerSelect value={values.manager} setFieldValue={setFieldValue} />
+                </div>
+              </div>
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={loading}>
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Warehouse"}
-            </Button>
-          </DialogFooter>
-        </form>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" disabled={isSubmitting}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create Warehouse"}
+                </Button>
+              </DialogFooter>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

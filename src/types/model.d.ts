@@ -17,9 +17,6 @@ declare type User = {
   enabled: boolean;
 };
 
-declare type WarehouseType = "DC" | "CW";
-declare type WarehouseStatus = "ACTIVE" | "MAINTENANCE" | "CLOSED";
-
 declare type Warehouse = {
   id: string;
   name: string;

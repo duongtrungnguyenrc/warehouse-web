@@ -1,62 +1,51 @@
-import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { Form, Formik, type FormikHelpers } from "formik";
+import { type ReactNode, useState } from "react";
+import * as Yup from "yup";
 
+import { ManagerSelect } from "@/components/manager-select.tsx";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 import { Textarea } from "@/components/shadcn/textarea";
+import { WarehouseStatusSelect } from "@/components/warehouse-status-select.tsx";
+import { WarehouseService } from "@/services";
+import toast from "react-hot-toast";
+import { catchError } from "@/lib";
 
 interface UpdateWarehouseDialogProps {
   warehouse: Warehouse | null;
   children?: ReactNode;
-  onUpdate: (warehouse: Warehouse) => void;
+  onUpdatedSuccess: (warehouse: Warehouse) => void;
 }
 
-export function UpdateWarehouseDialog({ warehouse, children, onUpdate }: UpdateWarehouseDialogProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    areaSize: "",
-    capacity: "",
-    status: "ACTIVE" as WarehouseStatus,
-    managerName: "",
-  });
+const WarehouseSchema = Yup.object().shape({
+  name: Yup.string().required("Required"),
+  address: Yup.string().required("Required"),
+  areaSize: Yup.number().required("Required"),
+  status: Yup.string().oneOf(["ACTIVE", "MAINTENANCE", "CLOSED"]).required(),
+  manager: Yup.string().required("Required"),
+});
 
-  useEffect(() => {
-    if (warehouse) {
-      setFormData({
-        name: warehouse.name,
-        address: warehouse.address,
-        areaSize: warehouse.areaSize.toString(),
-        capacity: warehouse.usedCapacity.toString(),
-        status: warehouse.status,
-        managerName: warehouse.manager!,
-      });
-    }
-  }, [warehouse]);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!warehouse) return;
-
-    const updatedWarehouse: Warehouse = {
-      ...warehouse,
-      name: formData.name,
-      address: formData.address,
-      areaSize: parseInt(formData.areaSize),
-      usedCapacity: parseInt(formData.capacity),
-      status: formData.status,
-      manager: "",
-    };
-
-    onUpdate(updatedWarehouse);
-  };
-
+export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }: UpdateWarehouseDialogProps) {
+  const [open, setOpen] = useState(false);
   if (!warehouse) return null;
 
+  const onUpdateWarehouse = async (values: Warehouse, helpers: FormikHelpers<Warehouse>) => {
+    await toast.promise(WarehouseService.update(warehouse.id, values), {
+      success: (updated) => {
+        helpers.resetForm();
+        setOpen(false);
+        onUpdatedSuccess(updated);
+        return "Warehouse created success";
+      },
+      error: catchError,
+      loading: "Creating warehouse",
+    });
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -65,58 +54,46 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdate }: UpdateW
           <DialogDescription>Edit warehouse information: {warehouse.id}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Warehouse Name *</Label>
-              <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status *</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value as WarehouseStatus })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ACTIVE">Active</SelectItem>
-                  <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
-                  <SelectItem value="CLOSED">Closed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        <Formik initialValues={warehouse} validationSchema={WarehouseSchema} onSubmit={onUpdateWarehouse}>
+          {({ values, handleChange, setFieldValue }) => (
+            <Form className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Warehouse Name *</Label>
+                  <Input id="name" name="name" value={values.name} onChange={handleChange} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status *</Label>
+                  <WarehouseStatusSelect value={values.status} handleChange={handleChange} />
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="address">Address *</Label>
-            <Textarea id="address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address *</Label>
+                <Textarea id="address" name="address" value={values.address} onChange={handleChange} required />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="areaSize">Area Size (m²) *</Label>
-              <Input id="areaSize" type="number" value={formData.areaSize} onChange={(e) => setFormData({ ...formData, areaSize: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="capacity">Capacity (m³) *</Label>
-              <Input id="capacity" type="number" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="areaSize">Area Size (m²) *</Label>
+                <Input id="areaSize" name="areaSize" type="number" value={values.areaSize} onChange={handleChange} required />
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="manager">Manager *</Label>
-            <Input id="manager" value={formData.managerName} onChange={(e) => setFormData({ ...formData, managerName: e.target.value })} required />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="manager">Manager *</Label>
+                <ManagerSelect value={values.manager} setFieldValue={setFieldValue} />
+              </div>
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-
-            <Button type="submit">Update</Button>
-          </DialogFooter>
-        </form>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit">Update</Button>
+              </DialogFooter>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

@@ -10,8 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/pop
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 
 interface WarehouseFiltersProps {
-  filters: any;
-  onFiltersChange: (filters: any) => void;
+  filters: WarehouseFilter;
+  onFiltersChange: (filters: WarehouseFilter) => void;
   onClearFilters: () => void;
 }
 
@@ -52,12 +52,7 @@ export function WarehouseFilters({ filters, onFiltersChange, onClearFilters }: W
       <div className="flex items-center gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search warehouses by name..."
-            value={filters.name || ""}
-            onChange={(e) => onFiltersChange({ ...filters, name: e.target.value })}
-            className="pl-10 bg-white"
-          />
+          <Input placeholder="Search warehouses by name..." onChange={(e) => onFiltersChange({ ...filters, name: e.target.value })} className="pl-10 bg-white" />
         </div>
 
         <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -173,7 +168,6 @@ export function WarehouseFilters({ filters, onFiltersChange, onClearFilters }: W
                 className="h-3 w-3 cursor-pointer"
                 onClick={() => {
                   const newFilters = { ...filters };
-                  delete newFilters[badge.key];
                   onFiltersChange(newFilters);
                 }}
               />
