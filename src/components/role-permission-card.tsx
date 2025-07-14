@@ -8,7 +8,7 @@ export const RolePermissionsCard = () => (
       <CardDescription>Detailed permissions for each role in the system</CardDescription>
     </CardHeader>
     <CardContent>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {Object.entries(ROLE_PERMISSIONS).map(([key, role]) => {
           const RoleIcon = role.icon;
           return (

@@ -6,7 +6,7 @@ export const CategorySelect = ({ value, setFieldValue }: { value: string; setFie
   const { data } = useListing({
     fetcher: CategoryService.list,
     initialQuery: {
-      limit: 100,
+      size: 100,
       page: 0,
     },
   });

@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 
 import { ProtectedLayout, RootLayout } from "@/layouts";
-import { DashboardPage, ForgotPasswordPage, InboundPage, LoginPage, OutboundPage, ProductsPage, ResetPasswordPage, UserPage, WarehousesPage } from "@/pages";
+import { ForgotPasswordPage, InboundPage, LoginPage, OutboundPage, ProductsPage, ResetPasswordPage, UserPage, WarehouseDetailPage, WarehousesPage } from "@/pages";
 
 export const router = createBrowserRouter([
   {
@@ -26,12 +26,17 @@ export const router = createBrowserRouter([
         Component: ProtectedLayout,
         children: [
           {
-            index: true,
-            Component: DashboardPage,
-          },
-          {
-            path: "/warehouses",
-            Component: WarehousesPage,
+            path: "/",
+            children: [
+              {
+                index: true,
+                Component: WarehousesPage,
+              },
+              {
+                path: ":id",
+                Component: WarehouseDetailPage,
+              },
+            ],
           },
           {
             path: "/products",

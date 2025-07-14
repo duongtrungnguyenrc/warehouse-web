@@ -8,6 +8,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
+import { WarehouseSelect } from "@/components/warehouse-select.tsx";
 import { useQuery } from "@/hooks";
 import { ROLE_PERMISSIONS } from "@/lib";
 import { AccountService } from "@/services";
@@ -25,6 +26,7 @@ type FormValues = {
   gender: Gender;
   email: string;
   role: Role;
+  warehouseId?: string;
 };
 
 const initialValues: FormValues = {
@@ -54,7 +56,7 @@ const validationSchema = Yup.object({
   gender: Yup.string().oneOf(["MALE", "FEMALE"], "Please select a valid gender").required("Gender is required"),
 });
 
-export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogProps) {
+export const CreateUserDialog = ({ children, onUserCreated }: CreateUserDialogProps) => {
   const handleSubmit = useCallback(
     async (values: FormValues, { resetForm }: { resetForm: VoidFunction }) => {
       const createdUser = await AccountService.register(values);
@@ -130,7 +132,13 @@ export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogPr
 
               <div className="space-y-2">
                 <Label>Role *</Label>
-                <Select value={values.role} onValueChange={(value) => setFieldValue("role", value)}>
+                <Select
+                  value={values.role}
+                  onValueChange={async (value) => {
+                    await setFieldValue("warehouseId", undefined);
+                    await setFieldValue("role", value);
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -144,6 +152,14 @@ export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogPr
                 </Select>
                 {touched.role && errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
               </div>
+
+              {(["MANAGER", "INVENTORY_STAFF"] as Role[]).includes(values.role) && (
+                <div className="space-y-2">
+                  <Label>Warehouse *</Label>
+                  <WarehouseSelect value={values.warehouseId} setFieldValue={setFieldValue} />
+                  {touched.role && errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+                </div>
+              )}
 
               <DialogFooter>
                 <DialogClose asChild>
@@ -159,4 +175,4 @@ export function CreateUserDialog({ children, onUserCreated }: CreateUserDialogPr
       </DialogContent>
     </Dialog>
   );
-}
+};

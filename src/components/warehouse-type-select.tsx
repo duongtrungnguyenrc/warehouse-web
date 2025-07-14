@@ -20,7 +20,7 @@ export const WarehouseTypeSelect = ({ value, handleChange }: WarehouseTypeSelect
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="DC">Distribution Center</SelectItem>
-        <SelectItem value="CW">Cold Storage</SelectItem>
+        <SelectItem value="CW">Central Warehouse</SelectItem>
       </SelectContent>
     </Select>
   );

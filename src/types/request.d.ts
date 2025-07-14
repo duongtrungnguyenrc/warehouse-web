@@ -1,6 +1,6 @@
 declare type PaginationQuery<T> = {
   page: number;
-  limit: number;
+  size: number;
   sort?: {
     [key: keyof T]: "ASC" | "DESC";
   }[];
@@ -58,7 +58,7 @@ declare type CreateWarehouseRequest = {
   status: WarehouseStatus;
   type: WarehouseType;
   areaSize: number;
-  manager: string;
+  manager?: string;
 };
 
 declare type UpdateWarehouseRequest = {

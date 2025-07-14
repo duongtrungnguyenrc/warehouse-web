@@ -1,4 +1,4 @@
-import { UserCheck, UserX } from "lucide-react";
+import { Lock, Unlock, UserCheck, UserX } from "lucide-react";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
 
@@ -89,14 +89,17 @@ export const UserTableRow = ({ user, onDeactivated }: { user: User; onDeactivate
       </TableCell>
       <TableCell>
         <div className="flex items-center space-x-2">
-          <Button onClick={handleReactivate} disabled={user.enabled} variant="outline" size="sm" className="text-green-600 hover:text-green-700">
-            Reactivate
-          </Button>
-          <ConfirmDialog onConfirm={handleDeactivate} title="Deactivate User" itemName={user.fullName}>
-            <Button disabled={!user.enabled} variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-              Deactivate
+          {user.enabled ? (
+            <ConfirmDialog onConfirm={handleDeactivate} title="Deactivate User" itemName={user.fullName}>
+              <Button disabled={!user.enabled} variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                <Unlock />
+              </Button>
+            </ConfirmDialog>
+          ) : (
+            <Button onClick={handleReactivate} disabled={user.enabled} variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
+              <Lock />
             </Button>
-          </ConfirmDialog>
+          )}
         </div>
       </TableCell>
     </TableRow>

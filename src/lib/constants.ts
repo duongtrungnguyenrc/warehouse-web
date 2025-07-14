@@ -1,4 +1,4 @@
-import { Settings, Shield, User, UserCheck } from "lucide-react";
+import { Shield, User, UserCheck } from "lucide-react";
 
 export const NO_REFRESH_ROUTES = ["/account/refresh", "/account/login"];
 
@@ -51,10 +51,9 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermission> = {
     icon: User,
     permissions: [PERMISSIONS.INVENTORY_TRACKING, PERMISSIONS.SHIPMENT_MANAGEMENT, PERMISSIONS.BARCODE_SCAN, PERMISSIONS.INVENTORY_UPDATE],
   },
-  DOCUMENT_STAFF: {
-    name: "Documentation Staff",
-    color: "bg-purple-50 text-purple-700",
-    icon: Settings,
-    permissions: [PERMISSIONS.DOCUMENT_CREATION, PERMISSIONS.TRANSACTION_HISTORY_VIEW, PERMISSIONS.SCHEDULE_NOTIFICATION, PERMISSIONS.DOCUMENT_HANDLING],
-  },
+};
+
+export const WAREHOUSE_TYPE: Record<WarehouseType, string> = {
+  DC: "Distribution Center",
+  CW: "Central Warehouse",
 };

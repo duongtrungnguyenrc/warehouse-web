@@ -1,6 +1,7 @@
 import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from "formik";
 import { Plus } from "lucide-react";
-import { type ChangeEvent, type ReactNode, useEffect, useState } from "react";
+import { type ChangeEvent, type ReactNode, useEffect, useState, useTransition } from "react";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 import { CategorySelect } from "@/components/category-select.tsx";
@@ -10,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { useQuery } from "@/hooks";
-import { toastOnError } from "@/lib";
+import { catchError, cn } from "@/lib";
 import { ProductService } from "@/services";
 
 const validationSchema = Yup.object({
@@ -65,6 +66,7 @@ interface AddProductDialogProps {
 export function CreateProductDialog({ onProductAdded, children }: AddProductDialogProps) {
   const [open, setOpen] = useState(false);
   const { call, result: sku, loading } = useQuery(ProductService.getSKU);
+  const [creating, startTransition] = useTransition();
 
   useEffect(() => {
     if (open && !sku) {
@@ -72,18 +74,23 @@ export function CreateProductDialog({ onProductAdded, children }: AddProductDial
     }
   }, [call, open, sku]);
 
-  const handleSubmit = async (values: CreateProductRequest, { setSubmitting, resetForm }: FormikHelpers<CreateProductRequest>) => {
-    try {
-      const product = await ProductService.create(values);
+  const handleSubmit = async (values: CreateProductRequest, { resetForm }: FormikHelpers<CreateProductRequest>) => {
+    startTransition(async () =>
+      toast.promise(
+        async () => {
+          const product = await ProductService.create(values);
 
-      onProductAdded?.(product);
-      resetForm();
-      setOpen(false);
-    } catch (error) {
-      toastOnError(error);
-    } finally {
-      setSubmitting(false);
-    }
+          onProductAdded?.(product);
+          resetForm();
+          setOpen(false);
+        },
+        {
+          success: "Product created successfully",
+          loading: "Creating product...",
+          error: catchError,
+        },
+      ),
+    );
   };
 
   const defaultTrigger = (
@@ -110,7 +117,7 @@ export function CreateProductDialog({ onProductAdded, children }: AddProductDial
         <Formik initialValues={initialFormValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize>
           {({ values, setFieldValue, isSubmitting, errors, touched }) => (
             <Form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-4", creating ? "pointer-events-none opacity-80" : "")}>
                 <FormField label="Product Name" name="name" required>
                   <Field name="name">
                     {({ field }: any) => <Input {...field} placeholder="Enter product name" className={`md:col-span-2 ${errors.name && touched.name ? "border-red-500" : ""}`} />}
@@ -139,6 +146,21 @@ export function CreateProductDialog({ onProductAdded, children }: AddProductDial
                   </Field>
                 </FormField>
 
+                <FormField label="Weight (kg)" name="weight" required>
+                  <Field name="weight">
+                    {({ field }: any) => (
+                      <Input
+                        {...field}
+                        type="number"
+                        step="0.01"
+                        placeholder="0"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("weight", Number.parseFloat(e.target.value) || 0)}
+                        className={errors.weight && touched.weight ? "border-red-500" : ""}
+                      />
+                    )}
+                  </Field>
+                </FormField>
+
                 <FormField label="Category" name="categoryId" required>
                   <CategorySelect value={values.categoryId} setFieldValue={setFieldValue} />
                 </FormField>
@@ -156,21 +178,6 @@ export function CreateProductDialog({ onProductAdded, children }: AddProductDial
                 <FormField label="Package Size" name="packageSize" required>
                   <Field name="packageSize">
                     {({ field }: any) => <Input {...field} placeholder="e.g., 30x20x10 cm" className={errors.packageSize && touched.packageSize ? "border-red-500" : ""} />}
-                  </Field>
-                </FormField>
-
-                <FormField label="Weight (kg)" name="weight" required>
-                  <Field name="weight">
-                    {({ field }: any) => (
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.01"
-                        placeholder="0"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("weight", Number.parseFloat(e.target.value) || 0)}
-                        className={errors.weight && touched.weight ? "border-red-500" : ""}
-                      />
-                    )}
                   </Field>
                 </FormField>
               </div>

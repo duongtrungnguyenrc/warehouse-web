@@ -24,9 +24,9 @@ declare type Warehouse = {
   areaSize: number;
   status: WarehouseStatus;
   type: WarehouseType;
-  createAt: Date;
-  createdBy: string;
-  manager: string;
+  createAt: string;
+  createdByUser: string;
+  managerUser: string;
   totalInboundBatches: number;
   totalOutboundBatches: number;
   totalProducts: number;
@@ -35,9 +35,10 @@ declare type Warehouse = {
   usagePercentage: number;
   totalStorageRacks: number;
   availableStorageRacks: number;
+  zones?: Zone[];
 };
 
-declare type Zone = {
+declare type Room = {
   id: string;
   name: string;
   maxCapacity: number;
@@ -46,29 +47,35 @@ declare type Zone = {
   storageTypeName: string;
 };
 
+declare type Rack = {
+  id: string;
+  levelNumber: number;
+  slotNumber: number;
+  maxSize: number;
+  usedSize: number;
+  remainingSize: number;
+  totalEquipment: number;
+  status: "FULL";
+  details: {
+    equipments: Equipment[];
+  };
+};
+
+declare type Equipment = {
+  id: string;
+  lpn: string;
+  maxSize: number;
+  usedSize: number;
+  remainingSize: number;
+  createdAt: Date;
+  currentRackID: string;
+  products: Product[];
+};
+
 declare type Category = {
   id: string;
   name: string;
   description: string;
-};
-
-declare type ProductBatch = {
-  id: string;
-  batchNumber: string;
-  quantity: number;
-  expiryDate: string;
-  location: string;
-  status: "good" | "expiring" | "expired";
-  receivedDate: string;
-};
-
-declare type ProductMovement = {
-  id: string;
-  type: "inbound" | "outbound" | "transfer";
-  quantity: number;
-  date: string;
-  location: string;
-  reference: string;
 };
 
 declare type Product = {
@@ -82,4 +89,24 @@ declare type Product = {
   weight: number;
   stockQuantity: number;
   category: Category;
+};
+
+declare type Inbound = {
+  id: string;
+  batchNumber: string;
+  receivedDate: string;
+  status: InboundStatus;
+  createdBy: string;
+  createdByUser: User;
+  inventoryStaff: string;
+  inventoryStaffUser: User;
+  details: {
+    product: Product;
+    expiryDate: string;
+    quantity: number;
+  }[];
+};
+
+declare type OutBound = Inbound & {
+  status: OutboundStatus;
 };

@@ -66,7 +66,7 @@ export const UserPage = () => {
     fetcher: AccountService.list,
     initialQuery: {
       page: 0,
-      limit: 20,
+      size: 20,
     },
     enableCache: true,
   });
@@ -111,7 +111,7 @@ export const UserPage = () => {
         </div>
         <CreateUserDialog onUserCreated={append}>
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Add User
           </Button>
         </CreateUserDialog>

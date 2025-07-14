@@ -96,7 +96,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
 
                 <div>
                   <label className="text-sm font-medium text-gray-500">Manager</label>
-                  <p>{warehouse.manager}</p>
+                  <p>{warehouse.managerUser}</p>
                 </div>
               </CardContent>
             </Card>
@@ -150,7 +150,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {(warehouse as any).zones?.map((zone: Zone) => (
+                {(warehouse as any).zones?.map((zone: Room) => (
                   <div key={zone.id} className="border rounded-lg p-4 space-y-2">
                     <div className="flex justify-between items-start">
                       <div>
@@ -194,7 +194,7 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
                 </div>
                 <div>
                   <label className="text-sm font-medium">Created By</label>
-                  <p className="text-sm text-gray-600">{warehouse.createdBy}</p>
+                  <p className="text-sm text-gray-600">{warehouse.createdByUser}</p>
                 </div>
               </div>
 

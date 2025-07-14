@@ -10,21 +10,23 @@ import {
   CardHeader,
   CardTitle,
   CreateProductDialog,
+  ImportDialog,
   Input,
+  Pagination,
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components";
 import { FilterDropdown } from "@/components/filter-dropdown";
-import { PageHeaderSkeleton, SearchFilterSkeleton, StatsCardSkeleton, TableSkeleton } from "@/components/skeletons";
+import { PageHeaderSkeleton, SearchFilterSkeleton, TableSkeleton } from "@/components/skeletons";
 import { useListing } from "@/hooks";
 import { cn } from "@/lib";
 import { ProductService } from "@/services";
 
-// Constants
 const SEARCH_COLUMNS: ColumnConfig<Product>[] = [
   { key: "name", label: "Name", visible: true, sortable: true, searchable: true },
   { key: "sku", label: "SKU", visible: true, sortable: true, searchable: true },
@@ -35,7 +37,6 @@ const SEARCH_COLUMNS: ColumnConfig<Product>[] = [
 const SKELETON_ROWS = 10;
 const DEBOUNCE_DELAY = 500;
 
-// Utility functions
 const getStatusColor = (stock: number): string => {
   if (stock > 100) return "bg-green-50 text-green-700";
   if (stock > 30) return "bg-yellow-50 text-yellow-700";
@@ -48,42 +49,6 @@ const getStatusText = (stock: number): string => {
   if (stock > 30) return "Low stock";
   if (stock > 0) return "Critical";
   return "Out of stock";
-};
-
-// Mock stats - in real app, this would come from API
-const mockStats = {
-  totalProducts: 1615,
-  lowStock: 12,
-  outOfStock: 3,
-  expiringSoon: 8,
-};
-
-const StatsCard = ({
-  title,
-  value,
-  description,
-  valueColor = "text-foreground",
-  loading = false,
-}: {
-  title: string;
-  value: number | string;
-  description: string;
-  valueColor?: string;
-  loading?: boolean;
-}) => {
-  if (loading) return <StatsCardSkeleton />;
-
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className={cn("text-2xl font-bold", valueColor)}>{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
-  );
 };
 
 const ProductRow = ({ product }: { product: Product }) => (
@@ -123,11 +88,6 @@ export const ProductsPage = () => {
 
   const { data, query, setQuery, loading } = useListing({
     fetcher: ProductService.list,
-    initialQuery: {
-      page: 0,
-      limit: 20,
-    },
-    enableCache: true,
   });
 
   const products = useMemo(() => data?.content ?? [], [data?.content]);
@@ -139,8 +99,6 @@ export const ProductsPage = () => {
     }),
     [searchField, query],
   );
-
-  const stats = useMemo(() => mockStats, []);
 
   const onSearchChange = useDebouncedCallback((e: ChangeEvent<HTMLInputElement>) => {
     setQuery({
@@ -162,6 +120,8 @@ export const ProductsPage = () => {
     [searchField, query, setQuery],
   );
 
+  const onPageChange = (page: number) => setQuery({ page });
+
   const isInitialLoading = loading && !data;
   const isSearching = loading && !!data;
 
@@ -175,19 +135,23 @@ export const ProductsPage = () => {
             <h1 className="text-3xl font-bold">Product Management</h1>
             <p className="text-muted-foreground">Manage the list of products and stock in the warehouse</p>
           </div>
-          <CreateProductDialog>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Button>
-          </CreateProductDialog>
+          <div className="flex items-center space-x-2">
+            <ImportDialog
+              title="Import Products"
+              description="Upload product list from Excel or CSV"
+              onUpload={ProductService.importProducts}
+              onSuccess={(data) => console.log(data)}
+            />
+
+            <CreateProductDialog>
+              <Button>
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+            </CreateProductDialog>
+          </div>
         </div>
       )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatsCard title="Total Products" value={stats.totalProducts} description="Items" loading={isInitialLoading} />
-        <StatsCard title="Expiring Soon" value={stats.expiringSoon} description="Within 30 days" valueColor="text-orange-600" loading={isInitialLoading} />
-      </div>
 
       {isInitialLoading ? (
         <SearchFilterSkeleton />
@@ -249,6 +213,15 @@ export const ProductsPage = () => {
                     products.map((product) => <ProductRow key={product.id} product={product} />)
                   )}
                 </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={9}>
+                      <div className="flex justify-center mt-5">
+                        <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
               </Table>
             </div>
           </CardContent>

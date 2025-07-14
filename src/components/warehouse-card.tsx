@@ -5,7 +5,7 @@ import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitl
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { UpdateWarehouseDialog } from "@/components/update-warehouse-dialog";
 import { WarehouseDetailDialog } from "@/components/warehouse-detail-dialog";
-import { catchError } from "@/lib";
+import { catchError, WAREHOUSE_TYPE } from "@/lib";
 import { WarehouseService } from "@/services";
 
 type WarehouseCardProps = {
@@ -51,10 +51,6 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
     }
   };
 
-  const getTypeText = (type: WarehouseType) => {
-    return type === "DC" ? "Distribution Center" : "Cold Storage";
-  };
-
   return (
     <Card key={warehouse.id} className="hover:shadow-md transition-shadow">
       <CardHeader>
@@ -98,12 +94,12 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
 
         <div className="grid grid-cols-2 gap-4 pt-2">
           <div className="text-center">
-            <div className="text-xs text-muted-foreground">Manager ID</div>
-            <div className="text-sm font-medium truncate">{warehouse.manager + ""}</div>
+            <div className="text-xs text-muted-foreground">Manager</div>
+            <div className="text-sm font-medium truncate">{warehouse.managerUser || "-"}</div>
           </div>
           <div className="text-center">
             <div className="text-xs text-muted-foreground">Type</div>
-            <div className="text-sm font-medium">{getTypeText(warehouse.type)}</div>
+            <div className="text-sm font-medium">{WAREHOUSE_TYPE[warehouse.type]}</div>
           </div>
         </div>
 
@@ -121,7 +117,7 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
             </Button>
           </UpdateWarehouseDialog>
 
-          <ConfirmDialog onConfirm={() => handleDeleteWarehouse(warehouse.id)} title="Delete Warehouse" itemName={warehouse.name}>
+          <ConfirmDialog onConfirm={() => handleDeleteWarehouse(warehouse.id)} title="Close Warehouse" itemName={warehouse.name}>
             <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 bg-transparent">
               <Trash2 className="h-4 w-4" />
             </Button>

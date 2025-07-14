@@ -5,11 +5,11 @@ const create = async (request: CreateWarehouseRequest): Promise<Warehouse> => {
 };
 
 const list = async (params: PaginationQuery<Warehouse> & WarehouseFilter): Promise<PaginationResponse<Warehouse>> => {
-  const { page, limit, ...filters } = params;
+  const { page, size, ...filters } = params;
 
   const queryParams = {
-    offset: page * limit,
-    limit,
+    offset: page * size,
+    size: size,
     ...filters,
   };
 
@@ -24,6 +24,45 @@ const get = async (id: string): Promise<Warehouse> => {
   return httpClient.get<Warehouse>(`/warehouse/warehouses/${id}`).then((response) => response.data);
 };
 
+const getManaging = async (): Promise<Warehouse> => {
+  return httpClient.get<Warehouse>(`/warehouse/manager/warehouse`).then((response) => response.data);
+};
+
+const getManagingWarehouseRooms = async (params: PaginationQuery<Room>): Promise<PaginationResponse<Room>> => {
+  const { page, size } = params;
+
+  const queryParams = {
+    offset: page * size,
+    size: size,
+  };
+
+  return httpClient
+    .get<PaginationResponse<Room>>(`/warehouse/manager/storage-room`, {
+      params: queryParams,
+    })
+    .then((response) => response.data);
+};
+
+const getManagingWarehouseRacks = async (params: PaginationQuery<Rack>): Promise<PaginationResponse<Rack>> => {
+  const { page, size, roomId } = params;
+
+  const queryParams = {
+    offset: page * size,
+    size: size,
+    roomId,
+  };
+
+  return httpClient
+    .get<PaginationResponse<Rack>>(`/warehouse/manager/storage-rack`, {
+      params: queryParams,
+    })
+    .then((response) => response.data);
+};
+
+const getWarehouseOperationStats = async (): Promise<WarehouseOperationStats> => {
+  return httpClient.get<WarehouseOperationStats>("/warehouse/manager/count-batch").then((response) => response.data);
+};
+
 const update = async (id: string, update: UpdateWarehouseRequest): Promise<Warehouse> => {
   return httpClient.put<Warehouse>(`/warehouse/warehouses/${id}`, update).then((response) => response.data);
 };
@@ -36,6 +75,10 @@ export const WarehouseService = {
   create,
   list,
   get,
+  getManaging,
+  getManagingWarehouseRooms,
+  getManagingWarehouseRacks,
+  getWarehouseOperationStats,
   update,
   del,
 };

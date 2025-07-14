@@ -17,11 +17,10 @@ interface CreateWarehouseDialogProps {
 }
 
 const CreateWarehouseSchema = Yup.object().shape({
-  name: Yup.string().required("Required"),
-  address: Yup.string().required("Required"),
-  areaSize: Yup.number().required("Required").min(1),
-  type: Yup.string().oneOf(["DC", "CW"]).required("Required"),
-  manager: Yup.string().required("Required"),
+  name: Yup.string().required("Warehouse name is required"),
+  address: Yup.string().required("Warehouse address is required"),
+  areaSize: Yup.number().required("Warehouse area size is required").min(1),
+  type: Yup.string().oneOf(["DC", "CW"]).required("Warehouse size is required"),
 });
 
 const initialFormValues: CreateWarehouseRequest = {
@@ -30,7 +29,6 @@ const initialFormValues: CreateWarehouseRequest = {
   areaSize: 0,
   type: "DC",
   status: "ACTIVE",
-  manager: "",
 };
 
 export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDialogProps) {

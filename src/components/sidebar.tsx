@@ -1,22 +1,33 @@
-import { ArrowDownToLine, ArrowUpFromLine, BarChart3, Home, Package, Settings, Users, Warehouse } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Package, Users, Warehouse } from "lucide-react";
 import { Link, useLocation } from "react-router";
-
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks";
 
-const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Warehouses", href: "/warehouses", icon: Warehouse },
-  { name: "Products", href: "/products", icon: Package },
-  { name: "Inbound", href: "/inbound", icon: ArrowDownToLine },
-  { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "Users", href: "/users", icon: Users },
-  { name: "Settings", href: "/settings", icon: Settings },
+type Navigation = {
+  name: string;
+  href: string;
+  icon: any;
+  roles: (Role | "*")[];
+};
+
+const navigation: Navigation[] = [
+  { name: "Warehouses", href: "/", icon: Warehouse, roles: ["*"] },
+  { name: "Products", href: "/products", icon: Package, roles: ["*"] },
+  { name: "Inbound", href: "/inbound", icon: ArrowDownToLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
+  { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
+  { name: "Users", href: "/users", icon: Users, roles: ["ADMIN"] },
 ];
 
 export function Sidebar() {
+  const { user, loading } = useAuth();
   const location = useLocation();
   const pathname = location.pathname;
+
+  if (loading || !user) return null;
+
+  const hasAccess = (item: Navigation): boolean => {
+    return item.roles.includes("*") || item.roles.includes(user.role);
+  };
 
   return (
     <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white shadow-sm border-r">
@@ -28,7 +39,7 @@ export function Sidebar() {
 
         <nav className="flex-1 px-4">
           <div className="space-y-1">
-            {navigation.map((item) => {
+            {navigation.filter(hasAccess).map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link

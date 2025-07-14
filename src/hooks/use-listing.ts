@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export function useListing<Q extends object, R>({ fetcher, initialQuery = { page: 0, limit: 10 }, enableCache = false, cacheTtl = 5 * 60 * 1000 }: UsePaginationProps<Q, R>) {
+export function useListing<Q extends object, R>({
+  fetcher,
+  initialQuery = {
+    page: 0,
+    size: 20,
+  },
+  enableCache = false,
+  cacheTtl = 5 * 60 * 1000,
+}: UsePaginationProps<Q, R>) {
   const [query, setQuery] = useState<PaginationQuery<Q>>(initialQuery as PaginationQuery<Q>);
   const [data, setData] = useState<PaginationResponse<R> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -116,7 +124,7 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
         if (!prev) return prev;
         const currentItems = prev.content ?? [];
         const newTotalElements = prev.totalElements + newItems.length;
-        const newTotalPages = Math.ceil(newTotalElements / query.limit);
+        const newTotalPages = Math.ceil(newTotalElements / query.size);
 
         const updatedData = {
           ...prev,
@@ -140,7 +148,7 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
         return updatedData;
       });
     },
-    [query.limit, enableCache, serializeQuery, query],
+    [enableCache, serializeQuery, query],
   );
 
   const remove = useCallback(
@@ -153,7 +161,7 @@ export function useListing<Q extends object, R>({ fetcher, initialQuery = { page
 
         const newItems = [...currentItems.slice(0, index), ...currentItems.slice(index + 1)];
         const newTotalElements = prev.totalElements - 1;
-        const limit = query.limit || 10;
+        const limit = query.size || 10;
         const newTotalPages = Math.max(1, Math.ceil(newTotalElements / limit));
 
         const updatedData = {

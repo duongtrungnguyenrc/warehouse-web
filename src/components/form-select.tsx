@@ -5,7 +5,7 @@ interface FormSelectProps {
   placeholder: string;
   options: Array<{ value: string; label: string }>;
   setFieldValue: (field: string, value: any) => void;
-  value: string;
+  value?: string;
 }
 
 export const FormSelect = ({ name, placeholder, options, setFieldValue, value }: FormSelectProps) => (

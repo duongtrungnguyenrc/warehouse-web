@@ -16,8 +16,22 @@ const create = async (request: CreateProductRequest): Promise<Product> => {
   return await httpClient.post("warehouse/products/create", request).then((response) => response.data);
 };
 
+const importProducts = async (file: File): Promise<Array<Product>> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await httpClient.post("warehouse/products/import", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
 export const ProductService = {
   list,
   getSKU,
   create,
+  importProducts,
 };
