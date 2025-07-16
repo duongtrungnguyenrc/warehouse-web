@@ -1,9 +1,9 @@
 import { ChevronRight, Layers, Plus } from "lucide-react";
 
-import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
+import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
 
@@ -13,11 +13,11 @@ interface RoomDetailProps {
 }
 
 export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
-  const { data } = useListing({
+  const { data, loading } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRacks,
     initialQuery: {
       page: 0,
-      size: 100,
+      size: 20,
       roomId: room.id,
     },
   });
@@ -43,7 +43,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500">Storage Type</label>
-                <p>{room.storageTypeName}</p>
+                <p>{room.storageType.name}</p>
               </div>
             </div>
             <div>
@@ -70,15 +70,15 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Used:</span>
-                <span className="font-medium">{usedCapacity} slots</span>
+                <span className="font-medium">{usedCapacity} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Available:</span>
-                <span className="font-medium">{maxCapacity - usedCapacity} slots</span>
+                <span className="font-medium">{maxCapacity - usedCapacity} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Total:</span>
-                <span className="font-medium">{maxCapacity} slots</span>
+                <span className="font-medium">{maxCapacity} m³</span>
               </div>
             </div>
           </CardContent>
@@ -103,50 +103,65 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {racks.map((rack) => {
-              const rackUsagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
+            {loading
+              ? Array.from({ length: 6 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader className="pb-3">
+                      <Skeleton className="h-4 w-32 mb-2" />
+                      <Skeleton className="h-3 w-24" />
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-2 w-full" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              : racks.map((rack) => {
+                  const rackUsagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
 
-              return (
-                <Card key={rack.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onRackSelect(rack)}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{rack.id}</h4>
-                        <p className="text-sm text-gray-500">Position: {rack.slotNumber}</p>
-                      </div>
-                      <div>
-                        <Badge className="bg-blue-50 text-blue-700">Full</Badge>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-gray-400" />
-                    </div>
-                  </CardHeader>
+                  return (
+                    <Card key={rack.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onRackSelect(rack)}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-semibold">{rack.id}</h4>
+                            <p className="text-sm text-gray-500">Position: {rack.slotNumber}</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </CardHeader>
 
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Usage</span>
-                        <span className="font-medium">{rackUsagePercentage}%</span>
-                      </div>
-                      <Progress value={rackUsagePercentage} className="h-2" />
-                      <div className="text-xs text-gray-500">
-                        {rack.usedSize} / {rack.maxSize} slots
-                      </div>
-                    </div>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Usage</span>
+                            <span className="font-medium">{rackUsagePercentage}%</span>
+                          </div>
+                          <Progress value={rackUsagePercentage} className="h-2" />
+                          <div className="text-xs text-gray-500">
+                            {rack.usedSize} / {rack.maxSize} m³
+                          </div>
+                        </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="font-medium">{rack.details.equipments?.length}</div>
-                        <div className="text-xs text-gray-500">Equipments</div>
-                      </div>
-                      <div>
-                        <div className="font-medium">{rack.levelNumber}</div>
-                        <div className="text-xs text-gray-500">Level</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <div className="font-medium">{rack.details.equipments?.length}</div>
+                            <div className="text-xs text-gray-500">Equipments</div>
+                          </div>
+                          <div>
+                            <div className="font-medium">{rack.levelNumber}</div>
+                            <div className="text-xs text-gray-500">Level</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
           </div>
         </CardContent>
       </Card>

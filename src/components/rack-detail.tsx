@@ -4,6 +4,9 @@ import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
+import { Skeleton } from "@/components/shadcn/skeleton";
+import { useListing } from "@/hooks";
+import { WarehouseService } from "@/services";
 
 interface RackDetailProps {
   rack: Rack;
@@ -11,8 +14,16 @@ interface RackDetailProps {
 }
 
 export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
-  const equipments = rack.details.equipments || [];
+  const { data, loading } = useListing({
+    fetcher: WarehouseService.getManagingWarehouseEquipments,
+    initialQuery: {
+      page: 0,
+      size: 20,
+      rackId: rack.id,
+    },
+  });
 
+  const equipments = data?.content || [];
   const usagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
 
   return (
@@ -82,38 +93,53 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {equipments.map((equipment) => (
-              <Card key={equipment.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onEquipmentSelect(equipment)}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold">Equipment</h4>
-                      <p className="text-sm text-gray-500">LPN: {equipment.lpn}</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
-                  </div>
-                </CardHeader>
+            {loading
+              ? Array.from({ length: 4 }).map((_, idx) => (
+                  <Card key={idx}>
+                    <CardHeader className="pb-3">
+                      <Skeleton className="h-4 w-40 mb-2" />
+                      <Skeleton className="h-3 w-32" />
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-sm">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </CardContent>
+                  </Card>
+                ))
+              : equipments.map((equipment) => (
+                  <Card key={equipment.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onEquipmentSelect(equipment)}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold">Equipment</h4>
+                          <p className="text-sm text-gray-500">LPN: {equipment.lpn}</p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      </div>
+                    </CardHeader>
 
-                <CardContent className="space-y-3 text-sm text-gray-600">
-                  <div className="flex justify-between">
-                    <span>Max Capacity:</span>
-                    <span className="font-medium">{equipment.maxSize}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Used:</span>
-                    <span className="font-medium">{equipment.usedSize}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Remaining:</span>
-                    <span className="font-medium">{equipment.remainingSize}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Created At:</span>
-                    <span>{new Date(equipment.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <CardContent className="space-y-3 text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span>Max Capacity:</span>
+                        <span className="font-medium">{equipment.maxSize}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Used:</span>
+                        <span className="font-medium">{equipment.usedSize}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Remaining:</span>
+                        <span className="font-medium">{equipment.remainingSize}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Created At:</span>
+                        <span>{new Date(equipment.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
           </div>
         </CardContent>
       </Card>

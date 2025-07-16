@@ -59,6 +59,38 @@ const getManagingWarehouseRacks = async (params: PaginationQuery<Rack>): Promise
     .then((response) => response.data);
 };
 
+const getManagingWarehouseEquipments = async (params: PaginationQuery<Equipment>): Promise<PaginationResponse<Equipment>> => {
+  const { page, size, rackId } = params;
+
+  const queryParams = {
+    offset: page * size,
+    size: size,
+    rackId,
+  };
+
+  return httpClient
+    .get<PaginationResponse<Equipment>>(`/warehouse/manager/storage-equipment`, {
+      params: queryParams,
+    })
+    .then((response) => response.data);
+};
+
+const getManagingWarehouseProducts = async (params: PaginationQuery<Product>): Promise<PaginationResponse<Product>> => {
+  const { page, size, equipmentId } = params;
+
+  const queryParams = {
+    offset: page * size,
+    size: size,
+    equipmentId,
+  };
+
+  return httpClient
+    .get<PaginationResponse<Product>>(`/warehouse/manager/products`, {
+      params: queryParams,
+    })
+    .then((response) => response.data);
+};
+
 const getWarehouseOperationStats = async (): Promise<WarehouseOperationStats> => {
   return httpClient.get<WarehouseOperationStats>("/warehouse/manager/count-batch").then((response) => response.data);
 };
@@ -79,6 +111,8 @@ export const WarehouseService = {
   getManagingWarehouseRooms,
   getManagingWarehouseRacks,
   getWarehouseOperationStats,
+  getManagingWarehouseEquipments,
+  getManagingWarehouseProducts,
   update,
   del,
 };

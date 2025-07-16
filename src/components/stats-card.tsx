@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/shadcn/skeleton.tsx";
 
 type StatsCardProps = {
   title: string;
-  value: number | null;
+  value: number | string | null;
   description: string;
   color?: string;
   loading: boolean;

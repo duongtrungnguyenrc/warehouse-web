@@ -13,6 +13,7 @@ import {
   ImportDialog,
   Input,
   Pagination,
+  RoleProtect,
   Table,
   TableBody,
   TableCell,
@@ -73,20 +74,22 @@ const ProductRow = ({ product }: { product: Product }) => (
     <TableCell>
       <span className={cn("px-3 py-1 rounded-full text-xs", getStatusColor(product.stockQuantity))}>{getStatusText(product.stockQuantity)}</span>
     </TableCell>
-    <TableCell>
-      <div className="flex space-x-2">
-        <Button variant="outline" size="sm">
-          Edit
-        </Button>
-      </div>
-    </TableCell>
+    <RoleProtect role={["MANAGER"]}>
+      <TableCell>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm">
+            Edit
+          </Button>
+        </div>
+      </TableCell>
+    </RoleProtect>
   </TableRow>
 );
 
 export const ProductsPage = () => {
   const [searchField, setSearchField] = useState<keyof Product>("name");
 
-  const { data, query, setQuery, loading } = useListing({
+  const { data, query, setQuery, loading, append } = useListing({
     fetcher: ProductService.list,
   });
 
@@ -122,6 +125,8 @@ export const ProductsPage = () => {
 
   const onPageChange = (page: number) => setQuery({ page });
 
+  const onImportSuccess = useCallback((data: Product[]) => append(...data), [append]);
+
   const isInitialLoading = loading && !data;
   const isSearching = loading && !!data;
 
@@ -135,21 +140,18 @@ export const ProductsPage = () => {
             <h1 className="text-3xl font-bold">Product Management</h1>
             <p className="text-muted-foreground">Manage the list of products and stock in the warehouse</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <ImportDialog
-              title="Import Products"
-              description="Upload product list from Excel or CSV"
-              onUpload={ProductService.importProducts}
-              onSuccess={(data) => console.log(data)}
-            />
+          <RoleProtect role={["MANAGER"]}>
+            <div className="flex items-center space-x-2">
+              <ImportDialog title="Import Products" description="Upload product list from Excel or CSV" onUpload={ProductService.importProducts} onSuccess={onImportSuccess} />
 
-            <CreateProductDialog>
-              <Button>
-                <Plus className="h-4 w-4" />
-                Add
-              </Button>
-            </CreateProductDialog>
-          </div>
+              <CreateProductDialog>
+                <Button>
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </CreateProductDialog>
+            </div>
+          </RoleProtect>
         </div>
       )}
 
@@ -199,7 +201,9 @@ export const ProductsPage = () => {
                     <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Action</TableHead>
+                    <RoleProtect role={["MANAGER"]}>
+                      <TableHead>Action</TableHead>
+                    </RoleProtect>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

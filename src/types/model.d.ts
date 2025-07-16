@@ -38,13 +38,22 @@ declare type Warehouse = {
   zones?: Zone[];
 };
 
+declare type RoomType = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 declare type Room = {
   id: string;
   name: string;
   maxCapacity: number;
+  usedCapacity: number;
+  remainingCapacity: number;
+  rackCount: number;
   envSettings: string;
   warehouse: string;
-  storageTypeName: string;
+  storageType: RoomType;
 };
 
 declare type Rack = {
@@ -69,7 +78,6 @@ declare type Equipment = {
   remainingSize: number;
   createdAt: Date;
   currentRackID: string;
-  products: Product[];
 };
 
 declare type Category = {

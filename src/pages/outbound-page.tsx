@@ -1,5 +1,8 @@
-import { CheckCircle, ChevronRight, Clock, Download, Eye, FileText, Package, Search } from "lucide-react";
-import { Fragment, useState } from "react";
+import { format } from "date-fns";
+import { CheckCircle, ChevronRight, Clock, Download, FileText, Package, Search, X } from "lucide-react";
+import { type ChangeEvent, Fragment, useCallback, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { useDebouncedCallback } from "use-debounce";
 
 import {
   Badge,
@@ -64,12 +67,13 @@ const getStatusColor = (status: OutboundStatus) => {
 
 export const OutboundPage = () => {
   const { download } = useDownloadFile();
+
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const { data, query, setQuery, loading } = useListing({
     fetcher: OutboundService.list,
   });
 
   const orders = data?.content || [];
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const toggleRow = (id: string) => setExpandedRow((prev) => (prev === id ? null : id));
   const onPageChange = (page: number) => setQuery({ page });
 
@@ -85,6 +89,31 @@ export const OutboundPage = () => {
   };
 
   const handleExport = async (batchId: string) => await download(() => OutboundService.exportOrder(batchId));
+
+  const onSearchChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const search = event.target.value === "" ? undefined : event.target.value;
+    setQuery({ search });
+  }, 500);
+
+  const onRangeTimeFilterChange = useCallback(
+    (rangeTime: DateRange) => {
+      setQuery({
+        fromDate: rangeTime.from ? format(rangeTime.from, "yyyy-MM-dd") : undefined,
+        toDate: rangeTime.to ? format(rangeTime.to, "yyyy-MM-dd") : undefined,
+      });
+    },
+    [setQuery],
+  );
+
+  const onClearFilter = useCallback(
+    () =>
+      setQuery({
+        search: undefined,
+        fromDate: undefined,
+        toDate: undefined,
+      }),
+    [setQuery],
+  );
 
   return (
     <div className="space-y-6">
@@ -104,9 +133,14 @@ export const OutboundPage = () => {
       <div className="flex space-x-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input placeholder="Search by batch number or recipient..." className="pl-10 bg-white" />
+          <Input placeholder="Search by batch number or supplier..." className="pl-10 bg-white" onChange={onSearchChange} />
         </div>
-        <DateRangePicker />
+        <DateRangePicker onChange={onRangeTimeFilterChange} />
+        {Object.entries(query).some(([key, value]) => ["search", "fromDate", "toDate"].includes(key) && !!value) && (
+          <Button variant="outline" size="icon" onClick={onClearFilter}>
+            <X />
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -147,8 +181,10 @@ export const OutboundPage = () => {
                     return (
                       <Fragment key={order.id}>
                         <TableRow className="cursor-pointer select-none">
-                          <TableCell className="w-6 text-center" onClick={() => toggleRow(order.id)}>
-                            <ChevronRight className={cn("h-5 w-5 transition-all", isExpanded && "rotate-90")} />
+                          <TableCell className="w-6 text-center">
+                            <Button variant="ghost" size="sm" onClick={() => toggleRow(order.id)}>
+                              <ChevronRight className={cn("h-5 w-5 transition-all", isExpanded && "rotate-90")} />
+                            </Button>
                           </TableCell>
                           <TableCell className="font-mono text-sm font-medium">{order.batchNumber}</TableCell>
                           <TableCell>{renderUserInfo(order.inventoryStaffUser)}</TableCell>
@@ -170,9 +206,6 @@ export const OutboundPage = () => {
                           <TableCell className="text-sm">{order.receivedDate || <span className="text-muted-foreground">Not dispatched</span>}</TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              <Button variant="outline" size="sm" onClick={() => toggleRow(order.id)}>
-                                <Eye />
-                              </Button>
                               <Button variant="outline" size="sm" onClick={() => handleExport(order.id)}>
                                 <Download />
                               </Button>
@@ -187,16 +220,16 @@ export const OutboundPage = () => {
                                 <table className="w-full text-sm border-collapse border border-gray-200">
                                   <thead>
                                     <tr>
+                                      <th className="text-left p-2 border border-gray-200">ID</th>
                                       <th className="text-left p-2 border border-gray-200">Product Name</th>
-                                      <th className="text-left p-2 border border-gray-200">Expiry Date</th>
                                       <th className="text-left p-2 border border-gray-200">Quantity</th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {order.details.map((item, idx) => (
                                       <tr key={idx} className="border-t border-gray-200">
+                                        <td className="p-2 border border-gray-200">{item.product.id}</td>
                                         <td className="p-2 border border-gray-200">{item.product.name}</td>
-                                        <td className="p-2 border border-gray-200">{item.expiryDate}</td>
                                         <td className="p-2 border border-gray-200">{item.quantity.toLocaleString()}</td>
                                       </tr>
                                     ))}

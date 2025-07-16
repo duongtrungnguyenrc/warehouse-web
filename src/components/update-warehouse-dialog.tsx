@@ -16,7 +16,7 @@ import { WarehouseService } from "@/services";
 interface UpdateWarehouseDialogProps {
   warehouse: Warehouse | null;
   children?: ReactNode;
-  onUpdatedSuccess: (warehouse: Warehouse) => void;
+  onUpdatedSuccess?: (warehouse: Warehouse) => void;
 }
 
 const WarehouseSchema = Yup.object().shape({
@@ -36,7 +36,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
       success: (updated) => {
         helpers.resetForm();
         setOpen(false);
-        onUpdatedSuccess(updated);
+        onUpdatedSuccess?.(updated);
         return "Warehouse created success";
       },
       error: catchError,
@@ -80,7 +80,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
 
               <div className="space-y-2">
                 <Label htmlFor="manager">Manager *</Label>
-                <ManagerSelect value={values.manager} setFieldValue={setFieldValue} />
+                <ManagerSelect value={values.managerUser} setFieldValue={setFieldValue} />
               </div>
 
               <DialogFooter>

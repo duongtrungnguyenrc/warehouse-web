@@ -1,7 +1,8 @@
 import { ArrowDownToLine, ArrowUpFromLine, Package, Users, Warehouse } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { cn } from "@/lib/utils";
+
 import { useAuth } from "@/hooks";
+import { cn } from "@/lib/utils";
 
 type Navigation = {
   name: string;
@@ -12,7 +13,7 @@ type Navigation = {
 
 const navigation: Navigation[] = [
   { name: "Warehouses", href: "/", icon: Warehouse, roles: ["*"] },
-  { name: "Products", href: "/products", icon: Package, roles: ["*"] },
+  { name: "Products", href: "/products", icon: Package, roles: ["INVENTORY_STAFF", "MANAGER"] },
   { name: "Inbound", href: "/inbound", icon: ArrowDownToLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
   { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
   { name: "Users", href: "/users", icon: Users, roles: ["ADMIN"] },

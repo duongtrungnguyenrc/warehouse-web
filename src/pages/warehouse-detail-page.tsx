@@ -1,4 +1,4 @@
-import { Activity, ArrowLeft, Edit, Package, Users, Warehouse } from "lucide-react";
+import { ArrowLeft, Package, Warehouse } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { EquipmentDetail } from "@/components/equipment-detail.tsx";
@@ -250,7 +250,7 @@ export function WarehouseDetailPage() {
               </Card>
             </div>
 
-            <RoomsList warehouseId={warehouse.id} onRoomSelect={(room: any) => handleNavigate({ level: "room", selectedRoom: room })} />
+            <RoomsList warehouseId={warehouse.id} onRoomSelect={(room: Room) => handleNavigate({ level: "room", selectedRoom: room })} />
 
             <Card>
               <CardHeader>
@@ -267,20 +267,6 @@ export function WarehouseDetailPage() {
                     <label className="text-sm font-medium">Created By</label>
                     <p className="text-sm text-gray-600">{warehouse.createdByUser || "-"}</p>
                   </div>
-                </div>
-                <div className="flex space-x-2 pt-4">
-                  <Button variant="outline">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button variant="outline">
-                    <Activity className="mr-2 h-4 w-4" />
-                    Activity History
-                  </Button>
-                  <Button variant="outline">
-                    <Users className="mr-2 h-4 w-4" />
-                    Manage Access
-                  </Button>
                 </div>
               </CardContent>
             </Card>
