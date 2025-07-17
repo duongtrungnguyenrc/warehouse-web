@@ -133,7 +133,6 @@ export function useListing<Q extends object, R>({
           totalPages: newTotalPages,
         };
 
-        // Update cache with new data
         if (enableCache) {
           const cacheKey = serializeQuery(query);
           const existingCache = cacheRef.current.get(cacheKey);

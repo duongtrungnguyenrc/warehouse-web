@@ -4,27 +4,14 @@ import { type ChangeEvent, Fragment, useCallback, useMemo, useState } from "reac
 import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
-import {
-  Badge,
-  DateRangePicker,
-  ImportDialog,
-  Pagination,
-  RoleProtect,
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  WarehouseStats,
-} from "@/components";
+import { Badge, DateRangePicker, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
 import { useDownloadFile, useListing } from "@/hooks";
 import { cn } from "@/lib";
 import { InboundService } from "@/services";
+import { WarehouseInboundImportDialog } from "@/components/shadcn/warehouse-operation-import-dialog.tsx";
 
 const getStatusText = (status: InboundStatus) => {
   switch (status) {
@@ -123,9 +110,7 @@ export const InboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage inbound orders</p>
         </div>
 
-        <RoleProtect role={["INVENTORY_STAFF"]}>
-          <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={InboundService.importOrders} />
-        </RoleProtect>
+        <WarehouseInboundImportDialog />
       </div>
 
       <WarehouseStats type="inbound" />

@@ -5,6 +5,7 @@ export type AuthContextType = {
   login: (request: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
+  token?: string;
 };
 
 export const AuthContext = createContext<AuthContextType>({ loading: false, login: async () => {}, logout: async () => {} });

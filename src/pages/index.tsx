@@ -7,3 +7,4 @@ export * from "./reset-password-page.tsx";
 export * from "./user-page.tsx";
 export * from "./warehouse-detail-page.tsx";
 export * from "./warehouse-page.tsx";
+export * from "./bot-page.tsx";

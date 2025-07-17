@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { ConfirmDialog } from "./confirm-dialog";
 import { CreateZoneDialog } from "./create-zone-dialog";
-import { UpdateZoneDialog } from "./update-zone-dialog";
+import { UpdateRoomDialog } from "./update-zone-dialog";
 
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
@@ -155,14 +155,14 @@ export const WarehouseDetailDialog = ({ warehouse, children }: WarehouseDetailDi
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-medium">{zone.name}</h4>
-                        <p className="text-xs text-gray-500">{zone.storageTypeName}</p>
+                        <p className="text-xs text-gray-500">{zone.storageType.name}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <UpdateZoneDialog onUpdatedSuccess={(_) => {}} zone={zone}>
+                        <UpdateRoomDialog onUpdatedSuccess={(_) => {}} zone={zone}>
                           <Badge className="text-black bg-gray-50">
                             <Pen className="h-4 w-4" />
                           </Badge>
-                        </UpdateZoneDialog>
+                        </UpdateRoomDialog>
                         <ConfirmDialog onConfirm={() => console.log("Delete", zone.id)} title="Delete Zone" itemName={zone.name}>
                           <Badge className="text-red-500 bg-red-50">
                             <Trash2 className="h-4 w-4" />

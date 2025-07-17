@@ -10,32 +10,23 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 
-export type Zone = {
-  id: string;
-  name: string;
-  maxCapacity: number;
-  envSettings: string;
-  warehouse: string;
-  storageTypeName: string;
-};
-
-interface UpdateZoneDialogProps {
-  zone: Zone | null;
+interface UpdateRoomDialogProps {
+  zone: Room | null;
   children?: ReactNode;
-  onUpdatedSuccess: (zone: Zone) => void;
+  onUpdatedSuccess: (zone: Room) => void;
 }
 
-const ZoneSchema = Yup.object({
+const RoomSchema = Yup.object({
   name: Yup.string().required("Tên không được để trống"),
   maxCapacity: Yup.number().required("Dung lượng không được để trống"),
   storageTypeName: Yup.string().required("Loại lưu trữ không được để trống"),
 });
 
-export function UpdateZoneDialog({ zone, children, onUpdatedSuccess }: UpdateZoneDialogProps) {
+export function UpdateRoomDialog({ zone, children, onUpdatedSuccess }: UpdateRoomDialogProps) {
   const initialValues = {
     name: zone?.name || "",
     maxCapacity: zone?.maxCapacity || 0,
-    storageTypeName: zone?.storageTypeName || "",
+    storageTypeName: zone?.storageType.name || "",
   };
 
   const handleSubmit = (values: typeof initialValues) => {
@@ -77,14 +68,14 @@ export function UpdateZoneDialog({ zone, children, onUpdatedSuccess }: UpdateZon
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
-            {getTypeIcon(zone.storageTypeName)}
+            {getTypeIcon(zone.storageType.name)}
             <span>Cập Nhật Khu Vực {zone.id}</span>
-            <Badge className={getTypeColor(zone.storageTypeName)}>{zone.storageTypeName}</Badge>
+            <Badge className={getTypeColor(zone.storageType.name)}>{zone.storageType.name}</Badge>
           </DialogTitle>
           <DialogDescription>Chỉnh sửa thông tin cơ bản của khu vực</DialogDescription>
         </DialogHeader>
 
-        <Formik initialValues={initialValues} validationSchema={ZoneSchema} onSubmit={handleSubmit} enableReinitialize>
+        <Formik initialValues={initialValues} validationSchema={RoomSchema} onSubmit={handleSubmit} enableReinitialize>
           {({ values, handleChange, errors, touched }) => (
             <Form className="space-y-4">
               <div className="space-y-2">

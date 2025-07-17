@@ -56,8 +56,13 @@ const importOrders = async (file: File): Promise<Array<Product>> => {
   return response.data;
 };
 
+const generateBatchNumber = async (): Promise<string> => {
+  return httpClient.get("warehouse/batch/inbound/generate-batch-number", {}).then((response) => response.data);
+};
+
 export const InboundService = {
   list,
   exportOrder,
   importOrders,
+  generateBatchNumber,
 };

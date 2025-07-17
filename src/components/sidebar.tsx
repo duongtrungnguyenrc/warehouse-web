@@ -1,4 +1,4 @@
-import { ArrowDownToLine, ArrowUpFromLine, Package, Users, Warehouse } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Bot, Package, Users, Warehouse } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 import { useAuth } from "@/hooks";
@@ -17,6 +17,7 @@ const navigation: Navigation[] = [
   { name: "Inbound", href: "/inbound", icon: ArrowDownToLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
   { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
   { name: "Users", href: "/users", icon: Users, roles: ["ADMIN"] },
+  { name: "Bot", href: "/bot", icon: Bot, roles: ["*"] },
 ];
 
 export function Sidebar() {

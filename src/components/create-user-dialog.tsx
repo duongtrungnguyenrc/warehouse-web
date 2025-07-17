@@ -9,8 +9,7 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
 import { WarehouseSelect } from "@/components/warehouse-select.tsx";
-import { useQuery } from "@/hooks";
-import { ROLE_PERMISSIONS } from "@/lib";
+import { catchError, ROLE_PERMISSIONS } from "@/lib";
 import { AccountService } from "@/services";
 
 type CreateUserDialogProps = {
@@ -58,18 +57,19 @@ const validationSchema = Yup.object({
 
 export const CreateUserDialog = ({ children, onUserCreated }: CreateUserDialogProps) => {
   const handleSubmit = useCallback(
-    async (values: FormValues, { resetForm }: { resetForm: VoidFunction }) => {
-      const createdUser = await AccountService.register(values);
+    async (values: FormValues, { resetForm }: { resetForm: VoidFunction }) =>
+      await toast.promise(AccountService.register(values), {
+        success: (newUser) => {
+          onUserCreated(newUser);
+          resetForm();
 
-      onUserCreated(createdUser);
-      resetForm();
-
-      toast.success("User created successfully.");
-    },
+          return "User created successfully.";
+        },
+        loading: "Creating new user...",
+        error: catchError,
+      }),
     [onUserCreated],
   );
-
-  const { call } = useQuery(handleSubmit);
 
   return (
     <Dialog>
@@ -81,7 +81,7 @@ export const CreateUserDialog = ({ children, onUserCreated }: CreateUserDialogPr
           <DialogDescription>Enter user information to create a new account in the system.</DialogDescription>
         </DialogHeader>
 
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={call}>
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ values, handleChange, handleSubmit, setFieldValue, errors, touched }) => (
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div className="grid grid-cols-2 gap-4">

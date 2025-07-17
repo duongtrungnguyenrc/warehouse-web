@@ -1,7 +1,7 @@
 import { type FC, type ReactNode, useCallback, useEffect, useState } from "react";
 
 import { AuthContext, type AuthContextType } from "@/contexts";
-import { clearAuthToken } from "@/lib";
+import { clearAuthToken, getAuthToken } from "@/lib";
 import { AccountService } from "@/services";
 
 type AuthProviderProps = {
@@ -19,7 +19,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     try {
       await AccountService.login(request);
       const user = await AccountService.get();
-      setState({ user, loading: false });
+      setState({ user, loading: false, token: getAuthToken().accessToken });
     } catch (e) {
       setState((prev) => ({ ...prev, loading: false }));
       throw e;
@@ -28,13 +28,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const logout = useCallback(async () => {
     clearAuthToken();
-    setState({ user: undefined, loading: false });
+    setState({ user: undefined, loading: false, token: undefined });
   }, []);
 
   const auth = useCallback(async () => {
     try {
       const user = await AccountService.get();
-      setState({ user, loading: false });
+      setState({ user, loading: false, token: getAuthToken().accessToken });
     } catch {
       clearAuthToken();
       setState({ user: undefined, loading: false });
