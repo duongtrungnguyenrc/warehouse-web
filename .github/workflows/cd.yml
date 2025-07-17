@@ -26,7 +26,7 @@ jobs:
           script: |
             echo ">> Deploying to production..."
 
-            cd ~/application/wms/web
+            cd ~/application/web
             git pull origin main
 
             echo ">> Build Docker image"
