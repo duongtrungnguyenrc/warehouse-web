@@ -13,17 +13,6 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build React App
-        run: npm run build
-
       - name: Build Docker Image
         run: docker build -t warehouse-web:ci .
 
