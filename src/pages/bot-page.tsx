@@ -2,12 +2,12 @@ import { Bot, Send, User, Wifi, WifiOff } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { MarkdownRenderer } from "@/components";
 import { Avatar, AvatarFallback } from "@/components/shadcn/avatar";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
-import { MarkdownRenderer } from "@/components";
 import { useAuth } from "@/hooks";
 
 interface Message {
