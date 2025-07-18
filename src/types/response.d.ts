@@ -4,7 +4,6 @@ declare type PaginationResponse<T> = {
   totalPages: number;
   totalElements: number;
   content: T[];
-  data: T[];
 };
 
 declare type LoginResponse = TokenPair;
@@ -26,4 +25,10 @@ declare type WarehouseOperationStats = {
     inProgress: number;
     cancelled: number;
   };
+};
+
+declare type InboundUploadResponse = {
+  sku: string;
+  expiryDate: string;
+  quantity: number;
 };

@@ -8,6 +8,7 @@ export * from "./date-range-picker.tsx";
 export * from "./form-select.tsx";
 export * from "./header";
 export * from "./import-dialog.tsx";
+export * from "./inbound-import-dialog.tsx";
 export * from "./inbound-stats.tsx";
 export * from "./inventory-count-dialog";
 export * from "./log-out-button.tsx";

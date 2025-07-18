@@ -16,7 +16,6 @@ export function useListing<Q extends object, R>({
   const cacheRef = useRef<Map<string, CacheEntry<R>>>(new Map());
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Improved serialization with consistent key ordering
   const serializeQuery = useCallback((q: PaginationQuery<Q>) => {
     const sortedKeys = Object.keys(q).sort();
     const sortedQuery = sortedKeys.reduce((acc, key) => {
@@ -28,12 +27,10 @@ export function useListing<Q extends object, R>({
 
   const fetchData = useCallback(
     async (forceRefresh = false) => {
-      // Cancel previous request if it exists
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
 
-      // Create new abort controller for this request
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
@@ -43,7 +40,6 @@ export function useListing<Q extends object, R>({
       const cacheKey = serializeQuery(query);
       const now = Date.now();
 
-      // Check cache only if enabled and not forcing refresh
       if (enableCache && !forceRefresh) {
         const cacheEntry = cacheRef.current.get(cacheKey);
         if (cacheEntry && cacheEntry.expiresAt > now) {
@@ -51,20 +47,14 @@ export function useListing<Q extends object, R>({
           setLoading(false);
           return cacheEntry.data;
         } else if (cacheEntry) {
-          // Remove expired cache entry
           cacheRef.current.delete(cacheKey);
         }
       }
 
       try {
         const response = await fetcher(query);
+        if (abortController.signal.aborted) return;
 
-        // Check if request was aborted
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        // Cache the response if caching is enabled
         if (enableCache) {
           cacheRef.current.set(cacheKey, {
             data: response,
@@ -89,7 +79,6 @@ export function useListing<Q extends object, R>({
 
   useEffect(() => {
     fetchData();
-
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -101,9 +90,7 @@ export function useListing<Q extends object, R>({
     setQuery((prev) => ({ ...prev, ...newQuery }));
   }, []);
 
-  const refetch = useCallback(() => {
-    return fetchData(true); // Force refresh, bypass cache
-  }, [fetchData]);
+  const refetch = useCallback(() => fetchData(true), [fetchData]);
 
   const clearCache = useCallback(() => {
     cacheRef.current.clear();
@@ -122,32 +109,65 @@ export function useListing<Q extends object, R>({
     (...newItems: R[]) => {
       setData((prev) => {
         if (!prev) return prev;
+
+        const limit = query.size || 20;
         const currentItems = prev.content ?? [];
+        const merged = [...newItems, ...currentItems];
+
+        const pageItems = merged.slice(0, limit);
+        let overflowItems = merged.slice(limit);
+
         const newTotalElements = prev.totalElements + newItems.length;
-        const newTotalPages = Math.ceil(newTotalElements / query.size);
+        const newTotalPages = Math.ceil(newTotalElements / limit);
 
         const updatedData = {
           ...prev,
-          content: [...currentItems, ...newItems],
+          content: pageItems,
           totalElements: newTotalElements,
           totalPages: newTotalPages,
         };
 
         if (enableCache) {
+          const now = Date.now();
           const cacheKey = serializeQuery(query);
-          const existingCache = cacheRef.current.get(cacheKey);
-          if (existingCache) {
-            cacheRef.current.set(cacheKey, {
-              ...existingCache,
-              data: updatedData,
+          cacheRef.current.set(cacheKey, {
+            data: updatedData,
+            expiresAt: now + cacheTtl,
+          });
+
+          // Đẩy phần dư sang các page tiếp theo
+          let page = (query.page || 0) + 1;
+          while (overflowItems.length > 0) {
+            const slice = overflowItems.slice(0, limit);
+            overflowItems = overflowItems.slice(limit);
+
+            const nextQuery = { ...query, page };
+            const nextKey = serializeQuery(nextQuery);
+            const existing = cacheRef.current.get(nextKey)?.data?.content ?? [];
+
+            const mergedNextPage = [...slice, ...existing].slice(0, limit);
+            const total = mergedNextPage.length;
+            const newPageData: PaginationResponse<R> = {
+              page,
+              size: limit,
+              content: mergedNextPage,
+              totalElements: total,
+              totalPages: Math.ceil(total / limit),
+            };
+
+            cacheRef.current.set(nextKey, {
+              data: newPageData,
+              expiresAt: now + cacheTtl,
             });
+
+            page++;
           }
         }
 
         return updatedData;
       });
     },
-    [enableCache, serializeQuery, query],
+    [enableCache, serializeQuery, query, cacheTtl],
   );
 
   const remove = useCallback(
@@ -170,22 +190,18 @@ export function useListing<Q extends object, R>({
           totalPages: newTotalPages,
         };
 
-        // Update cache with new data
         if (enableCache) {
           const cacheKey = serializeQuery(query);
-          const existingCache = cacheRef.current.get(cacheKey);
-          if (existingCache) {
-            cacheRef.current.set(cacheKey, {
-              ...existingCache,
-              data: updatedData,
-            });
-          }
+          cacheRef.current.set(cacheKey, {
+            data: updatedData,
+            expiresAt: Date.now() + cacheTtl,
+          });
         }
 
         return updatedData;
       });
     },
-    [enableCache, serializeQuery, query],
+    [enableCache, serializeQuery, query, cacheTtl],
   );
 
   const update = useCallback(
@@ -202,19 +218,16 @@ export function useListing<Q extends object, R>({
 
         if (enableCache) {
           const cacheKey = serializeQuery(query);
-          const existingCache = cacheRef.current.get(cacheKey);
-          if (existingCache) {
-            cacheRef.current.set(cacheKey, {
-              ...existingCache,
-              data: updatedData,
-            });
-          }
+          cacheRef.current.set(cacheKey, {
+            data: updatedData,
+            expiresAt: Date.now() + cacheTtl,
+          });
         }
 
         return updatedData;
       });
     },
-    [enableCache, serializeQuery, query],
+    [enableCache, serializeQuery, query, cacheTtl],
   );
 
   return {

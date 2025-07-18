@@ -5,10 +5,10 @@ import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Badge, DateRangePicker, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
+import { InboundImportDialog } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
-import { WarehouseInboundImportDialog } from "@/components/shadcn/warehouse-operation-import-dialog.tsx";
 import { useDownloadFile, useListing } from "@/hooks";
 import { cn } from "@/lib";
 import { InboundService } from "@/services";
@@ -110,7 +110,7 @@ export const InboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage inbound orders</p>
         </div>
 
-        <WarehouseInboundImportDialog />
+        <InboundImportDialog />
       </div>
 
       <WarehouseStats type="inbound" />

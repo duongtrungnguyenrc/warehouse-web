@@ -80,3 +80,13 @@ declare type CreateProductRequest = {
   categoryId: string;
   sku: string;
 };
+
+declare type InboundDetail = InboundUploadResponse;
+
+declare type ImportInboundRequest = {
+  batch: {
+    batchNumber: string;
+    receivedDate: string;
+  };
+  details: Array<InboundDetail>;
+};
