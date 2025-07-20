@@ -87,6 +87,18 @@ declare type ImportInboundRequest = {
   batch: {
     batchNumber: string;
     receivedDate: string;
+    inventoryStaff: string;
   };
-  details: Array<InboundDetail>;
+  details: InboundDetail[];
+};
+
+declare type OutboundDetail = OutboundUploadResponse;
+
+declare type ImportOutboundRequest = {
+  batch: {
+    batchNumber: string;
+    shippedDate: string;
+    inventoryStaff: string;
+  };
+  details: OutboundDetail[];
 };

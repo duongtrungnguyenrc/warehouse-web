@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
                 Component: WarehousesPage,
               },
               {
-                path: ":id",
+                path: ":slug",
                 Component: WarehouseDetailPage,
               },
             ],

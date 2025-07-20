@@ -1,8 +1,8 @@
 import { httpClient } from "@/lib";
 
-const list = async (params: PaginationQuery<Inbound>): Promise<PaginationResponse<Inbound>> => {
+const list = async (params: PaginationQuery<Outbound>): Promise<PaginationResponse<Outbound>> => {
   return await httpClient
-    .get<PaginationResponse<Inbound>>("/warehouse/manager/outbound", {
+    .get<PaginationResponse<Outbound>>("/warehouse/manager/outbound", {
       params: params,
     })
     .then((response) => response.data);
@@ -18,7 +18,11 @@ const exportOrder = async (batchId: string) => {
   });
 };
 
-const importOrders = async (file: File): Promise<Array<Product>> => {
+const generateBatchNumber = async (): Promise<string> => {
+  return httpClient.get("warehouse/batch/outbound/generate-batch-number", {}).then((response) => response.data);
+};
+
+const uploadOrders = async (file: File): Promise<Array<OutboundUploadResponse>> => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -31,8 +35,19 @@ const importOrders = async (file: File): Promise<Array<Product>> => {
   return response.data;
 };
 
+const validateOrders = async (request: ImportOutboundRequest): Promise<OutboundValidateResponse> => {
+  return httpClient.post<OutboundValidateResponse>("warehouse/batch/outbound/validate-quantity", request).then((response) => response.data);
+};
+
+const importOrders = async (request: ImportOutboundRequest): Promise<Array<Outbound>> => {
+  return httpClient.post<Array<Outbound>>("warehouse/batch/outbound/upload", request).then((response) => response.data);
+};
+
 export const OutboundService = {
   list,
   exportOrder,
+  generateBatchNumber,
   importOrders,
+  validateOrders,
+  uploadOrders,
 };

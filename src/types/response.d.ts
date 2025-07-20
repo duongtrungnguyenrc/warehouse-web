@@ -32,3 +32,20 @@ declare type InboundUploadResponse = {
   expiryDate: string;
   quantity: number;
 };
+
+declare type OutboundUploadResponse = {
+  sku: string;
+  quantity: number;
+};
+
+declare type OutboundValidateResponse = {
+  sufficientProducts: {
+    sku: "string";
+    quantity: 0;
+  }[];
+  insufficientProducts: {
+    sku: "string";
+    quantity: 0;
+  }[];
+  canProceed: true;
+};

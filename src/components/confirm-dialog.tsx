@@ -1,5 +1,5 @@
 import { AlertTriangle, HelpCircle } from "lucide-react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useRef, useState } from "react";
 
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
@@ -12,6 +12,8 @@ interface ConfirmationDialogProps {
   type?: "delete" | "confirm";
   confirmText?: string;
   cancelText?: string;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 }
 
 const dialogVariant = {
@@ -31,7 +33,8 @@ const dialogVariant = {
   },
 };
 
-export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "delete", confirmText, cancelText }: ConfirmationDialogProps) => {
+export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "delete", confirmText, cancelText, open, setOpen }: ConfirmationDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   const variant = dialogVariant[type];
@@ -39,7 +42,7 @@ export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "de
   const hide = () => closeRef.current?.click();
 
   return (
-    <Dialog>
+    <Dialog open={open || internalOpen} onOpenChange={setOpen || setInternalOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">

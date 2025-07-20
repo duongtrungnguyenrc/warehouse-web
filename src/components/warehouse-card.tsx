@@ -1,10 +1,10 @@
 import { AlertCircle, Edit, Eye, MapPin, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Link } from "react-router";
 
 import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { UpdateWarehouseDialog } from "@/components/update-warehouse-dialog";
-import { WarehouseDetailDialog } from "@/components/warehouse-detail-dialog";
 import { catchError, WAREHOUSE_TYPE } from "@/lib";
 import { WarehouseService } from "@/services";
 
@@ -104,12 +104,12 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
         </div>
 
         <div className="flex space-x-2 pt-2">
-          <WarehouseDetailDialog warehouse={warehouse}>
-            <Button variant="outline" size="sm" className="flex-1 bg-transparent">
+          <Link className="flex-1" to={warehouse.slug}>
+            <Button variant="outline" size="sm" className="w-full">
               <Eye className="mr-2 h-4 w-4" />
               View Details
             </Button>
-          </WarehouseDetailDialog>
+          </Link>
 
           <UpdateWarehouseDialog warehouse={warehouse} onUpdatedSuccess={onUpdated}>
             <Button variant="outline" size="sm">

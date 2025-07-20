@@ -1,6 +1,8 @@
-import { ChevronRight, Grid3X3, Package, Plus } from "lucide-react";
+import { ChevronRight, Grid3X3, Package } from "lucide-react";
+import { useCallback } from "react";
 
-import { Button } from "@/components/shadcn/button";
+import { ImportDialog } from "@/components/import-dialog.tsx";
+import { RoleProtect } from "@/components/role-protect.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -13,7 +15,7 @@ interface RoomsListProps {
 }
 
 export function RoomsList({ warehouseId, onRoomSelect }: RoomsListProps) {
-  const { data, loading } = useListing({
+  const { data, loading, append } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRooms,
     initialQuery: {
       page: 0,
@@ -23,6 +25,10 @@ export function RoomsList({ warehouseId, onRoomSelect }: RoomsListProps) {
   });
 
   const rooms = data?.content || [];
+
+  const onImportRooms = useCallback(async (file: File) => WarehouseService.importRooms(warehouseId, "", file), []);
+
+  const onImportSuccess = (newRooms: Array<Room>) => append(...newRooms);
 
   return (
     <Card>
@@ -35,10 +41,9 @@ export function RoomsList({ warehouseId, onRoomSelect }: RoomsListProps) {
             </CardTitle>
             <CardDescription>Manage rooms inside the warehouse</CardDescription>
           </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Room
-          </Button>
+          <RoleProtect role={["ADMIN"]}>
+            <ImportDialog onUpload={onImportRooms} onSuccess={onImportSuccess} />
+          </RoleProtect>
         </div>
       </CardHeader>
       <CardContent>

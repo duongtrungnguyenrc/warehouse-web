@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ImportDialog, RoleProtect } from "@/components";
+import { ImportDialog, Label, RoleProtect, UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
@@ -17,16 +17,18 @@ interface InboundExtraInfoDialogProps {
   onClose: VoidFunction;
 }
 
-export const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onClose }) => {
+const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onClose }) => {
   const formik = useFormik({
     initialValues: {
       batchNumber: "",
       receivedDate: "",
+      inventoryStaff: "",
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
       batchNumber: Yup.string().required("Batch number is required"),
       receivedDate: Yup.string().required("Received date is required"),
+      inventoryStaff: Yup.string().required("Inventory staff is required"),
     }),
     onSubmit: async (values) =>
       await toast.promise(
@@ -34,6 +36,7 @@ export const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ detail
           batch: {
             batchNumber: values.batchNumber,
             receivedDate: values.receivedDate,
+            inventoryStaff: values.inventoryStaff,
           },
           details: details || [],
         }),
@@ -68,13 +71,26 @@ export const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ detail
           <DialogTitle>Additional Information</DialogTitle>
         </DialogHeader>
         <form onSubmit={formik.handleSubmit} className="space-y-4">
-          <div>
-            <Input name="batchNumber" placeholder="Batch Number" value={formik.values.batchNumber} onChange={formik.handleChange} disabled />
-            {formik.touched.batchNumber && formik.errors.batchNumber && <p className="text-red-500 text-sm">{formik.errors.batchNumber}</p>}
+          <div className="flex space-x-3">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="name">Batch number *</Label>
+
+              <Input name="batchNumber" placeholder="Batch Number" value={formik.values.batchNumber} onChange={formik.handleChange} disabled />
+              {formik.touched.batchNumber && formik.errors.batchNumber && <p className="text-red-500 text-sm">{formik.errors.batchNumber}</p>}
+            </div>
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="name">Received date *</Label>
+
+              <Input type="date" name="receivedDate" value={formik.values.receivedDate} onChange={formik.handleChange} />
+              {formik.touched.receivedDate && formik.errors.receivedDate && <p className="text-red-500 text-sm">{formik.errors.receivedDate}</p>}
+            </div>
           </div>
-          <div>
-            <Input type="date" name="receivedDate" value={formik.values.receivedDate} onChange={formik.handleChange} />
-            {formik.touched.receivedDate && formik.errors.receivedDate && <p className="text-red-500 text-sm">{formik.errors.receivedDate}</p>}
+
+          <div className="space-y-2">
+            <Label htmlFor="name">Inventory staff *</Label>
+
+            <UserSelect role={["INVENTORY_STAFF"]} name="inventoryStaff" placeholder="Select staff" setFieldValue={formik.setFieldValue} value={formik.values.inventoryStaff} />
+            {formik.touched.inventoryStaff && formik.errors.inventoryStaff && <p className="text-red-500 text-sm">{formik.errors.inventoryStaff}</p>}
           </div>
           <DialogFooter>
             <Button type="submit">Submit</Button>
@@ -92,7 +108,7 @@ export const InboundImportDialog = () => {
     <RoleProtect role={["INVENTORY_STAFF"]}>
       <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={call} />
 
-      <InboundExtraInfoDialog details={result?.content || undefined} onClose={reset} />
+      <InboundExtraInfoDialog details={result || undefined} onClose={reset} />
     </RoleProtect>
   );
 };

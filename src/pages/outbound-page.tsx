@@ -4,21 +4,7 @@ import { type ChangeEvent, Fragment, useCallback, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
-import {
-  Badge,
-  DateRangePicker,
-  ImportDialog,
-  Pagination,
-  RoleProtect,
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  WarehouseStats,
-} from "@/components";
+import { Badge, DateRangePicker, OutboundImportDialog, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
@@ -123,9 +109,7 @@ export const OutboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage outbound orders</p>
         </div>
 
-        <RoleProtect role={["INVENTORY_STAFF"]}>
-          <ImportDialog title="Import Outbound Orders" description="Upload outbound orders from Excel or CSV" onUpload={OutboundService.importOrders} />
-        </RoleProtect>
+        <OutboundImportDialog />
       </div>
 
       <WarehouseStats type="outbound" />

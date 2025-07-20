@@ -22,6 +22,7 @@ declare type Warehouse = {
   name: string;
   address: string;
   areaSize: number;
+  slug: string;
   status: WarehouseStatus;
   type: WarehouseType;
   createAt: string;
@@ -35,7 +36,6 @@ declare type Warehouse = {
   usagePercentage: number;
   totalStorageRacks: number;
   availableStorageRacks: number;
-  zones?: Zone[];
 };
 
 declare type RoomType = {
@@ -115,6 +115,6 @@ declare type Inbound = {
   }[];
 };
 
-declare type OutBound = Inbound & {
+declare type Outbound = Inbound & {
   status: OutboundStatus;
 };

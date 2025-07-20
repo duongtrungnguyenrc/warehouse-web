@@ -24,8 +24,14 @@ const get = async (id: string): Promise<Warehouse> => {
   return httpClient.get<Warehouse>(`/warehouse/warehouses/${id}`).then((response) => response.data);
 };
 
-const getManaging = async (): Promise<Warehouse> => {
-  return httpClient.get<Warehouse>(`/warehouse/manager/warehouse`).then((response) => response.data);
+const getManaging = async (slug?: string): Promise<Warehouse> => {
+  return httpClient
+    .get<Warehouse>(`/warehouse/manager/warehouse`, {
+      params: {
+        slug,
+      },
+    })
+    .then((response) => response.data);
 };
 
 const getManagingWarehouseRooms = async (params: PaginationQuery<Room>): Promise<PaginationResponse<Room>> => {
@@ -103,6 +109,39 @@ const del = async (id: string): Promise<string> => {
   return httpClient.delete<string>(`/warehouse/warehouses/${id}`).then((response) => response.data);
 };
 
+const importRooms = async (warehouseId: string, storageTypeId: string, file: File): Promise<Array<Room>> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await httpClient.post("warehouse/storage-rooms/import", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    params: {
+      warehouseId,
+      storageTypeId,
+    },
+  });
+
+  return response.data;
+};
+
+const importRacks = async (roomId: string, file: File): Promise<Rack[]> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await httpClient.post("warehouse/storage-racks/import", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    params: {
+      roomId,
+    },
+  });
+
+  return response.data;
+};
+
 export const WarehouseService = {
   create,
   list,
@@ -113,6 +152,8 @@ export const WarehouseService = {
   getWarehouseOperationStats,
   getManagingWarehouseEquipments,
   getManagingWarehouseProducts,
+  importRooms,
+  importRacks,
   update,
   del,
 };

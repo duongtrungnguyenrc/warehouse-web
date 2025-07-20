@@ -3,12 +3,12 @@ import { type ReactNode, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ManagerSelect } from "@/components/manager-select.tsx";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
+import { UserSelect } from "@/components/user-select.tsx";
 import { WarehouseStatusSelect } from "@/components/warehouse-status-select.tsx";
 import { catchError } from "@/lib";
 import { WarehouseService } from "@/services";
@@ -80,7 +80,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
 
               <div className="space-y-2">
                 <Label htmlFor="manager">Manager *</Label>
-                <ManagerSelect value={values.managerUser} setFieldValue={setFieldValue} />
+                <UserSelect value={values.managerUser} setFieldValue={setFieldValue} />
               </div>
 
               <DialogFooter>

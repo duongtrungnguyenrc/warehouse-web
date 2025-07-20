@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/shadcn/skeleton";
 import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
 import { WarehouseService } from "@/services";
+import { useParams } from "react-router";
 
 type ViewLevel = "warehouse" | "room" | "rack" | "equipment";
 
@@ -25,6 +26,7 @@ interface NavigationState {
 }
 
 export function WarehouseDetailPage() {
+  const params = useParams();
   const [navigation, setNavigation] = useState<NavigationState>({
     level: "warehouse",
   });
@@ -32,7 +34,7 @@ export function WarehouseDetailPage() {
   const { result: warehouse, call, loading } = useQuery(WarehouseService.getManaging);
 
   useEffect(() => {
-    call().catch(toastOnError);
+    call(params.slug).catch(toastOnError);
   }, [call]);
 
   const getStatusColor = (status: string) => {

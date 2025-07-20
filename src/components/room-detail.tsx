@@ -1,6 +1,8 @@
-import { ChevronRight, Layers, Plus } from "lucide-react";
+import { ChevronRight, Layers } from "lucide-react";
+import { useCallback } from "react";
 
-import { Button } from "@/components/shadcn/button";
+import { ImportDialog } from "@/components/import-dialog.tsx";
+import { RoleProtect } from "@/components/role-protect.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -13,7 +15,7 @@ interface RoomDetailProps {
 }
 
 export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
-  const { data, loading } = useListing({
+  const { data, loading, append } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRacks,
     initialQuery: {
       page: 0,
@@ -27,6 +29,10 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
   const usedCapacity = racks.reduce((sum, rack) => sum + rack.usedSize, 0);
   const maxCapacity = racks.reduce((sum, rack) => sum + rack.maxSize, 0);
   const usagePercentage = maxCapacity === 0 ? 0 : Math.round((usedCapacity / maxCapacity) * 100);
+
+  const onImportRacks = useCallback(async (file: File) => WarehouseService.importRacks(room.id, file), []);
+
+  const onImportSuccess = (newRacks: Array<Rack>) => append(...newRacks);
 
   return (
     <div className="space-y-6">
@@ -95,10 +101,9 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
               </CardTitle>
               <CardDescription>Racks stored in the room</CardDescription>
             </div>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Rack
-            </Button>
+            <RoleProtect role={["ADMIN"]}>
+              <ImportDialog onUpload={onImportRacks} onSuccess={onImportSuccess} />
+            </RoleProtect>
           </div>
         </CardHeader>
         <CardContent>

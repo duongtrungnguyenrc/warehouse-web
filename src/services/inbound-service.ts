@@ -47,11 +47,11 @@ const importOrders = async (request: ImportInboundRequest): Promise<Array<Inboun
   return httpClient.post<Array<Inbound>>("warehouse/batch/inbound/upload", request).then((response) => response.data);
 };
 
-const uploadOrders = async (file: File): Promise<PaginationResponse<InboundUploadResponse>> => {
+const uploadOrders = async (file: File): Promise<Array<InboundUploadResponse>> => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await httpClient.post<PaginationResponse<InboundUploadResponse>>("warehouse/batch/inbound/import", formData, {
+  const response = await httpClient.post<Array<InboundUploadResponse>>("warehouse/batch/inbound/import", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
