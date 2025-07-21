@@ -1,5 +1,5 @@
 declare type Role = "ADMIN" | "MANAGER" | "INVENTORY_STAFF";
-declare type WarehouseStatus = "ACTIVE" | "MAINTENANCE" | "CLOSED";
+declare type WarehouseStatus = "ACTIVE" | "CLOSED";
 declare type WarehouseType = "DC" | "CW";
 declare type Gender = "MALE" | "FEMALE";
 declare type InboundStatus = "IN_PROGRESS" | "COMPLETED" | "CANCELLED";

@@ -230,6 +230,51 @@ export function useListing<Q extends object, R>({
     [enableCache, serializeQuery, query, cacheTtl],
   );
 
+  const hasNextPage = useCallback(() => {
+    if (!data) return false;
+    return data.page + 1 < data.totalPages;
+  }, [data]);
+
+  const fetchNext = useCallback(async () => {
+    if (!hasNextPage()) return;
+
+    const nextPage = (query.page || 0) + 1;
+    const nextQuery = { ...query, page: nextPage };
+
+    const response = await fetcher(nextQuery);
+
+    setData((prev) => {
+      if (!prev) return response;
+
+      const mergedContent = [...prev.content, ...response.content];
+      const newData = {
+        ...response,
+        content: mergedContent,
+      };
+
+      if (enableCache) {
+        const now = Date.now();
+        const cacheKey = serializeQuery(nextQuery);
+        cacheRef.current.set(cacheKey, {
+          data: response,
+          expiresAt: now + cacheTtl,
+        });
+
+        const currentKey = serializeQuery(query);
+        cacheRef.current.set(currentKey, {
+          data: newData,
+          expiresAt: now + cacheTtl,
+        });
+      }
+
+      return newData;
+    });
+
+    setQuery(nextQuery);
+
+    return response;
+  }, [query, fetcher, data, enableCache, cacheTtl, serializeQuery, hasNextPage]);
+
   return {
     data,
     loading,
@@ -239,6 +284,8 @@ export function useListing<Q extends object, R>({
     refetch,
     clearCache,
     clearCacheForQuery,
+    fetchNext,
+    hasNextPage,
     append,
     remove,
     update,

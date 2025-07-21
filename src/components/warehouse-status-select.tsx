@@ -14,13 +14,12 @@ type WarehouseTypeSelectProps = {
 
 export const WarehouseStatusSelect = ({ value, handleChange }: WarehouseTypeSelectProps) => {
   return (
-    <Select value={value} onValueChange={(value) => handleChange({ target: { name: "type", value } })}>
+    <Select value={value} onValueChange={(value) => handleChange({ target: { name: "status", value } })}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select warehouse status" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="ACTIVE">Active</SelectItem>
-        <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
         <SelectItem value="CLOSED">Closed</SelectItem>
       </SelectContent>
     </Select>

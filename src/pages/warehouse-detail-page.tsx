@@ -1,5 +1,6 @@
 import { ArrowLeft, Package, Warehouse } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 
 import { EquipmentDetail } from "@/components/equipment-detail.tsx";
 import { RackDetail } from "@/components/rack-detail.tsx";
@@ -14,7 +15,6 @@ import { Skeleton } from "@/components/shadcn/skeleton";
 import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
 import { WarehouseService } from "@/services";
-import { useParams } from "react-router";
 
 type ViewLevel = "warehouse" | "room" | "rack" | "equipment";
 

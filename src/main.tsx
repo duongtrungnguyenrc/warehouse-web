@@ -4,7 +4,19 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 
 import { ProtectedLayout, RootLayout } from "@/layouts";
-import { ChatbotPage, ForgotPasswordPage, InboundPage, LoginPage, OutboundPage, ProductsPage, ResetPasswordPage, UserPage, WarehouseDetailPage, WarehousesPage } from "@/pages";
+import {
+  ChatbotPage,
+  StatisticsPage,
+  ForgotPasswordPage,
+  InboundPage,
+  LoginPage,
+  OutboundPage,
+  ProductsPage,
+  ResetPasswordPage,
+  UserPage,
+  WarehouseDetailPage,
+  WarehousesPage,
+} from "@/pages";
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +61,10 @@ export const router = createBrowserRouter([
           {
             path: "/outbound",
             Component: OutboundPage,
+          },
+          {
+            path: "/stats",
+            Component: StatisticsPage,
           },
           {
             path: "/users",

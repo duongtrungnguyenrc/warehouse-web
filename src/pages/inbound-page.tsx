@@ -4,7 +4,7 @@ import { type ChangeEvent, Fragment, useCallback, useMemo, useState } from "reac
 import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
-import { Badge, DateRangePicker, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
+import { Badge, CreateInboundDialog, DateRangePicker, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
 import { InboundImportDialog } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -56,7 +56,7 @@ export const InboundPage = () => {
   const { download } = useDownloadFile();
 
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const { data, query, setQuery, loading } = useListing({
+  const { data, query, setQuery, loading, append } = useListing({
     fetcher: InboundService.list,
   });
 
@@ -102,6 +102,8 @@ export const InboundPage = () => {
     [setQuery],
   );
 
+  const onImportedSuccess = useCallback((newInboundOrders: Array<Inbound>) => append(...newInboundOrders), [append]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -110,7 +112,10 @@ export const InboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage inbound orders</p>
         </div>
 
-        <InboundImportDialog />
+        <div className="flex items-center space-x-3">
+          <InboundImportDialog onImportedSuccess={onImportedSuccess} />
+          <CreateInboundDialog onCreatedSuccess={append} />
+        </div>
       </div>
 
       <WarehouseStats type="inbound" />

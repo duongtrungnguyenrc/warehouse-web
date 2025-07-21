@@ -4,7 +4,21 @@ import { type ChangeEvent, Fragment, useCallback, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
-import { Badge, DateRangePicker, OutboundImportDialog, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
+import {
+  Badge,
+  CreateOutboundDialog,
+  DateRangePicker,
+  OutboundImportDialog,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  WarehouseStats,
+} from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
@@ -55,7 +69,7 @@ export const OutboundPage = () => {
   const { download } = useDownloadFile();
 
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const { data, query, setQuery, loading } = useListing({
+  const { data, query, setQuery, loading, append } = useListing({
     fetcher: OutboundService.list,
   });
 
@@ -109,7 +123,10 @@ export const OutboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage outbound orders</p>
         </div>
 
-        <OutboundImportDialog />
+        <div className="flex items-center space-x-3">
+          <OutboundImportDialog />
+          <CreateOutboundDialog onCreatedSuccess={append} />
+        </div>
       </div>
 
       <WarehouseStats type="outbound" />

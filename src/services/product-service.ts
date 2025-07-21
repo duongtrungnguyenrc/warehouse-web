@@ -12,6 +12,14 @@ const list = async (params: PaginationQuery<Product>): Promise<PaginationRespons
     .then((response) => response.data);
 };
 
+const listManaging = async (params: PaginationQuery<Product>): Promise<PaginationResponse<Product>> => {
+  return await httpClient
+    .get<PaginationResponse<Product>>("/warehouse/manager/products", {
+      params: params,
+    })
+    .then((response) => response.data);
+};
+
 const create = async (request: CreateProductRequest): Promise<Product> => {
   return await httpClient.post("warehouse/products/create", request).then((response) => response.data);
 };
@@ -31,6 +39,7 @@ const importProducts = async (file: File): Promise<Array<Product>> => {
 
 export const ProductService = {
   list,
+  listManaging,
   getSKU,
   create,
   importProducts,

@@ -15,9 +15,10 @@ import { InboundService } from "@/services";
 interface InboundExtraInfoDialogProps {
   details?: InboundDetail[];
   onClose: VoidFunction;
+  onImportedSuccess?: (orders: Inbound[]) => void;
 }
 
-const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onClose }) => {
+const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onClose, onImportedSuccess }) => {
   const formik = useFormik({
     initialValues: {
       batchNumber: "",
@@ -41,10 +42,10 @@ const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onCl
           details: details || [],
         }),
         {
-          success: () => {
-            onClose();
-
+          success: (newInboundOrders) => {
             formik.resetForm();
+            onClose();
+            onImportedSuccess?.(newInboundOrders);
             return "Inbound order imported success!";
           },
           error: catchError,
@@ -73,22 +74,19 @@ const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onCl
         <form onSubmit={formik.handleSubmit} className="space-y-4">
           <div className="flex space-x-3">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="name">Batch number *</Label>
-
-              <Input name="batchNumber" placeholder="Batch Number" value={formik.values.batchNumber} onChange={formik.handleChange} disabled />
+              <Label htmlFor="batchNumber">Batch number *</Label>
+              <Input name="batchNumber" value={formik.values.batchNumber} onChange={formik.handleChange} disabled />
               {formik.touched.batchNumber && formik.errors.batchNumber && <p className="text-red-500 text-sm">{formik.errors.batchNumber}</p>}
             </div>
             <div className="flex-1 space-y-2">
-              <Label htmlFor="name">Received date *</Label>
-
+              <Label htmlFor="receivedDate">Received date *</Label>
               <Input type="date" name="receivedDate" value={formik.values.receivedDate} onChange={formik.handleChange} />
               {formik.touched.receivedDate && formik.errors.receivedDate && <p className="text-red-500 text-sm">{formik.errors.receivedDate}</p>}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Inventory staff *</Label>
-
+            <Label htmlFor="inventoryStaff">Inventory staff *</Label>
             <UserSelect role={["INVENTORY_STAFF"]} name="inventoryStaff" placeholder="Select staff" setFieldValue={formik.setFieldValue} value={formik.values.inventoryStaff} />
             {formik.touched.inventoryStaff && formik.errors.inventoryStaff && <p className="text-red-500 text-sm">{formik.errors.inventoryStaff}</p>}
           </div>
@@ -101,14 +99,17 @@ const InboundExtraInfoDialog: FC<InboundExtraInfoDialogProps> = ({ details, onCl
   );
 };
 
-export const InboundImportDialog = () => {
+interface InboundImportDialogProps {
+  onImportedSuccess?: (orders: Inbound[]) => void;
+}
+
+export const InboundImportDialog: FC<InboundImportDialogProps> = ({ onImportedSuccess }) => {
   const { result, call, reset } = useQuery(InboundService.uploadOrders);
 
   return (
     <RoleProtect role={["INVENTORY_STAFF"]}>
       <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={call} />
-
-      <InboundExtraInfoDialog details={result || undefined} onClose={reset} />
+      <InboundExtraInfoDialog details={result || undefined} onClose={reset} onImportedSuccess={onImportedSuccess} />
     </RoleProtect>
   );
 };

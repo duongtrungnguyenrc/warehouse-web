@@ -35,6 +35,10 @@ const uploadOrders = async (file: File): Promise<Array<OutboundUploadResponse>> 
   return response.data;
 };
 
+const createOrder = async (request: ImportOutboundRequest): Promise<Outbound> => {
+  return httpClient.post("/warehouse/batch/outbound", request, {}).then((response) => response.data);
+};
+
 const validateOrders = async (request: ImportOutboundRequest): Promise<OutboundValidateResponse> => {
   return httpClient.post<OutboundValidateResponse>("warehouse/batch/outbound/validate-quantity", request).then((response) => response.data);
 };
@@ -48,6 +52,7 @@ export const OutboundService = {
   exportOrder,
   generateBatchNumber,
   importOrders,
+  createOrder,
   validateOrders,
   uploadOrders,
 };

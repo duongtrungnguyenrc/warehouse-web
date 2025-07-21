@@ -80,7 +80,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
 
               <div className="space-y-2">
                 <Label htmlFor="manager">Manager *</Label>
-                <UserSelect value={values.managerUser} setFieldValue={setFieldValue} />
+                <UserSelect role={["MANAGER"]} value={values.managerUser} setFieldValue={setFieldValue} />
               </div>
 
               <DialogFooter>

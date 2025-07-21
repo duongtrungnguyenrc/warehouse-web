@@ -1,4 +1,4 @@
-import { useFormik } from "formik";
+import { Form, Formik, type FormikHelpers } from "formik";
 import { type FC, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
@@ -9,117 +9,114 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/shadcn/input";
 import { useQuery } from "@/hooks";
 import { catchError } from "@/lib";
-import { OutboundService } from "@/services";
+import { InboundService, OutboundService } from "@/services";
 
 interface OutboundExtraInfoDialogProps {
   details?: OutboundDetail[];
   onClose: VoidFunction;
+  onImportedSuccess?: (orders: Outbound[]) => void;
 }
 
-const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ details, onClose }) => {
+const validationSchema = Yup.object({
+  batchNumber: Yup.string().required("Batch number is required"),
+  shippedDate: Yup.string().required("Shipped date is required"),
+  inventoryStaff: Yup.string().required("Inventory staff is required"),
+});
+
+export const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ details, onClose, onImportedSuccess }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const confirmCallback = useRef<VoidFunction | null>(null);
 
-  const formik = useFormik({
-    initialValues: {
-      batchNumber: "",
-      shippedDate: "",
-      inventoryStaff: "",
-    },
-    enableReinitialize: true,
-    validationSchema: Yup.object({
-      batchNumber: Yup.string().required("Batch number is required"),
-      shippedDate: Yup.string().required("Shipped date is required"),
-    }),
-    onSubmit: async (values) => {
-      const request: ImportOutboundRequest = {
-        batch: {
-          batchNumber: values.batchNumber,
-          shippedDate: values.shippedDate,
-          inventoryStaff: values.inventoryStaff,
-        },
-        details: details || [],
-      };
+  const { call: generateBatchNumber, result: batchNumber } = useQuery(InboundService.generateBatchNumber);
 
-      try {
-        const validation = await OutboundService.validateOrders(request);
+  useEffect(() => {
+    generateBatchNumber();
+  }, [generateBatchNumber]);
 
-        if (!validation.canProceed) {
-          confirmCallback.current = async () => {
-            await toast.promise(OutboundService.importOrders(request), {
-              success: () => {
-                onClose();
-                formik.resetForm();
-                return "Outbound order imported success!";
-              },
-              error: catchError,
-              loading: "Importing outbound orders...",
-            });
-          };
+  const initialValues = {
+    batchNumber: batchNumber || "",
+    shippedDate: "",
+    inventoryStaff: "",
+  };
 
-          setShowConfirm(true);
-          return;
-        }
+  const handleSubmit = async (values: typeof initialValues, helpers: FormikHelpers<typeof initialValues>) => {
+    const request: ImportOutboundRequest = {
+      batch: {
+        batchNumber: values.batchNumber || "",
+        shippedDate: values.shippedDate,
+        inventoryStaff: values.inventoryStaff,
+      },
+      details: details || [],
+    };
 
+    try {
+      const validation = await OutboundService.validateOrders(request);
+
+      const doImport = async () => {
         await toast.promise(OutboundService.importOrders(request), {
-          success: () => {
+          success: (newOutboundOrders) => {
             onClose();
-            formik.resetForm();
-            return "Outbound order imported success!";
+            helpers.resetForm();
+            onImportedSuccess?.(newOutboundOrders);
+            return "Outbound order imported successfully!";
           },
           error: catchError,
           loading: "Importing outbound orders...",
         });
-      } catch (err) {
-        toast.error(catchError(err));
-      }
-    },
-  });
+      };
 
-  const getBatchNumber = async () => {
-    const batchNumber = await OutboundService.generateBatchNumber();
-    await formik.setFieldValue("batchNumber", batchNumber);
+      if (!validation.canProceed) {
+        confirmCallback.current = doImport;
+        setShowConfirm(true);
+        return;
+      }
+
+      await doImport();
+    } catch (err) {
+      toast.error(catchError(err));
+    }
   };
 
-  const onCloseDialog = (open: boolean) => (!open ? onClose() : undefined);
-
-  useEffect(() => {
-    getBatchNumber();
-  }, []);
+  const handleCloseDialog = (open: boolean) => {
+    if (!open) onClose();
+  };
 
   return (
     <>
-      <Dialog open={!!details} onOpenChange={onCloseDialog}>
+      <Dialog open={!!details} onOpenChange={handleCloseDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Additional Information</DialogTitle>
           </DialogHeader>
-          <form onSubmit={formik.handleSubmit} className="space-y-4">
-            <div className="flex space-x-3">
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="name">Batch number *</Label>
 
-                <Input name="batchNumber" placeholder="Batch Number" value={formik.values.batchNumber} onChange={formik.handleChange} disabled />
-                {formik.touched.batchNumber && formik.errors.batchNumber && <p className="text-red-500 text-sm">{formik.errors.batchNumber}</p>}
-              </div>
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="name">Received date *</Label>
+          <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            {({ values, errors, touched, handleChange, setFieldValue }) => (
+              <Form className="space-y-4">
+                <div className="flex space-x-3">
+                  <div className="flex-1 space-y-2">
+                    <Label>Batch number *</Label>
+                    <Input name="batchNumber" value={values.batchNumber} disabled />
+                    {touched.batchNumber && errors.batchNumber && <p className="text-sm text-red-500">{errors.batchNumber}</p>}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <Label>Shipped date *</Label>
+                    <Input type="date" name="shippedDate" value={values.shippedDate} onChange={handleChange} />
+                    {touched.shippedDate && errors.shippedDate && <p className="text-sm text-red-500">{errors.shippedDate}</p>}
+                  </div>
+                </div>
 
-                <Input type="date" name="shippedDate" value={formik.values.shippedDate} onChange={formik.handleChange} />
-                {formik.touched.shippedDate && formik.errors.shippedDate && <p className="text-red-500 text-sm">{formik.errors.shippedDate}</p>}
-              </div>
-            </div>
+                <div className="space-y-2">
+                  <Label>Inventory staff *</Label>
+                  <UserSelect role={["INVENTORY_STAFF"]} name="inventoryStaff" placeholder="Select staff" setFieldValue={setFieldValue} value={values.inventoryStaff} />
+                  {touched.inventoryStaff && errors.inventoryStaff && <p className="text-sm text-red-500">{errors.inventoryStaff}</p>}
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">Inventory staff *</Label>
-
-              <UserSelect role={["INVENTORY_STAFF"]} name="inventoryStaff" placeholder="Select staff" setFieldValue={formik.setFieldValue} value={formik.values.inventoryStaff} />
-              {formik.touched.inventoryStaff && formik.errors.inventoryStaff && <p className="text-red-500 text-sm">{formik.errors.inventoryStaff}</p>}
-            </div>
-            <DialogFooter>
-              <Button type="submit">Submit</Button>
-            </DialogFooter>
-          </form>
+                <DialogFooter>
+                  <Button type="submit">Submit</Button>
+                </DialogFooter>
+              </Form>
+            )}
+          </Formik>
         </DialogContent>
       </Dialog>
 

@@ -8,6 +8,10 @@ const list = async (params: PaginationQuery<Inbound>): Promise<PaginationRespons
     .then((response) => response.data);
 };
 
+const createOrder = async (request: ImportInboundRequest): Promise<Inbound> => {
+  return httpClient.post("/warehouse/batch/inbound", request, {}).then((response) => response.data);
+};
+
 const exportOrder = async (batchId: string) => {
   try {
     const response = await httpClient.get(`/warehouse/batch/inbound/export`, {
@@ -66,6 +70,7 @@ const generateBatchNumber = async (): Promise<string> => {
 
 export const InboundService = {
   list,
+  createOrder,
   exportOrder,
   uploadOrders,
   importOrders,
