@@ -35,11 +35,12 @@ const getManaging = async (slug?: string): Promise<Warehouse> => {
 };
 
 const getManagingWarehouseRooms = async (params: PaginationQuery<Room>): Promise<PaginationResponse<Room>> => {
-  const { page, size } = params;
+  const { page, size, slug } = params;
 
   const queryParams = {
     offset: page * size,
     size: size,
+    slug,
   };
 
   return httpClient

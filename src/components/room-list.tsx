@@ -10,23 +10,23 @@ import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
 
 interface RoomsListProps {
-  warehouseId: string;
+  warehouseSlug: string;
   onRoomSelect: (room: Room) => void;
 }
 
-export function RoomsList({ warehouseId, onRoomSelect }: RoomsListProps) {
+export function RoomsList({ warehouseSlug, onRoomSelect }: RoomsListProps) {
   const { data, loading, append } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRooms,
     initialQuery: {
       page: 0,
       size: 20,
-      warehouseId,
+      slug: warehouseSlug,
     },
   });
 
   const rooms = data?.content || [];
 
-  const onImportRooms = useCallback(async (file: File) => WarehouseService.importRooms(warehouseId, "", file), []);
+  const onImportRooms = useCallback(async (file: File) => WarehouseService.importRooms(warehouseSlug, "", file), []);
 
   const onImportSuccess = (newRooms: Array<Room>) => append(...newRooms);
 

@@ -252,7 +252,7 @@ export function WarehouseDetailPage() {
               </Card>
             </div>
 
-            <RoomsList warehouseId={warehouse.id} onRoomSelect={(room: Room) => handleNavigate({ level: "room", selectedRoom: room })} />
+            <RoomsList warehouseSlug={params.slug || ""} onRoomSelect={(room: Room) => handleNavigate({ level: "room", selectedRoom: room })} />
 
             <Card>
               <CardHeader>
