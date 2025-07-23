@@ -28,7 +28,6 @@ export * from "./update-product-dialog";
 export * from "./update-warehouse-dialog";
 export * from "./update-zone-dialog";
 export * from "./user-select.tsx";
-export * from "./warehouse-detail-dialog";
 export * from "./warehouse-filter.tsx";
 export * from "./warehouse-select.tsx";
 export * from "./warehouse-status-select.tsx";
