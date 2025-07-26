@@ -37,7 +37,7 @@ jobs:
             docker rm web || true
 
             echo ">> Start new container"
-            docker run -d --env-file ../infra/.env.web --name web -p 3000:3000 web:latest
+            docker run -d --env-file ../infra/.env.web --name web -p 80:3000 web:latest
 
             docker ps
 
