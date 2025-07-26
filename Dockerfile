@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+COPY ../infra/.env.web .env
+
 RUN npm run build
 
 FROM nginx:alpine AS runner
