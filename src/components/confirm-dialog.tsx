@@ -22,14 +22,14 @@ const dialogVariant = {
     titleColor: "text-red-600",
     actionColor: "destructive",
     warningText: "This action cannot be undone!",
-    confirmLabel: "Delete",
+    confirmLabel: "Yes",
   },
   confirm: {
     icon: <HelpCircle className="h-5 w-5 text-blue-600" />,
     titleColor: "text-blue-600",
     actionColor: "default",
     warningText: "",
-    confirmLabel: "Confirm",
+    confirmLabel: "Yes",
   },
 };
 

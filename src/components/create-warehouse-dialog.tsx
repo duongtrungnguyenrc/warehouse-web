@@ -7,7 +7,6 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { UserSelect } from "@/components/user-select.tsx";
 import { WarehouseTypeSelect } from "@/components/warehouse-type-select.tsx";
 import { WarehouseService } from "@/services";
 
@@ -59,7 +58,7 @@ export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDi
             }
           }}
         >
-          {({ values, handleChange, isSubmitting, setFieldValue }) => (
+          {({ values, handleChange, isSubmitting }) => (
             <Form className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -77,15 +76,9 @@ export function CreateWarehouseDialog({ children, onSuccess }: CreateWarehouseDi
                 <Textarea id="address" name="address" placeholder="Enter full address of the warehouse" value={values.address} onChange={handleChange} required />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="areaSize">Area Size (m²) *</Label>
-                  <Input id="areaSize" name="areaSize" type="number" placeholder="e.g., 5000" value={values.areaSize} onChange={handleChange} required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="manager">Manager *</Label>
-                  <UserSelect value={values.manager} setFieldValue={setFieldValue} />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="areaSize">Area Size (m²) *</Label>
+                <Input id="areaSize" name="areaSize" type="number" placeholder="e.g., 5000" value={values.areaSize} onChange={handleChange} required />
               </div>
 
               <DialogFooter>

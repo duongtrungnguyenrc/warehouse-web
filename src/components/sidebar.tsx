@@ -13,7 +13,7 @@ type Navigation = {
 
 const navigation: Navigation[] = [
   { name: "Warehouses", href: "/", icon: Warehouse, roles: ["*"] },
-  { name: "Statistics", href: "/stats", icon: ChartLine, roles: ["*"] },
+  { name: "Statistics", href: "/stats", icon: ChartLine, roles: ["MANAGER"] },
   { name: "Products", href: "/products", icon: Package, roles: ["INVENTORY_STAFF", "MANAGER"] },
   { name: "Inbound", href: "/inbound", icon: ArrowDownToLine, roles: ["MANAGER", "INVENTORY_STAFF"] },
   { name: "Outbound", href: "/outbound", icon: ArrowUpFromLine, roles: ["MANAGER", "INVENTORY_STAFF"] },

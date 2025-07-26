@@ -3,7 +3,7 @@ import { type FC, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ConfirmDialog, ImportDialog, Label, RoleProtect, UserSelect } from "@/components";
+import { ConfirmDialog, ImportDialog, Label, UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
@@ -141,9 +141,9 @@ export const OutboundImportDialog = () => {
   const { result, call, reset } = useQuery(OutboundService.uploadOrders);
 
   return (
-    <RoleProtect role={["INVENTORY_STAFF"]}>
+    <>
       <ImportDialog title="Import Outbound Orders" description="Upload outbound orders from Excel or CSV" onUpload={call} />
       <OutboundExtraInfoDialog details={result || undefined} onClose={reset} />
-    </RoleProtect>
+    </>
   );
 };

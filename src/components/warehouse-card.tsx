@@ -1,4 +1,4 @@
-import { AlertCircle, Edit, Eye, MapPin, Trash2 } from "lucide-react";
+import { AlertCircle, Edit, Eye, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router";
 
@@ -56,18 +56,13 @@ export const WarehouseCard = ({ warehouse, onUpdated, onDeleted }: WarehouseCard
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg">{warehouse.name}</CardTitle>
-            <CardDescription className="font-mono text-sm">{warehouse.id}</CardDescription>
+            <CardTitle className="text-lg max-w-full">{warehouse.name}</CardTitle>
+            <CardDescription className="text-sm flex">{warehouse.address}</CardDescription>
           </div>
           <Badge className={getStatusColor(warehouse.status)}>{getStatusText(warehouse.status)}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center text-sm text-muted-foreground max-w-[90%] truncate">
-          <MapPin className="mr-2 h-4 w-4 shrink-0" />
-          <span className="truncate">{warehouse.address}</span>
-        </div>
-
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Used capacity</span>

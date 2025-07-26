@@ -10,6 +10,7 @@ import {
   DateRangePicker,
   OutboundImportDialog,
   Pagination,
+  RoleProtect,
   Table,
   TableBody,
   TableCell,
@@ -123,10 +124,12 @@ export const OutboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage outbound orders</p>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <OutboundImportDialog />
-          <CreateOutboundDialog onCreatedSuccess={append} />
-        </div>
+        <RoleProtect role={["INVENTORY_STAFF"]}>
+          <div className="flex items-center space-x-3">
+            <OutboundImportDialog />
+            <CreateOutboundDialog onCreatedSuccess={append} />
+          </div>
+        </RoleProtect>
       </div>
 
       <WarehouseStats type="outbound" />

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ImportDialog, Label, RoleProtect, UserSelect } from "@/components";
+import { ImportDialog, Label, UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
@@ -107,9 +107,9 @@ export const InboundImportDialog: FC<InboundImportDialogProps> = ({ onImportedSu
   const { result, call, reset } = useQuery(InboundService.uploadOrders);
 
   return (
-    <RoleProtect role={["INVENTORY_STAFF"]}>
+    <>
       <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={call} />
       <InboundExtraInfoDialog details={result || undefined} onClose={reset} onImportedSuccess={onImportedSuccess} />
-    </RoleProtect>
+    </>
   );
 };

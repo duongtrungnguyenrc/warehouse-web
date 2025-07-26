@@ -4,7 +4,21 @@ import { type ChangeEvent, Fragment, useCallback, useMemo, useState } from "reac
 import type { DateRange } from "react-day-picker";
 import { useDebouncedCallback } from "use-debounce";
 
-import { Badge, CreateInboundDialog, DateRangePicker, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, WarehouseStats } from "@/components";
+import {
+  Badge,
+  CreateInboundDialog,
+  DateRangePicker,
+  Pagination,
+  RoleProtect,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  WarehouseStats,
+} from "@/components";
 import { InboundImportDialog } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -112,10 +126,12 @@ export const InboundPage = () => {
           <p className="text-muted-foreground">Monitor and manage inbound orders</p>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <InboundImportDialog onImportedSuccess={onImportedSuccess} />
-          <CreateInboundDialog onCreatedSuccess={append} />
-        </div>
+        <RoleProtect role={["INVENTORY_STAFF"]}>
+          <div className="flex items-center space-x-3">
+            <InboundImportDialog onImportedSuccess={onImportedSuccess} />
+            <CreateInboundDialog onCreatedSuccess={append} />
+          </div>
+        </RoleProtect>
       </div>
 
       <WarehouseStats type="inbound" />

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
 import * as Yup from "yup";
 
-import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, Input, Label } from "@/components";
+import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
 import { useAuth } from "@/hooks";
 import { catchError } from "@/lib/utils.ts";
 
@@ -105,13 +105,7 @@ export const LoginPage = () => {
                     {touched.password && errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="rememberMe" checked={values.rememberPassword} onCheckedChange={(checked) => setFieldValue("rememberPassword", !!checked)} />
-                      <Label htmlFor="rememberMe" className="text-sm font-normal">
-                        Remember me
-                      </Label>
-                    </div>
+                  <div className="flex items-center justify-end">
                     <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
                       Forgot password?
                     </Link>
