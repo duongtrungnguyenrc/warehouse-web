@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/ca
 import { Input } from "@/components/shadcn/input";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { useAuth } from "@/hooks";
+import { INTELLIGENT_URL } from "@/lib";
 
 interface Message {
   id: string;
@@ -42,7 +43,7 @@ export const ChatbotPage = () => {
   const { token, user } = useAuth();
 
   useEffect(() => {
-    const ws = new WebSocket(`${import.meta.env.VITE_INTELLIGENT_URL}?token=${token}`);
+    const ws = new WebSocket(`${INTELLIGENT_URL}?token=${token}`);
     wsRef.current = ws;
 
     ws.onopen = () => setIsConnected(true);

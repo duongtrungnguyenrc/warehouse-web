@@ -1,5 +1,11 @@
 import { Shield, User, UserCheck } from "lucide-react";
 
+export const SERVER_BASE_URL = import.meta.env.VITE_SERVER_BASE_URL || "https://api.wmstdt.cloud/api";
+export const INTELLIGENT_URL = import.meta.env.VITE_INTELLIGENT_URL || "wss://api.wmstdt.cloud/api/ai/ws";
+export const TOKEN_TYPE = import.meta.env.VITE_TOKEN_TYPE || "Bearer";
+export const ACCESS_TOKEN_PREFIX = import.meta.env.VITE_ACCESS_TOKEN_PREFIX || "__session";
+export const REFRESH_TOKEN_PREFIX = import.meta.env.VITE_REFRESH_TOKEN_PREFIX || "__refresh";
+
 export const NO_REFRESH_ROUTES = ["/account/refresh", "/account/login"];
 
 export const PERMISSIONS: Record<Permission, string> = {

@@ -3,19 +3,20 @@ import { type ClassValue, clsx } from "clsx";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
+import { ACCESS_TOKEN_PREFIX, REFRESH_TOKEN_PREFIX, TOKEN_TYPE } from "@/lib/constants.ts";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
 export const saveAuthToken = (token: TokenPair): void => {
-  Cookies.set(import.meta.env.VITE_ACCESS_TOKEN_PREFIX, token.accessToken, {
+  Cookies.set(ACCESS_TOKEN_PREFIX, token.accessToken, {
     secure: import.meta.env.PROD,
     expires: 60 * 60 * 1000, // 1h
     path: "/",
   });
 
-  Cookies.set(import.meta.env.VITE_REFRESH_TOKEN_PREFIX, token.refreshToken, {
+  Cookies.set(REFRESH_TOKEN_PREFIX, token.refreshToken, {
     secure: import.meta.env.PROD,
     expires: 14 * 24 * 60 * 60 * 1000, // 14 days
     path: "/",
@@ -23,13 +24,13 @@ export const saveAuthToken = (token: TokenPair): void => {
 };
 
 export const clearAuthToken = (): void => {
-  Cookies.remove(import.meta.env.VITE_ACCESS_TOKEN_PREFIX);
-  Cookies.remove(import.meta.env.VITE_REFRESH_TOKEN_PREFIX);
+  Cookies.remove(ACCESS_TOKEN_PREFIX);
+  Cookies.remove(REFRESH_TOKEN_PREFIX);
 };
 
 export const getAuthToken = (): Partial<TokenPair> => {
-  const accessToken = Cookies.get(import.meta.env.VITE_ACCESS_TOKEN_PREFIX);
-  const refreshToken = Cookies.get(import.meta.env.VITE_REFRESH_TOKEN_PREFIX);
+  const accessToken = Cookies.get(ACCESS_TOKEN_PREFIX);
+  const refreshToken = Cookies.get(REFRESH_TOKEN_PREFIX);
 
   return {
     accessToken,
@@ -40,7 +41,7 @@ export const getAuthToken = (): Partial<TokenPair> => {
 export const getAuthorizationToken = (): string => {
   const token = getAuthToken();
 
-  return `${import.meta.env.VITE_TOKEN_TYPE} ${token.accessToken}`;
+  return `${TOKEN_TYPE} ${token.accessToken}`;
 };
 
 export const catchError = (e: unknown, callback?: (cause: string) => void): string => {

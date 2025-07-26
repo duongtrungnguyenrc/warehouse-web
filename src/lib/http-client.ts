@@ -1,10 +1,10 @@
 import axios, { type AxiosError } from "axios";
 
-import { getAuthorizationToken, getAuthToken, NO_REFRESH_ROUTES } from "@/lib";
+import { getAuthorizationToken, getAuthToken, NO_REFRESH_ROUTES, SERVER_BASE_URL } from "@/lib";
 import { AccountService } from "@/services";
 
 const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_BASE_URL,
+  baseURL: SERVER_BASE_URL,
 });
 
 httpClient.interceptors.request.use((config) => {
