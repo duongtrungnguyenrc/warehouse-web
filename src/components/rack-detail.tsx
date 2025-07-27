@@ -98,7 +98,7 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
               <CardDescription>Devices stored in this rack</CardDescription>
             </div>
 
-            <RoleProtect role={["ADMIN"]}>
+            <RoleProtect role={["MANAGER"]}>
               <CreateEquipmentsDialog onSuccess={onCreateEquipmentSuccess} />
             </RoleProtect>
           </div>

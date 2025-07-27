@@ -26,7 +26,7 @@ const StatisticsPage = () => {
         WarehouseService.getStatistics(),
         ProductService.getTopOutboundProducts(range),
         ProductService.getLeastOutboundProducts(range),
-        ProductService.getTotalProducts(),
+        WarehouseService.getManaging(),
       ]);
 
       if (chartRes.status === "fulfilled") {
@@ -39,15 +39,15 @@ const StatisticsPage = () => {
       }
 
       if (topRes.status === "fulfilled") {
-        setTopOutbound(topRes.value.length);
+        setTopOutbound(topRes.value.length || 0);
       }
 
       if (leastRes.status === "fulfilled") {
-        setLeastOutbound(leastRes.value.length);
+        setLeastOutbound(leastRes.value.length || 0);
       }
 
       if (totalRes.status === "fulfilled") {
-        setTotalProducts(totalRes.value.length);
+        setTotalProducts(totalRes.value.totalProducts || 0);
       }
     } catch (error) {
       console.error("Unexpected error in statistics loading", error);
