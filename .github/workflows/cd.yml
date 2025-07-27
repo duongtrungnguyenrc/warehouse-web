@@ -1,0 +1,45 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 200m
+          script: |
+            echo ">> Deploying to production..."
+
+            cd ~/application/web
+            git pull origin main
+
+            echo ">> Build Docker image"
+            docker build -t web:latest .
+
+            echo ">> Stop and remove old container"
+            docker stop web || true
+            docker rm web || true
+
+            echo ">> Start new container"
+            docker run -d --env-file ../infra/.env.web --name web -p 3000:3000 web:latest
+
+            docker ps
+
+      - name: Notify Done
+        run: echo "CD completed successfully."
