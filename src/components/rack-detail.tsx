@@ -123,12 +123,12 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
                     </CardContent>
                   </Card>
                 ))
-              : equipments.map((equipment) => (
+              : equipments.map((equipment, index) => (
                   <Card key={equipment.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onEquipmentSelect(equipment)}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-semibold">Equipment</h4>
+                          <h4 className="font-semibold">Equipment {query.page * query.size + index + 1}</h4>
                           <p className="text-sm text-gray-500">LPN: {equipment.lpn}</p>
                         </div>
                         <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -138,15 +138,15 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
                     <CardContent className="space-y-3 text-sm text-gray-600">
                       <div className="flex justify-between">
                         <span>Max Capacity:</span>
-                        <span className="font-medium">{equipment.maxSize}</span>
+                        <span className="font-medium">{equipment.maxSize.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Used:</span>
-                        <span className="font-medium">{equipment.usedSize}</span>
+                        <span className="font-medium">{equipment.usedSize.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Remaining:</span>
-                        <span className="font-medium">{equipment.remainingSize}</span>
+                        <span className="font-medium">{equipment.remainingSize.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Created At:</span>

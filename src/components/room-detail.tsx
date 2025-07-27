@@ -133,14 +133,14 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                     </CardContent>
                   </Card>
                 ))
-              : racks.map((rack) => {
+              : racks.map((rack, index) => {
                   const rackUsagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
                   return (
                     <Card key={rack.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] flex flex-col" onClick={() => onRackSelect(rack)}>
                       <CardHeader className="pb-3 flex-shrink-0">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <h4 className="font-semibold">{rack.id}</h4>
+                            <h4 className="font-semibold">Rack {rack.slotNumber}</h4>
                             <p className="text-sm text-gray-500">Position: {rack.slotNumber}</p>
                           </div>
                           <ChevronRight className="h-4 w-4 text-gray-400" />

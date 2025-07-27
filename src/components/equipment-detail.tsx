@@ -103,6 +103,7 @@ export function EquipmentDetail({ equipment }: EquipmentDetailProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>SKU</TableHead>
                     <TableHead>Product Name</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Quantity</TableHead>
@@ -113,6 +114,7 @@ export function EquipmentDetail({ equipment }: EquipmentDetailProps) {
                 <TableBody>
                   {products.map((product) => (
                     <TableRow key={product.id}>
+                      <TableCell className="font-medium">{product.sku}</TableCell>
                       <TableCell className="font-medium">{product.name}</TableCell>
                       <TableCell>{product.category.name}</TableCell>
                       <TableCell>{product.stockQuantity.toLocaleString()}</TableCell>

@@ -217,7 +217,7 @@ const InboundPage = () => {
                                 <table className="w-full text-sm border-collapse border border-gray-200">
                                   <thead>
                                     <tr>
-                                      <th className="text-left p-2 border border-gray-200">ID</th>
+                                      <th className="text-left p-2 border border-gray-200">SKU</th>
                                       <th className="text-left p-2 border border-gray-200">Product Name</th>
                                       <th className="text-left p-2 border border-gray-200">Expiry Date</th>
                                       <th className="text-left p-2 border border-gray-200">Quantity</th>
@@ -226,7 +226,7 @@ const InboundPage = () => {
                                   <tbody>
                                     {order.details.map((item, idx) => (
                                       <tr key={idx} className="border-t border-gray-200">
-                                        <td className="p-2 border border-gray-200">{item.product.id}</td>
+                                        <td className="p-2 border border-gray-200">{item.product.sku}</td>
                                         <td className="p-2 border border-gray-200">{item.product.name}</td>
                                         <td className="p-2 border border-gray-200">{item.expiryDate || "-"}</td>
                                         <td className="p-2 border border-gray-200">{item.quantity.toLocaleString()}</td>

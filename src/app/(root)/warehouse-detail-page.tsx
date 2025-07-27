@@ -141,10 +141,10 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               {navigation.level === "rack" ? (
-                <BreadcrumbPage>{navigation.selectedRack.id}</BreadcrumbPage>
+                <BreadcrumbPage>Rack {navigation.selectedRack.slotNumber}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink onClick={() => handleNavigate({ level: "rack" })} className="cursor-pointer">
-                  {navigation.selectedRack.id}
+                  {navigation.selectedRack.slotNumber}
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
@@ -155,7 +155,7 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{navigation.selectedEquipment.id}</BreadcrumbPage>
+              <BreadcrumbPage>{navigation.selectedEquipment.lpn}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}
