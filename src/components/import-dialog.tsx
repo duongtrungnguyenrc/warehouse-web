@@ -1,13 +1,13 @@
 "use client";
 
-
-import { File, FileCheck2, UploadCloud } from "lucide-react";
+import { File, FileCheck2, FileSpreadsheet, UploadCloud } from "lucide-react";
 import { type ChangeEvent, type DragEvent, type ReactNode, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
+import { useDownloadFile } from "@/hooks";
 import { cn } from "@/lib";
 
 type RawTableData = string[][];
@@ -20,6 +20,7 @@ type ImportDialogProps<T = any> = {
   onUpload: (file: File) => Promise<T>;
   onSuccess?: (data: T) => void;
   renderPreview?: (preview: RawTableData) => ReactNode;
+  templateDownloader?: () => Promise<any>;
 };
 
 export const ImportDialog = <T,>({
@@ -30,11 +31,14 @@ export const ImportDialog = <T,>({
   onUpload,
   onSuccess,
   renderPreview,
+  templateDownloader,
 }: ImportDialogProps<T>) => {
   const [file, setFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<RawTableData>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { download } = useDownloadFile();
 
   const handleFile = (file: File) => {
     setFile(file);
@@ -86,6 +90,14 @@ export const ImportDialog = <T,>({
     });
   };
 
+  const handleTemplateDownload = async () => {
+    if (templateDownloader) {
+      await templateDownloader();
+    } else {
+      toast.error("Template download function not provided.");
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -101,6 +113,14 @@ export const ImportDialog = <T,>({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+
+        {templateDownloader && (
+          <div>
+            <button onClick={handleTemplateDownload} className="text-green-500 text-sm hover:text-green-600 cursor-pointer p-0 flex items-center space-x-2">
+              <span>Download example template</span> <FileSpreadsheet className="h-3 w-3" />
+            </button>
+          </div>
+        )}
 
         <div className="grid gap-4 py-4">
           <div

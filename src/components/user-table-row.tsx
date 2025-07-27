@@ -96,7 +96,7 @@ export const UserTableRow = ({ user, onDeactivated }: { user: User; onDeactivate
               </Button>
             </ConfirmDialog>
           ) : (
-            <Button onClick={handleReactivate} disabled={user.enabled} variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
+            <Button onClick={handleReactivate} disabled={user.enabled} variant="outline" size="sm" className="text-black">
               <Lock />
             </Button>
           )}

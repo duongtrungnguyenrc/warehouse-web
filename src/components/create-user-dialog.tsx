@@ -5,12 +5,12 @@ import { type ReactNode, useCallback } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
+import { WarehouseSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
-import { WarehouseSelect } from "@/components";
 import { catchError, ROLE_PERMISSIONS } from "@/lib";
 import { AccountService } from "@/services";
 

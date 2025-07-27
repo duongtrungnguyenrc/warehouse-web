@@ -1,18 +1,17 @@
 "use client";
 
-
 import { Form, Formik, type FormikHelpers } from "formik";
 import { type ReactNode, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
+import { UserSelect } from "@/components";
+import { WarehouseStatusSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { UserSelect } from "@/components";
-import { WarehouseStatusSelect } from "@/components";
 import { catchError } from "@/lib";
 import { WarehouseService } from "@/services";
 
@@ -34,7 +33,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
   const [open, setOpen] = useState(false);
   if (!warehouse) return null;
 
-  const onUpdateWarehouse = async (values: Warehouse, helpers: FormikHelpers<Warehouse>) => {
+  const onUpdateWarehouse = async (values: UpdateWarehouseRequest, helpers: FormikHelpers<UpdateWarehouseRequest>) => {
     await toast.promise(WarehouseService.update(warehouse.id, values), {
       success: (updated) => {
         helpers.resetForm();
@@ -47,6 +46,15 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
     });
   };
 
+  const initialValues: UpdateWarehouseRequest = {
+    name: warehouse.name,
+    address: warehouse.address,
+    areaSize: warehouse.areaSize,
+    status: warehouse.status,
+    manager: warehouse.managerUser || "",
+    type: warehouse.type,
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -57,7 +65,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
           <DialogDescription>Edit warehouse information: {warehouse.id}</DialogDescription>
         </DialogHeader>
 
-        <Formik initialValues={warehouse} validationSchema={WarehouseSchema} onSubmit={onUpdateWarehouse}>
+        <Formik initialValues={initialValues} validationSchema={WarehouseSchema} onSubmit={onUpdateWarehouse}>
           {({ values, handleChange, setFieldValue }) => (
             <Form className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -83,7 +91,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
 
               <div className="space-y-2">
                 <Label htmlFor="manager">Manager *</Label>
-                <UserSelect role={["MANAGER"]} value={values.managerUser} setFieldValue={setFieldValue} />
+                <UserSelect role={["MANAGER"]} value={values.manager} setFieldValue={setFieldValue} />
               </div>
 
               <DialogFooter>

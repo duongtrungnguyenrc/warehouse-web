@@ -1,9 +1,12 @@
 "use client";
 
-import { Box, ChevronRight, Plus } from "lucide-react";
+import { Box, ChevronRight } from "lucide-react";
+import { useCallback } from "react";
+
+import { CreateEquipmentsDialog } from "./create-equipments-dialog";
+import { RoleProtect } from "./role-protect";
 
 import { Badge } from "@/components/shadcn/badge";
-import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -16,7 +19,7 @@ interface RackDetailProps {
 }
 
 export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
-  const { data, loading } = useListing({
+  const { data, loading, append } = useListing({
     fetcher: WarehouseService.getManagingWarehouseEquipments,
     initialQuery: {
       page: 0,
@@ -27,6 +30,13 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
 
   const equipments = data?.content || [];
   const usagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
+
+  const onCreateEquipmentSuccess = useCallback(
+    (newEquipments: Equipment[]) => {
+      append(...newEquipments);
+    },
+    [append],
+  );
 
   return (
     <div className="space-y-6">
@@ -55,7 +65,7 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="text-3xl font-bold">{usagePercentage}%</div>
+              <div className="text-3xl font-bold">{usagePercentage.toFixed(2)}%</div>
               <p className="text-sm text-gray-500">Used</p>
             </div>
             <Progress value={usagePercentage} className="h-3" />
@@ -87,10 +97,10 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
               </CardTitle>
               <CardDescription>Devices stored in this rack</CardDescription>
             </div>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Equipment
-            </Button>
+
+            <RoleProtect role={["ADMIN"]}>
+              <CreateEquipmentsDialog onSuccess={onCreateEquipmentSuccess} />
+            </RoleProtect>
           </div>
         </CardHeader>
         <CardContent>

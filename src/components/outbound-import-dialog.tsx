@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/shadcn/input";
 import { useQuery } from "@/hooks";
 import { catchError } from "@/lib";
-import { InboundService, OutboundService } from "@/services";
+import { OutboundService } from "@/services";
 
 interface OutboundExtraInfoDialogProps {
   details?: OutboundDetail[];
@@ -29,7 +29,7 @@ export const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ deta
   const [showConfirm, setShowConfirm] = useState(false);
   const confirmCallback = useRef<VoidFunction | null>(null);
 
-  const { call: generateBatchNumber, result: batchNumber } = useQuery(InboundService.generateBatchNumber);
+  const { call: generateBatchNumber, result: batchNumber } = useQuery(OutboundService.generateBatchNumber);
 
   useEffect(() => {
     generateBatchNumber();
@@ -132,7 +132,6 @@ export const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ deta
           confirmCallback.current?.();
           setShowConfirm(false);
         }}
-        cancelText="No"
         confirmText="Yes, continue"
       />
     </>

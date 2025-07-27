@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { Menu } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
-import { Button } from "@/components/shadcn/button"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/shadcn/sheet"
-import { useAuth } from "@/hooks"
-import { NAVIGATION } from "@/lib"
-import { cn } from "@/lib/utils"
+import { Button } from "@/components/shadcn/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/shadcn/sheet";
+import { useAuth } from "@/hooks";
+import { NAVIGATION } from "@/lib";
+import { cn } from "@/lib/utils";
 
 export function MobileSidebar() {
-  const [open, setOpen] = useState(false)
-  const pathname = usePathname()
-  const { user, loading } = useAuth()
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const { user, loading } = useAuth();
 
-  if (loading || !user) return null
+  if (loading || !user) return null;
 
   const hasAccess = (item: Navigation): boolean => {
-    return item.roles.includes("*") || item.roles.includes(user.role)
-  }
+    return item.roles.includes("*") || item.roles.includes(user.role);
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -39,7 +39,7 @@ export function MobileSidebar() {
           <nav className="flex-1 px-4">
             <div className="space-y-1">
               {NAVIGATION.filter(hasAccess).map((item) => {
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
@@ -53,12 +53,12 @@ export function MobileSidebar() {
                     <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
                     <span className="truncate">{item.name}</span>
                   </Link>
-                )
+                );
               })}
             </div>
           </nav>
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

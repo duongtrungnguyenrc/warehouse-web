@@ -3,7 +3,7 @@
 import { ChevronRight, Grid3X3, Package } from "lucide-react";
 import { useCallback } from "react";
 
-import { ImportDialog } from "@/components";
+import { CreateRoomDialog, ImportDialog } from "@/components";
 import { RoleProtect } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
@@ -12,11 +12,12 @@ import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
 
 interface RoomsListProps {
+  warehouseId: string;
   warehouseSlug: string;
   onRoomSelect: (room: Room) => void;
 }
 
-export const RoomsList = ({ warehouseSlug, onRoomSelect }: RoomsListProps) => {
+export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsListProps) => {
   const { data, loading, append } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRooms,
     initialQuery: {
@@ -44,7 +45,10 @@ export const RoomsList = ({ warehouseSlug, onRoomSelect }: RoomsListProps) => {
             <CardDescription>Manage rooms inside the warehouse</CardDescription>
           </div>
           <RoleProtect role={["ADMIN"]}>
-            <ImportDialog onUpload={onImportRooms} onSuccess={onImportSuccess} />
+            <div className="flex space-x-2 items-center">
+              <CreateRoomDialog warehouseId={warehouseId} />
+              <ImportDialog templateDownloader={WarehouseService.getImportRoomsTemplate} onUpload={onImportRooms} onSuccess={onImportSuccess} />
+            </div>
           </RoleProtect>
         </div>
       </CardHeader>
@@ -67,7 +71,7 @@ export const RoomsList = ({ warehouseSlug, onRoomSelect }: RoomsListProps) => {
             : rooms.map((room) => {
                 const used = room.usedCapacity || 0;
                 const total = room.maxCapacity || 1;
-                const usagePercentage = Math.round((used / total) * 100);
+                const usagePercentage = (used / total) * 100;
 
                 return (
                   <Card key={room.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onRoomSelect(room)}>
@@ -85,7 +89,7 @@ export const RoomsList = ({ warehouseSlug, onRoomSelect }: RoomsListProps) => {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span>Space usage</span>
-                          <span className="font-medium">{usagePercentage}%</span>
+                          <span className="font-medium">{usagePercentage.toFixed(2)}%</span>
                         </div>
                         <Progress value={usagePercentage} className="h-2" />
                         <div className="text-xs text-gray-500">

@@ -3,8 +3,8 @@
 import { ChevronRight, Layers } from "lucide-react";
 import { useCallback } from "react";
 
-import { ImportDialog } from "@/components";
-import { RoleProtect } from "@/components";
+import { ImportDialog, RoleProtect } from "@/components";
+import { RoomTypeManagement } from "@/components/room-type-management";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -27,13 +27,11 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
   });
 
   const racks = data?.content || [];
-
-  const usedCapacity = racks.reduce((sum, rack) => sum + rack.usedSize, 0);
-  const maxCapacity = racks.reduce((sum, rack) => sum + rack.maxSize, 0);
+  const usedCapacity = room.usedCapacity || 0;
+  const maxCapacity = room.maxCapacity || 1;
   const usagePercentage = maxCapacity === 0 ? 0 : Math.round((usedCapacity / maxCapacity) * 100);
 
   const onImportRacks = useCallback(async (file: File) => WarehouseService.importRacks(room.id, file), []);
-
   const onImportSuccess = (newRacks: Array<Rack>) => append(...newRacks);
 
   return (
@@ -41,7 +39,12 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Room Information</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Room Information</CardTitle>
+              <RoleProtect role={["ADMIN"]}>
+                <RoomTypeManagement />
+              </RoleProtect>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -78,15 +81,15 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Used:</span>
-                <span className="font-medium">{usedCapacity} m³</span>
+                <span className="font-medium">{usedCapacity.toFixed(2)} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Available:</span>
-                <span className="font-medium">{maxCapacity - usedCapacity} m³</span>
+                <span className="font-medium">{(maxCapacity - usedCapacity).toFixed(2)} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Total:</span>
-                <span className="font-medium">{maxCapacity} m³</span>
+                <span className="font-medium">{maxCapacity.toFixed(2)} m³</span>
               </div>
             </div>
           </CardContent>
@@ -109,7 +112,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
             {loading
               ? Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i}>
@@ -130,10 +133,9 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                 ))
               : racks.map((rack) => {
                   const rackUsagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
-
                   return (
-                    <Card key={rack.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onRackSelect(rack)}>
-                      <CardHeader className="pb-3">
+                    <Card key={rack.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] flex flex-col" onClick={() => onRackSelect(rack)}>
+                      <CardHeader className="pb-3 flex-shrink-0">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <h4 className="font-semibold">{rack.id}</h4>
@@ -142,20 +144,18 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                           <ChevronRight className="h-4 w-4 text-gray-400" />
                         </div>
                       </CardHeader>
-
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span>Usage</span>
-                            <span className="font-medium">{rackUsagePercentage}%</span>
+                            <span className="font-medium">{rackUsagePercentage.toFixed(2)}%</span>
                           </div>
                           <Progress value={rackUsagePercentage} className="h-2" />
                           <div className="text-xs text-gray-500">
-                            {rack.usedSize} / {rack.maxSize} m³
+                            {rack.usedSize.toFixed(2)} / {rack.maxSize.toFixed(2)} m³
                           </div>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="grid grid-cols-2 gap-4 text-sm mt-auto">
                           <div>
                             <div className="font-medium">{rack.details.equipments?.length}</div>
                             <div className="text-xs text-gray-500">Equipments</div>

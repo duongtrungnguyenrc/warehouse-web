@@ -246,7 +246,7 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center">
-                    <div className="text-3xl font-bold">{warehouse.usagePercentage}%</div>
+                    <div className="text-3xl font-bold">{warehouse.usagePercentage.toFixed(2)}%</div>
                     <p className="text-sm text-gray-500">Used</p>
                   </div>
                   <Progress value={warehouse.usagePercentage} className="h-3" />
@@ -268,7 +268,7 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
               </Card>
             </div>
 
-            <RoomsList warehouseSlug={slug || ""} onRoomSelect={(room: Room) => handleNavigate({ level: "room", selectedRoom: room })} />
+            <RoomsList warehouseId={warehouse.id} warehouseSlug={slug || ""} onRoomSelect={(room: Room) => handleNavigate({ level: "room", selectedRoom: room })} />
 
             <Card>
               <CardHeader>

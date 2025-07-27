@@ -4,7 +4,7 @@ import { AlertTriangle, HelpCircle } from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 
 import { Button } from "@/components/shadcn/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 
 interface ConfirmationDialogProps {
   children?: ReactNode;
@@ -13,7 +13,6 @@ interface ConfirmationDialogProps {
   itemName?: string;
   type?: "delete" | "confirm";
   confirmText?: string;
-  cancelText?: string;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
@@ -35,7 +34,7 @@ const dialogVariant = {
   },
 };
 
-export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "delete", confirmText, cancelText, open, setOpen }: ConfirmationDialogProps) => {
+export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "delete", confirmText, open, setOpen }: ConfirmationDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -70,12 +69,6 @@ export const ConfirmDialog = ({ children, onConfirm, title, itemName, type = "de
         </DialogHeader>
 
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline" ref={closeRef}>
-              {cancelText || "Cancel"}
-            </Button>
-          </DialogClose>
-
           <Button
             variant={variant.actionColor as any}
             onClick={() => {

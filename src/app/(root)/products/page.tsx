@@ -1,5 +1,6 @@
 "use client";
 
+import { on } from "events";
 import { Plus, Search } from "lucide-react";
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -23,11 +24,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  UpdateProductDialog,
 } from "@/components";
 import { FilterDropdown } from "@/components/filter-dropdown";
 import { PageHeaderSkeleton, SearchFilterSkeleton, TableSkeleton } from "@/components/skeletons";
 import { useListing } from "@/hooks";
-import { cn } from "@/lib";
 import { ProductService } from "@/services";
 
 const SEARCH_COLUMNS: ColumnConfig<Product>[] = [
@@ -40,21 +41,7 @@ const SEARCH_COLUMNS: ColumnConfig<Product>[] = [
 const SKELETON_ROWS = 10;
 const DEBOUNCE_DELAY = 500;
 
-const getStatusColor = (stock: number): string => {
-  if (stock > 100) return "bg-green-50 text-green-700";
-  if (stock > 30) return "bg-yellow-50 text-yellow-700";
-  if (stock > 0) return "bg-red-50 text-red-700";
-  return "bg-gray-50 text-gray-700";
-};
-
-const getStatusText = (stock: number): string => {
-  if (stock > 100) return "Normal";
-  if (stock > 30) return "Low stock";
-  if (stock > 0) return "Critical";
-  return "Out of stock";
-};
-
-const ProductRow = ({ product }: { product: Product }) => (
+const ProductRow = ({ product, onUpdatedSuccess }: { product: Product; onUpdatedSuccess: (updatedProduct: Product) => void }) => (
   <TableRow key={product.id}>
     <TableCell className="font-mono text-sm">{product.sku}</TableCell>
     <TableCell>
@@ -64,25 +51,15 @@ const ProductRow = ({ product }: { product: Product }) => (
       </div>
     </TableCell>
     <TableCell>{product.category.name}</TableCell>
-    <TableCell>{product.packageSize}</TableCell>
-    <TableCell>{product.weight}</TableCell>
-    <TableCell>{product.price.toLocaleString()}</TableCell>
     <TableCell>
       <div className="flex items-center space-x-1">
         <span className="font-medium">{product.stockQuantity}</span>
         <span className="text-sm text-muted-foreground">{product.unitOfMeasure}</span>
       </div>
     </TableCell>
-    <TableCell>
-      <span className={cn("px-3 py-1 rounded-full text-xs", getStatusColor(product.stockQuantity))}>{getStatusText(product.stockQuantity)}</span>
-    </TableCell>
     <RoleProtect role={["MANAGER"]}>
       <TableCell>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="sm">
-            Edit
-          </Button>
-        </div>
+        <UpdateProductDialog product={product} onUpdatedSuccess={onUpdatedSuccess} />
       </TableCell>
     </RoleProtect>
   </TableRow>
@@ -91,7 +68,7 @@ const ProductRow = ({ product }: { product: Product }) => (
 const ProductsPage = () => {
   const [searchField, setSearchField] = useState<keyof Product>("name");
 
-  const { data, query, setQuery, loading, append } = useListing({
+  const { data, query, setQuery, loading, append, update } = useListing({
     fetcher: ProductService.list,
   });
 
@@ -128,6 +105,16 @@ const ProductsPage = () => {
   const onPageChange = (page: number) => setQuery({ page });
 
   const onImportSuccess = useCallback((data: Product[]) => append(...data), [append]);
+
+  const onUpdatedSuccess = useCallback(
+    (updatedProduct: Product) => {
+      update(
+        (prev) => prev.id === updatedProduct.id,
+        () => updatedProduct,
+      );
+    },
+    [update],
+  );
 
   const isInitialLoading = loading && !data;
   const isSearching = loading && !!data;
@@ -198,11 +185,7 @@ const ProductsPage = () => {
                     <TableHead>SKU</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Weight</TableHead>
-                    <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
-                    <TableHead>Status</TableHead>
                     <RoleProtect role={["MANAGER"]}>
                       <TableHead>Action</TableHead>
                     </RoleProtect>
@@ -216,7 +199,7 @@ const ProductsPage = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    products.map((product) => <ProductRow key={product.id} product={product} />)
+                    products.map((product) => <ProductRow key={product.id} product={product} onUpdatedSuccess={onUpdatedSuccess} />)
                   )}
                 </TableBody>
                 <TableFooter>

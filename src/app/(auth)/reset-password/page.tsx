@@ -2,6 +2,8 @@
 
 import { Formik } from "formik";
 import { AlertCircle, ArrowLeft, Loader2, Warehouse } from "lucide-react";
+import Link from "next/link";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
@@ -10,8 +12,6 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Inpu
 import { useQuery } from "@/hooks";
 import { toastOnError } from "@/lib";
 import { AccountService } from "@/services";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 
 type FormValues = {
   newPassword: string;

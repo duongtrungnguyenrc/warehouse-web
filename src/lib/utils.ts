@@ -4,11 +4,7 @@ import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
 
-import {
-  ACCESS_TOKEN_PREFIX,
-  REFRESH_TOKEN_PREFIX,
-  TOKEN_TYPE,
-} from "./constants";
+import { ACCESS_TOKEN_PREFIX, REFRESH_TOKEN_PREFIX, TOKEN_TYPE } from "./constants";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -49,15 +45,11 @@ export const getAuthorizationToken = (): string => {
   return `${TOKEN_TYPE} ${token.accessToken}`;
 };
 
-export const catchError = (
-  e: unknown,
-  callback?: (cause: string) => void
-): string => {
+export const catchError = (e: unknown, callback?: (cause: string) => void): string => {
   if (axios.isAxiosError(e)) {
     const error = e as AxiosError<any>;
 
-    const message =
-      error.response?.data?.message || error.message || "Unexpected API error";
+    const message = error.response?.data?.message || error.message || "Unexpected API error";
 
     callback?.(message);
 

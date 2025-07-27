@@ -37,6 +37,7 @@ function generateGreeting(): string {
 
 const ChatbotPage = () => {
   const wsRef = useRef<WebSocket | null>(null);
+
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -45,27 +46,29 @@ const ChatbotPage = () => {
   const { token, user } = useAuth();
 
   useEffect(() => {
-    const ws = new WebSocket(`${INTELLIGENT_URL}?token=${token}`);
-    wsRef.current = ws;
+    if (token) {
+      const ws = new WebSocket(`${INTELLIGENT_URL}?token=${token}`);
+      wsRef.current = ws;
 
-    ws.onopen = () => setIsConnected(true);
-    ws.onclose = () => {
-      setIsConnected(false);
-      wsRef.current = null;
-    };
-
-    ws.onmessage = (event) => {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        content: event.data,
-        role: "assistant",
-        timestamp: new Date(),
+      ws.onopen = () => setIsConnected(true);
+      ws.onclose = () => {
+        setIsConnected(false);
+        wsRef.current = null;
       };
-      setMessages((prev) => [...prev, newMessage]);
-    };
+
+      ws.onmessage = (event) => {
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          content: event.data,
+          role: "assistant",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, newMessage]);
+      };
+    }
 
     return () => {
-      ws.close();
+      wsRef.current?.close();
     };
   }, [token]);
 
@@ -111,8 +114,8 @@ const ChatbotPage = () => {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 p-4">
+      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+        <ScrollArea className="h-full px-4 py-2 overflow-y-auto">
           <div className="space-y-6">
             {messages.length === 0 && (
               <div className="text-center text-gray-500 mt-8">

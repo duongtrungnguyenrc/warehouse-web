@@ -3,6 +3,7 @@
 import { Formik } from "formik";
 import Lottie from "lottie-react";
 import { ArrowLeft, Loader2, Mail, Warehouse } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -11,7 +12,6 @@ import SuccessAnim from "@/assets/lotties/anim-success.json";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from "@/components";
 import { useQuery } from "@/hooks";
 import { AccountService } from "@/services";
-import Link from "next/link";
 
 type FormValues = { email: string };
 

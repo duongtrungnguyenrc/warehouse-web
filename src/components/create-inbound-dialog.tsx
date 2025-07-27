@@ -7,12 +7,12 @@ import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 import { ProductSelect } from "@/components";
+import { UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
-import { UserSelect } from "@/components";
 import { useQuery } from "@/hooks";
 import { catchError } from "@/lib";
 import { InboundService } from "@/services";

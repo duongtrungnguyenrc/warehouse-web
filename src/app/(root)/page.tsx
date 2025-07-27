@@ -1,6 +1,7 @@
-import { RoleProtect } from "@/components";
-import { WarehouseManagementPage } from "./warehouse-management-page";
 import { WarehouseDetailPage } from "./warehouse-detail-page";
+import { WarehouseManagementPage } from "./warehouse-management-page";
+
+import { RoleProtect } from "@/components";
 
 const WarehousesPage = () => {
   return (

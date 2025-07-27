@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { WarehouseDetailPage as WarehouseDetailPageContent } from "../warehouse-detail-page";
 
 type WarehouseDetailPageProps = {

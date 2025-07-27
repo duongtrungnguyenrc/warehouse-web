@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
+
 import { httpClient } from "@/lib";
 
 const getSKU = async (): Promise<string> => {
@@ -37,10 +40,39 @@ const importProducts = async (file: File): Promise<Array<Product>> => {
   return response.data;
 };
 
+const update = async (productId: string, request: UpdateProductRequest): Promise<Product> => {
+  return await httpClient.put<Product>(`warehouse/products/update/${productId}`, request).then((response) => response.data);
+};
+
 export const ProductService = {
   list,
   listManaging,
   getSKU,
   create,
   importProducts,
+  update,
+  getTopOutboundProducts: async (rangeTime: DateRange): Promise<Product[]> => {
+    const params = {
+      startDate: rangeTime.from ? format(rangeTime.from, "yyyy-MM-dd") : undefined,
+      endDate: rangeTime.to ? format(rangeTime.to, "yyyy-MM-dd") : undefined,
+    };
+
+    const res = await httpClient.get("/warehouse/manager/top-outbound-products", { params });
+    return res.data ?? [];
+  },
+
+  getLeastOutboundProducts: async (rangeTime: DateRange): Promise<Product[]> => {
+    const params = {
+      startDate: rangeTime.from ? format(rangeTime.from, "yyyy-MM-dd") : undefined,
+      endDate: rangeTime.to ? format(rangeTime.to, "yyyy-MM-dd") : undefined,
+    };
+
+    const res = await httpClient.get("/warehouse/manager/top-least-outbound-products", { params });
+    return res.data ?? [];
+  },
+
+  getTotalProducts: async (): Promise<Product[]> => {
+    // const res = await httpClient.get("/products/total", );
+    return [];
+  },
 };

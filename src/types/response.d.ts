@@ -49,3 +49,9 @@ declare type OutboundValidateResponse = {
   }[];
   canProceed: true;
 };
+
+declare type StatisticsResponse = {
+  month: number;
+  inboundCount: number;
+  outboundCount: number;
+}[];

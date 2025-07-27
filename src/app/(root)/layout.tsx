@@ -1,11 +1,10 @@
 "use client";
 
-import toast from "react-hot-toast";
+import { redirect, RedirectType } from "next/navigation";
+import { ReactNode } from "react";
 
 import { Header, Sidebar } from "@/components";
 import { useAuth } from "@/hooks";
-import { redirect, RedirectType } from "next/navigation";
-import { ReactNode } from "react";
 
 type Props = {
   children?: ReactNode;
@@ -23,8 +22,6 @@ const ProtectedLayout = ({ children }: Props) => {
   }
 
   if (!user) {
-    toast.error("Session already expired!");
-
     return redirect("/login", RedirectType.replace);
   }
 

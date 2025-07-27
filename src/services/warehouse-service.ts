@@ -127,6 +127,15 @@ const importRooms = async (warehouseId: string, storageTypeId: string, file: Fil
   return response.data;
 };
 
+const getImportRoomsTemplate = async () => {
+  return httpClient.get("warehouse/storage-rooms/import-template", {
+    responseType: "blob",
+    headers: {
+      Accept: "application/octet-stream",
+    },
+  });
+};
+
 const importRacks = async (roomId: string, file: File): Promise<Rack[]> => {
   const formData = new FormData();
   formData.append("file", file);
@@ -143,6 +152,56 @@ const importRacks = async (roomId: string, file: File): Promise<Rack[]> => {
   return response.data;
 };
 
+const getStatistics = async (): Promise<StatisticsResponse> => {
+  return httpClient.get<StatisticsResponse>("/warehouse/manager/summary/by-month").then((response) => response.data);
+};
+
+// ==================== ROOM TYPE METHODS ====================
+
+/**
+ * Get all room types with optional pagination and filtering
+ */
+const getRoomTypes = async (params: PaginationQuery<RoomType>): Promise<PaginationResponse<RoomType>> => {
+  const { page, size, ...filters } = params;
+
+  const queryParams = {
+    offset: page * size,
+    size: size,
+    ...filters,
+  };
+
+  return httpClient
+    .get<PaginationResponse<RoomType>>("/warehouse/storage-type", {
+      params: queryParams,
+    })
+    .then((response) => response.data);
+};
+
+/**
+ * Get a single room type by ID
+ */
+const getRoomType = async (id: string): Promise<RoomType> => {
+  return httpClient.get<RoomType>(`/warehouse/storage-type/${id}`).then((response) => response.data);
+};
+
+/**
+ * Create a new room type
+ */
+const createRoomType = async (request: CreateRoomTypeRequest): Promise<RoomType> => {
+  return httpClient.post<RoomType>("/warehouse/storage-type/create", request).then((response) => response.data);
+};
+
+/**
+ * Update an existing room type
+ */
+const updateRoomType = async (id: string, request: UpdateRoomTypeRequest): Promise<RoomType> => {
+  return httpClient.put<RoomType>(`/warehouse/storage-type/update/${id}`, request).then((response) => response.data);
+};
+
+const createEquipments = async (request: { quantity: number; maxSize: number }): Promise<Equipment[]> => {
+  return httpClient.post<Equipment[]>("/warehouse/equipments/create", request).then((res) => res.data);
+};
+
 export const WarehouseService = {
   create,
   list,
@@ -153,8 +212,15 @@ export const WarehouseService = {
   getWarehouseOperationStats,
   getManagingWarehouseEquipments,
   getManagingWarehouseProducts,
+  getImportRoomsTemplate,
   importRooms,
   importRacks,
   update,
   del,
+  createEquipments,
+  getStatistics,
+  getRoomTypes,
+  getRoomType,
+  createRoomType,
+  updateRoomType,
 };

@@ -1,25 +1,10 @@
-import {
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Bot,
-  ChartLine,
-  Package,
-  Shield,
-  User,
-  UserCheck,
-  Users,
-  Warehouse,
-} from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Bot, ChartLine, Package, Shield, User, UserCheck, Users, Warehouse } from "lucide-react";
 
-export const SERVER_BASE_URL =
-  process.env.SERVER_BASE_URL || "https://api.wmstdt.cloud/api";
-export const INTELLIGENT_URL =
-  process.env.INTELLIGENT_URL || "wss://api.wmstdt.cloud/api/ai/ws";
+export const SERVER_BASE_URL = process.env.SERVER_BASE_URL || "https://api.wmstdt.cloud/api";
+export const INTELLIGENT_URL = process.env.INTELLIGENT_URL || "wss://api.wmstdt.cloud/api/ai/ws";
 export const TOKEN_TYPE = process.env.TOKEN_TYPE || "Bearer";
-export const ACCESS_TOKEN_PREFIX =
-  process.env.ACCESS_TOKEN_PREFIX || "__session";
-export const REFRESH_TOKEN_PREFIX =
-  process.env.REFRESH_TOKEN_PREFIX || "__refresh";
+export const ACCESS_TOKEN_PREFIX = process.env.ACCESS_TOKEN_PREFIX || "__session";
+export const REFRESH_TOKEN_PREFIX = process.env.REFRESH_TOKEN_PREFIX || "__refresh";
 
 export const NO_REFRESH_ROUTES = ["/account/refresh", "/account/login"];
 
@@ -70,12 +55,7 @@ export const ROLE_PERMISSIONS: Record<Role, RolePermission> = {
     name: "Inventory Staff",
     color: "bg-green-50 text-green-700",
     icon: User,
-    permissions: [
-      PERMISSIONS.INVENTORY_TRACKING,
-      PERMISSIONS.SHIPMENT_MANAGEMENT,
-      PERMISSIONS.BARCODE_SCAN,
-      PERMISSIONS.INVENTORY_UPDATE,
-    ],
+    permissions: [PERMISSIONS.INVENTORY_TRACKING, PERMISSIONS.SHIPMENT_MANAGEMENT, PERMISSIONS.BARCODE_SCAN, PERMISSIONS.INVENTORY_UPDATE],
   },
 };
 

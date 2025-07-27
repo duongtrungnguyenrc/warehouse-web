@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 
 export function ClientToaster() {
-  return <Toaster position="bottom-center" />
+  return <Toaster position="bottom-center" />;
 }

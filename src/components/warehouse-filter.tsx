@@ -1,7 +1,10 @@
 "use client";
 
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
+
+import { WarehouseStatusSelect } from "./warehouse-status-select";
+import { WarehouseTypeSelect } from "./warehouse-type-select";
 
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
@@ -89,31 +92,20 @@ export function WarehouseFilters({ filters, onFiltersChange, onClearFilters }: W
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="type">Type</Label>
-                    <Select value={localFilters.type || "ANY_TYPE"} onValueChange={(value) => setLocalFilters({ ...localFilters, type: value || undefined })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Any type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ANY_TYPE">Any type</SelectItem>
-                        <SelectItem value="DC">Distribution Center</SelectItem>
-                        <SelectItem value="CW">Cold Storage</SelectItem>
-                      </SelectContent>
-                    </Select>
+
+                    <WarehouseTypeSelect
+                      value={localFilters.type}
+                      handleChange={(e: ChangeEvent<HTMLInputElement>) => setLocalFilters({ ...localFilters, type: e.target.value || undefined })}
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="status">Status</Label>
-                    <Select value={localFilters.status || "ANY_STATUS"} onValueChange={(value) => setLocalFilters({ ...localFilters, status: value || undefined })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Any status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ANY_STATUS">Any status</SelectItem>
-                        <SelectItem value="ACTIVE">Active</SelectItem>
-                        <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
-                        <SelectItem value="CLOSED">Closed</SelectItem>
-                      </SelectContent>
-                    </Select>
+
+                    <WarehouseStatusSelect
+                      value={localFilters.status}
+                      handleChange={(e: ChangeEvent<HTMLInputElement>) => setLocalFilters({ ...localFilters, satus: e.target.value || undefined })}
+                    />
                   </div>
                 </div>
 

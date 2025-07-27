@@ -4,12 +4,12 @@ import { Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import * as Yup from "yup";
 
+import { WarehouseTypeSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { WarehouseTypeSelect } from "@/components";
 import { WarehouseService } from "@/services";
 
 interface CreateWarehouseDialogProps {

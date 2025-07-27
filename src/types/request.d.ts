@@ -62,13 +62,20 @@ declare type CreateWarehouseRequest = {
 };
 
 declare type UpdateWarehouseRequest = {
-  name?: string;
-  address?: string;
-  areaSize?: number;
-  type?: WarehouseType;
-  createBy?: string;
-  manager?: string;
-  status?: WarehouseStatus;
+  name: string;
+  address: string;
+  areaSize: number;
+  type: WarehouseType;
+  manager: string;
+  status: WarehouseStatus;
+};
+
+declare type CreateRoomRequest = {
+  name: string;
+  maxCapacity: number;
+  envSettings: string;
+  storageTypeId: string;
+  warehouseId: string;
 };
 
 declare type CreateProductRequest = {
@@ -79,6 +86,16 @@ declare type CreateProductRequest = {
   weight: number;
   categoryId: string;
   sku: string;
+};
+
+declare type UpdateProductRequest = {
+  name: string;
+  price: number;
+  unitOfMeasure: string;
+  packageSize: string;
+  weight: number;
+  stockQuantity: number;
+  categoryId: string;
 };
 
 declare type InboundDetail = InboundUploadResponse;
@@ -101,4 +118,33 @@ declare type ImportOutboundRequest = {
     inventoryStaff: string;
   };
   details: OutboundDetail[];
+};
+
+declare type CreateRoomTypeRequest = {
+  name: string;
+  description: string;
+};
+
+declare type UpdateRoomTypeRequest = {
+  name?: string;
+  description?: string;
+};
+
+declare type RoomTypeFilter = {
+  name?: string;
+  description?: string;
+  search?: string;
+  createdBy?: string;
+  createdFrom?: string;
+  createdTo?: string;
+};
+
+declare type RoomTypeStats = {
+  roomTypeId: string;
+  roomTypeName: string;
+  totalRooms: number;
+  totalCapacity: number;
+  usedCapacity: number;
+  usagePercentage: number;
+  warehouses: string[];
 };
