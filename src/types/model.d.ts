@@ -48,6 +48,7 @@ declare type Room = {
   id: string;
   name: string;
   maxCapacity: number;
+  totalCapacity: number;
   usedCapacity: number;
   remainingCapacity: number;
   rackCount: number;

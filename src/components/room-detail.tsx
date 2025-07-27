@@ -28,7 +28,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
 
   const racks = data?.content || [];
   const usedCapacity = room.usedCapacity || 0;
-  const maxCapacity = room.maxCapacity || 1;
+  const maxCapacity = room.totalCapacity || 1;
   const usagePercentage = maxCapacity === 0 ? 0 : Math.round((usedCapacity / maxCapacity) * 100);
 
   const onImportRacks = useCallback(async (file: File) => WarehouseService.importRacks(room.id, file), []);

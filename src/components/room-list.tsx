@@ -70,7 +70,7 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
               ))
             : rooms.map((room) => {
                 const used = room.usedCapacity || 0;
-                const total = room.maxCapacity || 1;
+                const total = room.totalCapacity || 1;
                 const usagePercentage = (used / total) * 100;
 
                 return (

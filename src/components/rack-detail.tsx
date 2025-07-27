@@ -72,15 +72,15 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Total:</span>
-                <span className="font-medium">{rack.maxSize} m³</span>
+                <span className="font-medium">{rack.maxSize.toFixed(2)} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Used:</span>
-                <span className="font-medium">{rack.usedSize} m³</span>
+                <span className="font-medium">{rack.usedSize.toFixed(2)} m³</span>
               </div>
               <div className="flex justify-between">
                 <span>Available:</span>
-                <span className="font-medium">{rack.remainingSize} m³</span>
+                <span className="font-medium">{rack.remainingSize.toFixed(2)} m³</span>
               </div>
             </div>
           </CardContent>
