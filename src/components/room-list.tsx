@@ -89,12 +89,14 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
                 return (
                   <Card key={room.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                     <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between" onClick={() => onRoomSelect(room)}>
                         <div className="flex-1">
                           <h4 className="font-semibold text-lg">{room.name}</h4>
                           <p className="text-sm text-gray-500">{room.storageType.name}</p>
                         </div>
-                        <UpdateRoomDialog room={room} onUpdatedSuccess={onRoomUpdatedSuccess} />
+                        <RoleProtect role={["ADMIN"]}>
+                          <UpdateRoomDialog room={room} onUpdatedSuccess={onRoomUpdatedSuccess} />
+                        </RoleProtect>
                       </div>
                     </CardHeader>
 
