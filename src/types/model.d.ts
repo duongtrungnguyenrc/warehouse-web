@@ -106,9 +106,9 @@ declare type Inbound = {
   receivedDate: string;
   status: InboundStatus;
   createdBy: string;
-  createdByUser: User;
+  createdByUser: string;
   inventoryStaff: string;
-  inventoryStaffUser: User;
+  inventoryStaffUser: string;
   details: {
     product: Product;
     expiryDate: string;

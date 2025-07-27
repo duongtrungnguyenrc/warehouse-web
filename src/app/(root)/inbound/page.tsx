@@ -80,17 +80,6 @@ const InboundPage = () => {
   const toggleRow = (id: string) => setExpandedRow((prev) => (prev === id ? null : id));
   const onPageChange = (page: number) => setQuery({ page });
 
-  const renderUserInfo = (user?: { fullName: string; email: string }) => {
-    return user ? (
-      <div>
-        <div className="font-medium">{user.fullName}</div>
-        <div className="text-sm text-muted-foreground">{user.email}</div>
-      </div>
-    ) : (
-      "-"
-    );
-  };
-
   const handleExport = async (batchId: string) => await download(() => InboundService.exportOrder(batchId));
 
   const onSearchChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -195,8 +184,8 @@ const InboundPage = () => {
                             </Button>
                           </TableCell>
                           <TableCell className="font-mono text-sm font-medium">{order.batchNumber}</TableCell>
-                          <TableCell>{renderUserInfo(order.inventoryStaffUser)}</TableCell>
-                          <TableCell>{renderUserInfo(order.createdByUser)}</TableCell>
+                          <TableCell>{order.inventoryStaffUser}</TableCell>
+                          <TableCell>{order.createdByUser}</TableCell>
                           <TableCell>
                             <div>
                               <div className="font-medium">{totalItems.toLocaleString()} items</div>
