@@ -3,7 +3,7 @@
 import { ChevronRight, Layers } from "lucide-react";
 import { useCallback } from "react";
 
-import { ImportDialog, RoleProtect } from "@/components";
+import { ImportDialog, Pagination, RoleProtect } from "@/components";
 import { RoomTypeManagement } from "@/components/room-type-management";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
@@ -17,7 +17,7 @@ interface RoomDetailProps {
 }
 
 export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
-  const { data, loading, append } = useListing({
+  const { data, loading, query, append, setQuery } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRacks,
     initialQuery: {
       page: 0,
@@ -33,6 +33,8 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
 
   const onImportRacks = useCallback(async (file: File) => WarehouseService.importRacks(room.id, file), []);
   const onImportSuccess = (newRacks: Array<Rack>) => append(...newRacks);
+
+  const onPageChange = (page: number) => setQuery({ page });
 
   return (
     <div className="space-y-6">
@@ -169,6 +171,10 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                     </Card>
                   );
                 })}
+          </div>
+
+          <div className="flex justify-center mt-5">
+            <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
           </div>
         </CardContent>
       </Card>

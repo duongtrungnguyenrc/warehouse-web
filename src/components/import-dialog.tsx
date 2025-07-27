@@ -92,7 +92,7 @@ export const ImportDialog = <T,>({
 
   const handleTemplateDownload = async () => {
     if (templateDownloader) {
-      await templateDownloader();
+      await download(templateDownloader);
     } else {
       toast.error("Template download function not provided.");
     }
@@ -102,7 +102,7 @@ export const ImportDialog = <T,>({
     <Dialog>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="outline">
+          <Button onClick={handleTemplateDownload} variant="outline">
             <File className="h-4 w-4" />
             Import
           </Button>

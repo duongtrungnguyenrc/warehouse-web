@@ -12,6 +12,7 @@ import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
+import { Pagination } from "./pagination";
 
 interface RackDetailProps {
   rack: Rack;
@@ -19,7 +20,7 @@ interface RackDetailProps {
 }
 
 export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
-  const { data, loading, append } = useListing({
+  const { data, loading, query, append, setQuery } = useListing({
     fetcher: WarehouseService.getManagingWarehouseEquipments,
     initialQuery: {
       page: 0,
@@ -37,6 +38,8 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
     },
     [append],
   );
+
+  const onPageChange = (page: number) => setQuery({ page });
 
   return (
     <div className="space-y-6">
@@ -152,6 +155,10 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
                     </CardContent>
                   </Card>
                 ))}
+          </div>
+
+          <div className="flex justify-center mt-5">
+            <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
           </div>
         </CardContent>
       </Card>

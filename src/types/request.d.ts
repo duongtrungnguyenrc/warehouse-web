@@ -120,6 +120,14 @@ declare type ImportOutboundRequest = {
   details: OutboundDetail[];
 };
 
+declare type UpdateRoomRequest = {
+  name: string;
+  maxCapacity: number;
+  envSettings: string;
+  storageTypeId: string;
+  warehouseId: string;
+};
+
 declare type CreateRoomTypeRequest = {
   name: string;
   description: string;

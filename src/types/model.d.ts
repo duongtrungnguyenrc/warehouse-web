@@ -53,7 +53,7 @@ declare type Room = {
   remainingCapacity: number;
   rackCount: number;
   envSettings: string;
-  warehouse: string;
+  warehouse: Warehouse;
   storageType: RoomType;
 };
 

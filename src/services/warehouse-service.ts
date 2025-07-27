@@ -127,6 +127,10 @@ const importRooms = async (warehouseId: string, storageTypeId: string, file: Fil
   return response.data;
 };
 
+const updateRoom = async (id: string, request: UpdateRoomRequest): Promise<Room> => {
+  return httpClient.put<Room>(`/warehouse/storage-rooms/update/${id}`, request).then((response) => response.data);
+};
+
 const getImportRoomsTemplate = async () => {
   return httpClient.get("warehouse/storage-rooms/import-template", {
     responseType: "blob",
@@ -216,6 +220,7 @@ export const WarehouseService = {
   importRooms,
   importRacks,
   update,
+  updateRoom,
   del,
   createEquipments,
   getStatistics,

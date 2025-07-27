@@ -3,13 +3,14 @@
 import { ChevronRight, Grid3X3, Package } from "lucide-react";
 import { useCallback } from "react";
 
-import { CreateRoomDialog, ImportDialog } from "@/components";
+import { CreateRoomDialog, ImportDialog, Pagination } from "@/components";
 import { RoleProtect } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
+import { UpdateRoomDialog } from "./update-room-dialog";
 
 interface RoomsListProps {
   warehouseId: string;
@@ -18,7 +19,7 @@ interface RoomsListProps {
 }
 
 export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsListProps) => {
-  const { data, loading, append } = useListing({
+  const { data, loading, query, append, setQuery, update } = useListing({
     fetcher: WarehouseService.getManagingWarehouseRooms,
     initialQuery: {
       page: 0,
@@ -31,7 +32,19 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
 
   const onImportRooms = useCallback(async (file: File) => WarehouseService.importRooms(warehouseSlug, "", file), []);
 
-  const onImportSuccess = (newRooms: Array<Room>) => append(...newRooms);
+  const onImportSuccess = useCallback((newRooms: Array<Room>) => append(...newRooms), [append]);
+
+  const onPageChange = (page: number) => setQuery({ page });
+
+  const onRoomUpdatedSuccess = useCallback(
+    (updatedRoom: Room) => {
+      update(
+        (prev) => prev.id === updatedRoom.id,
+        () => updatedRoom,
+      );
+    },
+    [update],
+  );
 
   return (
     <Card>
@@ -74,18 +87,18 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
                 const usagePercentage = (used / total) * 100;
 
                 return (
-                  <Card key={room.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onRoomSelect(room)}>
+                  <Card key={room.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <h4 className="font-semibold text-lg">{room.name}</h4>
                           <p className="text-sm text-gray-500">{room.storageType.name}</p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                        <UpdateRoomDialog room={room} onUpdatedSuccess={onRoomUpdatedSuccess} />
                       </div>
                     </CardHeader>
 
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4" onClick={() => onRoomSelect(room)}>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span>Space usage</span>
@@ -112,6 +125,10 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
                   </Card>
                 );
               })}
+        </div>
+
+        <div className="flex justify-center mt-5">
+          <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
         </div>
 
         {!loading && rooms.length === 0 && <div className="text-center py-8 text-gray-500">No matching room found</div>}
