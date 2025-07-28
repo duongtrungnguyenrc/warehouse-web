@@ -2,11 +2,11 @@
 
 import { FormSelect } from "@/components";
 import { useListing } from "@/hooks";
-import { WarehouseService } from "@/services";
+import { RoomTypeService } from "@/services";
 
 export const RoomTypeSelect = ({ value, setFieldValue }: { value?: string; setFieldValue: (field: string, value: any) => void }) => {
   const { data } = useListing({
-    fetcher: WarehouseService.getRoomTypes,
+    fetcher: RoomTypeService.getRoomTypes,
     initialQuery: {
       size: 100,
       page: 0,
