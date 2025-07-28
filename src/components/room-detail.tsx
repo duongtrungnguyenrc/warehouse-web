@@ -3,7 +3,7 @@
 import { ChevronRight, Layers } from "lucide-react";
 import { useCallback } from "react";
 
-import { ImportDialog, Pagination, RoleProtect, RoomTypeManagementDialog } from "@/components";
+import { ImportDialog, Pagination, RoleProtect } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -40,12 +40,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Room Information</CardTitle>
-              <RoleProtect role={["ADMIN"]}>
-                <RoomTypeManagementDialog />
-              </RoleProtect>
-            </div>
+            <CardTitle>Room Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -139,8 +134,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                       <CardHeader className="pb-3 flex-shrink-0">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <h4 className="font-semibold">Rack {rack.slotNumber}</h4>
-                            <p className="text-sm text-gray-500">Position: {rack.slotNumber}</p>
+                            <h4 className="font-semibold">Rack {index * (query.page + 1) + 1}</h4>
                           </div>
                           <ChevronRight className="h-4 w-4 text-gray-400" />
                         </div>
@@ -156,14 +150,18 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
                             {rack.usedSize.toFixed(2)} / {rack.maxSize.toFixed(2)} m³
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm mt-auto">
-                          <div>
-                            <div className="font-medium">{rack.details.equipments?.length}</div>
+                        <div className="flex justify-between gap-4 text-sm mt-auto">
+                          <div className="flex space-x-1 items-center">
+                            <div className="font-medium">{rack.totalEquipment}</div>
                             <div className="text-xs text-gray-500">Equipments</div>
                           </div>
-                          <div>
-                            <div className="font-medium">{rack.levelNumber}</div>
+                          <div className="flex space-x-1 items-center">
                             <div className="text-xs text-gray-500">Level</div>
+                            <div className="font-medium">{rack.levelNumber}</div>
+                          </div>
+                          <div className="flex space-x-1 items-center">
+                            <div className="text-xs text-gray-500">Slot number</div>
+                            <div className="font-medium">{rack.slotNumber}</div>
                           </div>
                         </div>
                       </CardContent>

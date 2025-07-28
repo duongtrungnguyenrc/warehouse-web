@@ -3,6 +3,7 @@
 import { Box, ChevronRight } from "lucide-react";
 import { useCallback } from "react";
 
+import { Pagination, RoleProtect } from "./common";
 import { CreateEquipmentsDialog } from "./create-equipments-dialog";
 
 import { Badge } from "@/components/shadcn/badge";
@@ -11,7 +12,6 @@ import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
-import { Pagination, RoleProtect } from "./common";
 
 interface RackDetailProps {
   rack: Rack;
@@ -89,78 +89,80 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Box className="h-5 w-5" />
-                Equipment List
-              </CardTitle>
-              <CardDescription>Devices stored in this rack</CardDescription>
+      <RoleProtect role={["MANAGER", "INVENTORY_STAFF"]}>
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Box className="h-5 w-5" />
+                  Equipment List
+                </CardTitle>
+                <CardDescription>Devices stored in this rack</CardDescription>
+              </div>
+
+              <RoleProtect role={["MANAGER"]}>
+                <CreateEquipmentsDialog onSuccess={onCreateEquipmentSuccess} />
+              </RoleProtect>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {loading
+                ? Array.from({ length: 4 }).map((_, idx) => (
+                    <Card key={idx}>
+                      <CardHeader className="pb-3">
+                        <Skeleton className="h-4 w-40 mb-2" />
+                        <Skeleton className="h-3 w-32" />
+                      </CardHeader>
+                      <CardContent className="space-y-3 text-sm">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-2/3" />
+                      </CardContent>
+                    </Card>
+                  ))
+                : equipments.map((equipment, index) => (
+                    <Card key={equipment.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onEquipmentSelect(equipment)}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold">Equipment {query.page * query.size + index + 1}</h4>
+                            <p className="text-sm text-gray-500">LPN: {equipment.lpn}</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="space-y-3 text-sm text-gray-600">
+                        <div className="flex justify-between">
+                          <span>Max Capacity:</span>
+                          <span className="font-medium">{equipment.maxSize.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Used:</span>
+                          <span className="font-medium">{equipment.usedSize.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Remaining:</span>
+                          <span className="font-medium">{equipment.remainingSize.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Created At:</span>
+                          <span>{new Date(equipment.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
             </div>
 
-            <RoleProtect role={["MANAGER"]}>
-              <CreateEquipmentsDialog onSuccess={onCreateEquipmentSuccess} />
-            </RoleProtect>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {loading
-              ? Array.from({ length: 4 }).map((_, idx) => (
-                  <Card key={idx}>
-                    <CardHeader className="pb-3">
-                      <Skeleton className="h-4 w-40 mb-2" />
-                      <Skeleton className="h-3 w-32" />
-                    </CardHeader>
-                    <CardContent className="space-y-3 text-sm">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-2/3" />
-                    </CardContent>
-                  </Card>
-                ))
-              : equipments.map((equipment, index) => (
-                  <Card key={equipment.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]" onClick={() => onEquipmentSelect(equipment)}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold">Equipment {query.page * query.size + index + 1}</h4>
-                          <p className="text-sm text-gray-500">LPN: {equipment.lpn}</p>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="space-y-3 text-sm text-gray-600">
-                      <div className="flex justify-between">
-                        <span>Max Capacity:</span>
-                        <span className="font-medium">{equipment.maxSize.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Used:</span>
-                        <span className="font-medium">{equipment.usedSize.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Remaining:</span>
-                        <span className="font-medium">{equipment.remainingSize.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Created At:</span>
-                        <span>{new Date(equipment.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-          </div>
-
-          <div className="flex justify-center mt-5">
-            <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
-          </div>
-        </CardContent>
-      </Card>
+            <div className="flex justify-center mt-5">
+              <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
+            </div>
+          </CardContent>
+        </Card>
+      </RoleProtect>
     </div>
   );
 }

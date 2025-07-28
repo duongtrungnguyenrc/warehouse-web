@@ -43,7 +43,7 @@ export const RoomTypeManagementDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline">
           <Settings className="h-4 w-4 mr-2" />
           Manage Room Types
         </Button>

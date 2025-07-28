@@ -3,7 +3,7 @@
 import { ArrowLeft, Package, Warehouse } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { EquipmentDetail } from "@/components";
+import { EquipmentDetail, RoleProtect, RoomTypeManagementDialog } from "@/components";
 import { RackDetail } from "@/components";
 import { RoomDetail } from "@/components";
 import { RoomsList } from "@/components";
@@ -210,7 +210,12 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="md:col-span-2">
                 <CardHeader>
-                  <CardTitle>Basic Information</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Warehouse Information</CardTitle>
+                    <RoleProtect role={["ADMIN"]}>
+                      <RoomTypeManagementDialog />
+                    </RoleProtect>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
