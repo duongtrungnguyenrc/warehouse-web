@@ -12,6 +12,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CategoryManagementDialog,
   CreateProductDialog,
   ImportDialog,
   Input,
@@ -131,6 +132,10 @@ const ProductsPage = () => {
           </div>
           <RoleProtect role={["MANAGER"]}>
             <div className="flex items-center space-x-2">
+              <RoleProtect role={["MANAGER"]}>
+                <CategoryManagementDialog />
+              </RoleProtect>
+
               <ImportDialog title="Import Products" description="Upload product list from Excel or CSV" onUpload={ProductService.importProducts} onSuccess={onImportSuccess} />
 
               <CreateProductDialog>

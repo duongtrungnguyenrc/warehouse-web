@@ -40,20 +40,23 @@ export default [
       "@typescript-eslint/no-unsafe-access": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-unsafe-return": "off",
       "@typescript-eslint/no-empty-object-type": "off",
       "react-hooks/exhaustive-deps": "off",
-      "no-unused-vars": "off",
-      "no-undef": "off",
-
       "simple-import-sort/imports": [
         "warn",
         {
           groups: [
+            // External libs
             ["^\\u0000", "^@?\\w"],
+            // Internal aliases
             ["^~"],
+            // Parent relative imports
             ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+            // Current folder relative imports
             ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+            // Styles etc.
             ["^.+\\.s?css$"],
           ],
         },
@@ -61,6 +64,8 @@ export default [
       "simple-import-sort/exports": "warn",
       "react-refresh/only-export-components": "off",
       "no-empty-pattern": "off",
+      "no-unused-vars": "off", 
+      "no-undef": "off", 
     },
   },
 ];

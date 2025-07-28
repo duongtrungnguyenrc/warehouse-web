@@ -78,6 +78,16 @@ declare type CreateRoomRequest = {
   warehouseId: string;
 };
 
+declare type CreateCategoryRequest = {
+  name: string;
+  description: string;
+};
+
+declare type UpdateCategoryRequest = {
+  name: string;
+  description: string;
+};
+
 declare type CreateProductRequest = {
   name: string;
   price: number;

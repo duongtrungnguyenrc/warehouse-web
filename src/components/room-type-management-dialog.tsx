@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
 
-export const RoomTypeManagement = () => {
+export const RoomTypeManagementDialog = () => {
   const [open, setOpen] = useState(false);
 
   const { data, loading, append, update } = useListing({

@@ -3,8 +3,7 @@
 import { ChevronRight, Layers } from "lucide-react";
 import { useCallback } from "react";
 
-import { ImportDialog, Pagination, RoleProtect } from "@/components";
-import { RoomTypeManagement } from "@/components/room-type-management";
+import { ImportDialog, Pagination, RoleProtect, RoomTypeManagementDialog } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -44,7 +43,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
             <div className="flex items-center justify-between">
               <CardTitle>Room Information</CardTitle>
               <RoleProtect role={["ADMIN"]}>
-                <RoomTypeManagement />
+                <RoomTypeManagementDialog />
               </RoleProtect>
             </div>
           </CardHeader>

@@ -3,6 +3,8 @@
 import { ChevronRight, Grid3X3, Package } from "lucide-react";
 import { useCallback } from "react";
 
+import { UpdateRoomDialog } from "./update-room-dialog";
+
 import { CreateRoomDialog, ImportDialog, Pagination } from "@/components";
 import { RoleProtect } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -10,7 +12,6 @@ import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
-import { UpdateRoomDialog } from "./update-room-dialog";
 
 interface RoomsListProps {
   warehouseId: string;
