@@ -103,7 +103,7 @@ declare type Product = {
 declare type Inbound = {
   id: string;
   batchNumber: string;
-  shippedDate: Date;
+  receivedDate: Date;
   status: InboundStatus;
   createdBy: string;
   createdByUser: string;
@@ -116,6 +116,7 @@ declare type Inbound = {
   }[];
 };
 
-declare type Outbound = Inbound & {
+declare type Outbound = Omit<Inbound, "receivedDate"> & {
   status: OutboundStatus;
+  shippedDate: Date;
 };
