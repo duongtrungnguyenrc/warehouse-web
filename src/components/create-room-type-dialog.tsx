@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { WarehouseService } from "@/services";
+import { RoomTypeService } from "@/services";
 
 interface CreateRoomTypeDialogProps {
   onSuccess: (roomType: RoomType) => void;
@@ -32,7 +32,7 @@ export function CreateRoomTypeDialog({ onSuccess }: CreateRoomTypeDialogProps) {
 
   const handleSubmit = async (values: typeof initialValues, { setSubmitting, resetForm }: any) => {
     try {
-      const newRoomType = await WarehouseService.createRoomType(values);
+      const newRoomType = await RoomTypeService.createRoomType(values);
       onSuccess(newRoomType);
       toast.success("Room type created successfully");
       setOpen(false);

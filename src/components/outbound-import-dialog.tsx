@@ -143,7 +143,7 @@ export const OutboundImportDialog = () => {
 
   return (
     <>
-      <ImportDialog title="Import Outbound Orders" description="Upload outbound orders from Excel or CSV" onUpload={call} />
+      <ImportDialog title="Import Outbound Orders" description="Upload outbound orders from Excel or CSV" onUpload={call} templateDownloader={OutboundService.getImportTemplate} />
       <OutboundExtraInfoDialog details={result || undefined} onClose={reset} />
     </>
   );

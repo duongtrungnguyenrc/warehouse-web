@@ -136,7 +136,13 @@ const ProductsPage = () => {
                 <CategoryManagementDialog />
               </RoleProtect>
 
-              <ImportDialog title="Import Products" description="Upload product list from Excel or CSV" onUpload={ProductService.importProducts} onSuccess={onImportSuccess} />
+              <ImportDialog
+                title="Import Products"
+                description="Upload product list from Excel or CSV"
+                onUpload={ProductService.importProducts}
+                onSuccess={onImportSuccess}
+                templateDownloader={ProductService.getImportTemplate}
+              />
 
               <CreateProductDialog>
                 <Button>

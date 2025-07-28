@@ -26,6 +26,13 @@ const importOrders = async (request: ImportInboundRequest): Promise<Array<Inboun
   return httpClient.post<Array<Inbound>>("warehouse/batch/inbound/upload", request).then((response) => response.data);
 };
 
+const getImportTemplate = async (): Promise<Blob> => {
+  return httpClient.get("warehousebatch/inbound/import-template", {
+    responseType: "blob",
+    headers: { Accept: "application/octet-stream" },
+  });
+};
+
 const uploadOrders = async (file: File): Promise<Array<InboundUploadResponse>> => {
   const formData = new FormData();
   formData.append("file", file);
@@ -49,5 +56,6 @@ export const InboundService = {
   exportOrder,
   uploadOrders,
   importOrders,
+  getImportTemplate,
   generateBatchNumber,
 };

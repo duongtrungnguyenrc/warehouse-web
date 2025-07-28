@@ -108,7 +108,7 @@ export function RoomDetail({ room, onRackSelect }: RoomDetailProps) {
               <CardDescription>Racks stored in the room</CardDescription>
             </div>
             <RoleProtect role={["ADMIN"]}>
-              <ImportDialog onUpload={onImportRacks} onSuccess={onImportSuccess} />
+              <ImportDialog onUpload={onImportRacks} onSuccess={onImportSuccess} templateDownloader={WarehouseService.getImportRacksTemplate} />
             </RoleProtect>
           </div>
         </CardHeader>

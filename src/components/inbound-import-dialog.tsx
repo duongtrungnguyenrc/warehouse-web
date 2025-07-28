@@ -110,7 +110,7 @@ export const InboundImportDialog: FC<InboundImportDialogProps> = ({ onImportedSu
 
   return (
     <>
-      <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={call} />
+      <ImportDialog title="Import Inbound Orders" description="Upload inbound orders from Excel or CSV" onUpload={call} templateDownloader={InboundService.getImportTemplate} />
       <InboundExtraInfoDialog details={result || undefined} onClose={reset} onImportedSuccess={onImportedSuccess} />
     </>
   );

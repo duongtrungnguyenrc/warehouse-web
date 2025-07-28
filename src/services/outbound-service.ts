@@ -47,11 +47,19 @@ const importOrders = async (request: ImportOutboundRequest): Promise<Array<Outbo
   return httpClient.post<Array<Outbound>>("warehouse/batch/outbound/upload", request).then((response) => response.data);
 };
 
+const getImportTemplate = async (): Promise<Blob> => {
+  return httpClient.get("warehousebatch/outbound/import-template", {
+    responseType: "blob",
+    headers: { Accept: "application/octet-stream" },
+  });
+};
+
 export const OutboundService = {
   list,
   exportOrder,
   generateBatchNumber,
   importOrders,
+  getImportTemplate,
   createOrder,
   validateOrders,
   uploadOrders,

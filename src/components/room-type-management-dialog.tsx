@@ -11,13 +11,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
-import { WarehouseService } from "@/services";
+import { RoomTypeService } from "@/services";
 
 export const RoomTypeManagementDialog = () => {
   const [open, setOpen] = useState(false);
 
   const { data, loading, append, update } = useListing({
-    fetcher: WarehouseService.getRoomTypes,
+    fetcher: RoomTypeService.getRoomTypes,
     initialQuery: { page: 0, size: 20 },
   });
 

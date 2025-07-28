@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { WarehouseService } from "@/services";
+import { RoomTypeService } from "@/services";
 
 interface UpdateRoomTypeDialogProps {
   roomType: RoomType;
@@ -35,7 +35,7 @@ export function UpdateRoomTypeDialog({ roomType, onSuccess, children }: UpdateRo
 
   const handleSubmit = async (values: typeof initialValues, { setSubmitting }: any) => {
     try {
-      const updatedRoomType = await WarehouseService.updateRoomType(roomType.id, values);
+      const updatedRoomType = await RoomTypeService.updateRoomType(roomType.id, values);
       onSuccess(updatedRoomType);
       toast.success("Room type updated successfully");
       setOpen(false);
