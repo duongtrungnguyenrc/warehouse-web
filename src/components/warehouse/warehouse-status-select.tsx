@@ -9,7 +9,7 @@ type WarehouseTypeSelectProps = {
     /** Preact-like linkState. Will return a handleChange function.  */
     <T = string | React.ChangeEvent<any>>(field: T): T extends React.ChangeEvent<any> ? void : (e: string | React.ChangeEvent<any>) => void;
   };
-  value: string;
+  value?: string;
 };
 
 export const WarehouseStatusSelect = ({ value, handleChange }: WarehouseTypeSelectProps) => {

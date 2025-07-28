@@ -1,18 +1,11 @@
 "use client";
 
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, Filter, Search } from "lucide-react";
 import { ChangeEvent, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-import { WarehouseStatusSelect } from "./warehouse-status-select";
-import { WarehouseTypeSelect } from "./warehouse-type-select";
-
-import { Badge } from "@/components/shadcn/badge";
-import { Button } from "@/components/shadcn/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
-import { Input } from "@/components/shadcn/input";
-import { Label } from "@/components/shadcn/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
+import { WarehouseStatusSelect, WarehouseTypeSelect } from "@/components";
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger, Input } from "@/components/shadcn";
 
 interface WarehouseFiltersProps {
   filters: WarehouseFilter;
@@ -21,157 +14,60 @@ interface WarehouseFiltersProps {
 }
 
 export function WarehouseFilters({ filters, onFiltersChange, onClearFilters }: WarehouseFiltersProps) {
-  const [localFilters, setLocalFilters] = useState<any>(filters);
-  const [isOpen, setIsOpen] = useState(false);
+  const [localFilters, setLocalFilters] = useState<WarehouseFilter>(filters);
 
-  const applyFilters = () => {
+  const handleApplyFilters = useDebouncedCallback(() => {
     onFiltersChange(localFilters);
-    setIsOpen(false);
-  };
+  }, 400);
 
-  const clearFilters = () => {
+  const handleClearFilters = () => {
     setLocalFilters({});
     onClearFilters();
-    setIsOpen(false);
   };
 
-  const getActiveFiltersCount = () => {
-    return Object.values(filters).filter((value) => value !== undefined && value !== "").length;
-  };
-
-  const getActiveFilterBadges = () => {
-    const badges = [];
-
-    if (filters.name) badges.push({ key: "name", label: `Name: ${filters.name}` });
-    if (filters.address) badges.push({ key: "address", label: `Address: ${filters.address}` });
-    if (filters.type) badges.push({ key: "type", label: `Type: ${filters.type === "DC" ? "Distribution Center" : "Cold Storage"}` });
-    if (filters.status) badges.push({ key: "status", label: `Status: ${filters.status}` });
-    if (filters.minAreaSize) badges.push({ key: "minAreaSize", label: `Min Area: ${filters.minAreaSize}m²` });
-    if (filters.maxAreaSize) badges.push({ key: "maxAreaSize", label: `Max Area: ${filters.maxAreaSize}m²` });
-
-    return badges;
+  const handleInputChange = (key: keyof WarehouseFilter, value: string | undefined) => {
+    setLocalFilters({ ...localFilters, [key]: value });
+    handleApplyFilters();
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input placeholder="Search warehouses by name..." onChange={(e) => onFiltersChange({ ...filters, name: e.target.value })} className="pl-10 bg-white" />
-        </div>
-
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="gap-2 bg-white">
-              <SlidersHorizontal className="h-4 w-4" />
-              Filters
-              {getActiveFiltersCount() > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {getActiveFiltersCount()}
-                </Badge>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-5" align="end">
-            <Card className="border-0 shadow-none p-0">
-              <CardHeader className="p-0">
-                <CardTitle className="text-sm">Filter Warehouses</CardTitle>
-              </CardHeader>
-
-              <CardContent className="space-y-4 p-0">
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    placeholder="Search by address..."
-                    value={localFilters.address || ""}
-                    onChange={(e) => setLocalFilters({ ...localFilters, address: e.target.value })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Type</Label>
-
-                    <WarehouseTypeSelect
-                      value={localFilters.type}
-                      handleChange={(e: ChangeEvent<HTMLInputElement>) => setLocalFilters({ ...localFilters, type: e.target.value || undefined })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-
-                    <WarehouseStatusSelect
-                      value={localFilters.status}
-                      handleChange={(e: ChangeEvent<HTMLInputElement>) => setLocalFilters({ ...localFilters, satus: e.target.value || undefined })}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Area Size Range (m²)</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      type="number"
-                      placeholder="Min"
-                      value={localFilters.minAreaSize || ""}
-                      onChange={(e) =>
-                        setLocalFilters({
-                          ...localFilters,
-                          minAreaSize: e.target.value ? Number(e.target.value) : undefined,
-                        })
-                      }
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Max"
-                      value={localFilters.maxAreaSize || ""}
-                      onChange={(e) =>
-                        setLocalFilters({
-                          ...localFilters,
-                          maxAreaSize: e.target.value ? Number(e.target.value) : undefined,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-2 pt-4">
-                  <Button onClick={applyFilters} className="flex-1">
-                    Apply Filters
-                  </Button>
-                  <Button onClick={clearFilters} variant="outline">
-                    Clear
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </PopoverContent>
-        </Popover>
+    <div className="flex items-center gap-4">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search warehouses by name..."
+          className="pl-10 bg-white"
+          value={localFilters.name || ""}
+          onChange={(e) => handleInputChange("name", e.target.value)}
+          onBlur={handleApplyFilters}
+        />
       </div>
 
-      {/* Active Filters Display */}
-      {getActiveFilterBadges().length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-gray-500">Active filters:</span>
-          {getActiveFilterBadges().map((badge) => (
-            <Badge key={badge.key} variant="secondary" className="gap-1">
-              {badge.label}
-              <X
-                className="h-3 w-3 cursor-pointer"
-                onClick={() => {
-                  const newFilters = { ...filters };
-                  onFiltersChange(newFilters);
-                }}
-              />
-            </Badge>
-          ))}
-          <Button variant="ghost" size="sm" onClick={onClearFilters} className="h-auto p-1 text-xs">
-            Clear all
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="gap-2">
+            <Filter className="h-4 w-4" />
+            Filters
+            <ChevronDown className="h-4 w-4" />
           </Button>
-        </div>
-      )}
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent className="w-72 space-y-4 p-4" align="end">
+          <div className="space-y-2">
+            <DropdownMenuLabel>Warehouse Type</DropdownMenuLabel>
+            <WarehouseTypeSelect value={localFilters.type} handleChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("type", e.target.value || undefined)} />
+          </div>
+
+          <div className="space-y-2">
+            <DropdownMenuLabel>Warehouse Status</DropdownMenuLabel>
+            <WarehouseStatusSelect value={localFilters.status} handleChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("status", e.target.value || undefined)} />
+          </div>
+
+          <Button className="w-full" onClick={handleClearFilters}>
+            Clear
+          </Button>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

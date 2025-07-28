@@ -2,7 +2,6 @@
 
 import { Plus } from "lucide-react";
 import { useCallback } from "react";
-import { useDebouncedCallback } from "use-debounce";
 
 import { Button, WarehouseFilters } from "@/components";
 import { WarehouseCard } from "@/components";
@@ -36,13 +35,13 @@ export const WarehouseManagementPage = () => {
 
   const warehouses = data?.content ?? [];
 
-  const handleFiltersChange = useDebouncedCallback((filter: WarehouseFilter) => {
-    setQuery(filter);
-  }, 500);
-
-  const handleClearFilters = () => {
-    setQuery({});
-  };
+  const handleClearFilters = useCallback(() => {
+    setQuery({
+      name: undefined,
+      status: undefined,
+      type: undefined,
+    });
+  }, [setQuery]);
 
   const handleUpdateWarehouse = useCallback(
     (updatedWarehouse: Warehouse) =>
@@ -102,7 +101,7 @@ export const WarehouseManagementPage = () => {
         </CreateWarehouseDialog>
       </div>
 
-      <WarehouseFilters filters={query as any} onFiltersChange={handleFiltersChange} onClearFilters={handleClearFilters} />
+      <WarehouseFilters filters={query as any} onFiltersChange={setQuery} onClearFilters={handleClearFilters} />
 
       {warehouses.length === 0 ? (
         <div className="text-center py-12">
