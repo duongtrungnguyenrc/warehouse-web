@@ -6,8 +6,7 @@ import { type ChangeEvent, type ReactNode, useEffect, useState, useTransition } 
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { CategorySelect } from "@/components";
-import { FormSelect } from "@/components/form-select";
+import { CategorySelect, FormSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";

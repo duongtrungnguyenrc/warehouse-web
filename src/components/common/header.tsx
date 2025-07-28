@@ -3,7 +3,7 @@
 import { LogOut } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { ConfirmDialog } from "@/components";
 import { MobileSidebar } from "@/components/mobile-sidebar";
 import { Button } from "@/components/shadcn";
 import { useAuth } from "@/hooks";

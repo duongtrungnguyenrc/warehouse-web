@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Grid3X3, Package } from "lucide-react";
+import { Grid3X3, Package } from "lucide-react";
 import { useCallback } from "react";
 
 import { UpdateRoomDialog } from "./update-room-dialog";

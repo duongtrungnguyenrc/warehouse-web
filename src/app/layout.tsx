@@ -4,7 +4,7 @@ import type React from "react";
 
 import "./globals.css";
 
-import { ClientToaster } from "@/components/client-toaster";
+import { ClientToaster } from "@/components";
 import { AuthProvider } from "@/providers";
 
 const geistSans = Geist({

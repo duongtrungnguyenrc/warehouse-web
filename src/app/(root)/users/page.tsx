@@ -19,12 +19,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  FilterDropdown
 } from "@/components";
-import { FilterDropdown } from "@/components/filter-dropdown";
-import { RolePermissionsCard } from "@/components/role-permission-card";
+
 import { UserTableRow } from "@/components/user-table-row";
 import { useListing } from "@/hooks";
 import { AccountService } from "@/services";
+import { RolePermissionsCard } from "@/components/role-permission-card";
 
 const DEFAULT_COLUMNS: ColumnConfig<User>[] = [
   { key: "fullName", label: "User", visible: true, sortable: true },

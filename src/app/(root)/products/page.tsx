@@ -27,8 +27,7 @@ import {
   TableRow,
   UpdateProductDialog,
 } from "@/components";
-import { FilterDropdown } from "@/components/filter-dropdown";
-import { PageHeaderSkeleton, SearchFilterSkeleton, TableSkeleton } from "@/components/skeletons";
+import { PageHeaderSkeleton, SearchFilterSkeleton, TableSkeleton, FilterDropdown } from "@/components";
 import { useListing } from "@/hooks";
 import { ProductService } from "@/services";
 

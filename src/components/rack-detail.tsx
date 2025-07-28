@@ -4,8 +4,6 @@ import { Box, ChevronRight } from "lucide-react";
 import { useCallback } from "react";
 
 import { CreateEquipmentsDialog } from "./create-equipments-dialog";
-import { Pagination } from "./pagination";
-import { RoleProtect } from "./role-protect";
 
 import { Badge } from "@/components/shadcn/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -13,6 +11,7 @@ import { Progress } from "@/components/shadcn/progress";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useListing } from "@/hooks";
 import { WarehouseService } from "@/services";
+import { Pagination, RoleProtect } from "./common";
 
 interface RackDetailProps {
   rack: Rack;

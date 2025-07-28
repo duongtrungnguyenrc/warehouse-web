@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 import { RoomTypeSelect } from "./room-type-select";
-import { WarehouseSelect } from "./warehouse-select";
+import { WarehouseSelect } from "./warehouse";
 
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";

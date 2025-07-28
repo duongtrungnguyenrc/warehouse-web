@@ -2,8 +2,7 @@ import { AlertCircle, Edit, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components";
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, ConfirmDialog } from "@/components";
 import { UpdateWarehouseDialog } from "@/components/update-warehouse-dialog";
 import { catchError, WAREHOUSE_TYPE } from "@/lib";
 import { WarehouseService } from "@/services";
