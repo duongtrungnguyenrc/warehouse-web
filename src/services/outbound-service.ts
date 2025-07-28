@@ -48,7 +48,7 @@ const importOrders = async (request: ImportOutboundRequest): Promise<Array<Outbo
 };
 
 const getImportTemplate = async (): Promise<Blob> => {
-  return httpClient.get("warehousebatch/outbound/import-template", {
+  return httpClient.get("warehouse/batch/outbound/import-template", {
     responseType: "blob",
     headers: { Accept: "application/octet-stream" },
   });

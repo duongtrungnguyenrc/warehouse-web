@@ -62,6 +62,10 @@ const importRooms = async (warehouseId: string, storageTypeId: string, file: Fil
     .then((res) => res.data);
 };
 
+const createRoom = async (request: CreateRoomRequest): Promise<Room> => {
+  return httpClient.post<Room>("/warehouse/storage-rooms/create", request).then((response) => response.data);
+};
+
 const getImportRoomsTemplate = async (): Promise<Blob> => {
   return httpClient.get("warehouse/storage-rooms/import-template", {
     responseType: "blob",
@@ -143,7 +147,6 @@ const getStatistics = async (): Promise<StatisticsResponse> => {
   return httpClient.get<StatisticsResponse>("/warehouse/manager/summary/by-month").then((res) => res.data);
 };
 
-
 // ==========================
 // EXPORT SERVICE
 // ==========================
@@ -160,6 +163,7 @@ export const WarehouseService = {
   // Rooms
   getManagingWarehouseRooms,
   updateRoom,
+  createRoom,
   importRooms,
   getImportRoomsTemplate,
 

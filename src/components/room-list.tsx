@@ -47,6 +47,8 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
     [update],
   );
 
+  const onCreatedRoomSuccess = useCallback((newRoom: Room) => append(newRoom), [append]);
+
   return (
     <Card>
       <CardHeader>
@@ -60,7 +62,7 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
           </div>
           <RoleProtect role={["ADMIN"]}>
             <div className="flex space-x-2 items-center">
-              <CreateRoomDialog warehouseId={warehouseId} />
+              <CreateRoomDialog warehouseId={warehouseId} onCreatedSuccess={onCreatedRoomSuccess} />
               <ImportDialog templateDownloader={WarehouseService.getImportRoomsTemplate} onUpload={onImportRooms} onSuccess={onImportSuccess} />
             </div>
           </RoleProtect>

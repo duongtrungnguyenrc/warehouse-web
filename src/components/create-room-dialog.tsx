@@ -1,36 +1,25 @@
 "use client";
 
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { FormSelect } from "@/components";
+import { FormSelect, RoomTypeSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-
-export type CreateRoomRequest = {
-  name: string;
-  maxCapacity: number;
-  envSettings: string;
-  storageTypeId: string;
-  warehouseId: string;
-};
+import { catchError } from "@/lib";
+import { WarehouseService } from "@/services";
 
 interface CreateRoomDialogProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   warehouseId: string;
+  onCreatedSuccess: (newRoom: Room) => void;
 }
-
-const storageTypes = [
-  { value: "normal", label: "Normal Area" },
-  { value: "cold", label: "Cold Storage" },
-  { value: "dry", label: "Dry Area" },
-  { value: "hazardous", label: "Hazardous Zone" },
-];
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Room name is required"),
@@ -39,8 +28,19 @@ const validationSchema = Yup.object().shape({
   storageTypeId: Yup.string().required("Storage type is required"),
 });
 
-export function CreateRoomDialog({ children, warehouseId }: CreateRoomDialogProps) {
+export function CreateRoomDialog({ children, warehouseId, onCreatedSuccess }: CreateRoomDialogProps) {
   const [open, setOpen] = useState(false);
+
+  const handleCreateRoom = (values: CreateRoomRequest, helpers: FormikHelpers<CreateRoomRequest>) =>
+    toast.promise(WarehouseService.createRoom(values), {
+      loading: "creating room...",
+      error: catchError,
+      success: (newRoom) => {
+        onCreatedSuccess?.(newRoom);
+        helpers.resetForm();
+        return "Created room successfully!";
+      },
+    });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,17 +68,13 @@ export function CreateRoomDialog({ children, warehouseId }: CreateRoomDialogProp
             warehouseId,
           }}
           validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => {
-            console.log("CreateRoomRequest:", values);
-            setOpen(false);
-            resetForm();
-          }}
+          onSubmit={handleCreateRoom}
         >
           {({ values, handleChange, handleBlur, errors, touched, setFieldValue }) => (
             <Form className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Room Name *</Label>
-                <Input id="name" name="name" value={values.name} onChange={handleChange} onBlur={handleBlur} placeholder="e.g., Zone A - Frozen Goods" />
+                <Input id="name" name="name" value={values.name} onChange={handleChange} onBlur={handleBlur} placeholder="e.g., Room A - Frozen Goods" />
                 {touched.name && errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
 
@@ -90,7 +86,7 @@ export function CreateRoomDialog({ children, warehouseId }: CreateRoomDialogProp
 
               <div className="space-y-2">
                 <Label htmlFor="storageTypeId">Storage Type *</Label>
-                <FormSelect name="storageTypeId" placeholder="Select storage type" options={storageTypes} value={values.storageTypeId} setFieldValue={setFieldValue} />
+                <RoomTypeSelect value={values.storageTypeId} setFieldValue={setFieldValue} />
                 {touched.storageTypeId && errors.storageTypeId && <p className="text-sm text-red-500">{errors.storageTypeId}</p>}
               </div>
 

@@ -103,7 +103,7 @@ declare type Product = {
 declare type Inbound = {
   id: string;
   batchNumber: string;
-  receivedDate: string;
+  shippedDate: Date;
   status: InboundStatus;
   createdBy: string;
   createdByUser: string;

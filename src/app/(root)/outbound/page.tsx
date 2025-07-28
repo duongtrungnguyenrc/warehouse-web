@@ -198,7 +198,7 @@ const OutboundPage = () => {
                               </div>
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-sm">{order.receivedDate || <span className="text-muted-foreground">Not dispatched</span>}</TableCell>
+                          <TableCell className="text-sm">{ order.shippedDate ? new Date(order.shippedDate).toLocaleDateString() : <span className="text-muted-foreground">Not dispatched</span>}</TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
                               <Button variant="outline" size="sm" onClick={() => handleExport(order.id)}>
