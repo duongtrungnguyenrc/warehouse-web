@@ -110,6 +110,11 @@ declare type UpdateProductRequest = {
 
 declare type InboundDetail = InboundUploadResponse;
 
+declare type UpdateInboundRequest = {
+  batchId: string;
+  status: InboundStatus;
+}
+
 declare type ImportInboundRequest = {
   batch: {
     batchNumber: string;
@@ -135,7 +140,6 @@ declare type UpdateRoomRequest = {
   maxCapacity: number;
   envSettings: string;
   storageTypeId: string;
-  warehouseId: string;
 };
 
 declare type CreateRoomTypeRequest = {

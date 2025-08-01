@@ -27,6 +27,7 @@ declare type Warehouse = {
   type: WarehouseType;
   createAt: string;
   createdByUser: string;
+  manager: string;
   managerUser: string;
   totalInboundBatches: number;
   totalOutboundBatches: number;

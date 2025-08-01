@@ -50,6 +50,10 @@ const generateBatchNumber = async (): Promise<string> => {
   return httpClient.get("warehouse/batch/inbound/generate-batch-number", {}).then((response) => response.data);
 };
 
+const updateStatus = async (request: UpdateInboundRequest): Promise<Inbound> => {
+  return httpClient.put("warehouse/batch/inbound/update/status", request).then((response) => response.data);
+};
+
 export const InboundService = {
   list,
   createOrder,
@@ -58,4 +62,5 @@ export const InboundService = {
   importOrders,
   getImportTemplate,
   generateBatchNumber,
+  updateStatus,
 };

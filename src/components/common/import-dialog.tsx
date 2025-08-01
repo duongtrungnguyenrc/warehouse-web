@@ -154,7 +154,7 @@ export const ImportDialog = <T,>({
                   <thead className="bg-gray-100">
                     <tr>
                       {previewData[0].map((cell, i) => (
-                        <th key={i} className="border px-3 py-1 text-left font-medium">
+                        <th key={i} className="border px-3 py-1 text-left font-medium text-nowrap">
                           {cell}
                         </th>
                       ))}
@@ -164,7 +164,7 @@ export const ImportDialog = <T,>({
                     {previewData.slice(1).map((row, rIdx) => (
                       <tr key={rIdx} className="hover:bg-muted/30">
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} className="border px-3 py-1">
+                          <td key={cIdx} className="border px-3 py-1 text-nowrap">
                             {cell}
                           </td>
                         ))}
@@ -177,7 +177,7 @@ export const ImportDialog = <T,>({
         </div>
 
         <DialogFooter>
-          <Button onClick={handleUpload} disabled={!file}>
+          <Button type="button" onClick={handleUpload} disabled={!file}>
             Upload
           </Button>
         </DialogFooter>

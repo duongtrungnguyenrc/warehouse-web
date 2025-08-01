@@ -4,12 +4,17 @@ import { format } from "date-fns";
 import { CheckCircle, ChevronRight, Clock, Download, FileText, Package, Search, X } from "lucide-react";
 import { type ChangeEvent, Fragment, useCallback, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
+import toast from "react-hot-toast";
 import { useDebouncedCallback } from "use-debounce";
 
 import {
   Badge,
   CreateInboundDialog,
   DateRangePicker,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Pagination,
   RoleProtect,
   Table,
@@ -26,7 +31,7 @@ import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
 import { useDownloadFile, useListing } from "@/hooks";
-import { cn } from "@/lib";
+import { catchError, cn } from "@/lib";
 import { InboundService } from "@/services";
 
 const getStatusText = (status: InboundStatus) => {
@@ -108,6 +113,15 @@ const InboundPage = () => {
   );
 
   const onImportedSuccess = useCallback((newInboundOrders: Array<Inbound>) => append(...newInboundOrders), [append]);
+
+  const handleUpdateStatus = async (batchId: string, status: InboundStatus) => {
+    await toast.promise(InboundService.updateStatus({ batchId, status }), {
+      loading: "Updating status...",
+      success: "Status updated!",
+      error: catchError,
+    });
+    setQuery({});
+  };
 
   return (
     <div className="space-y-6">
@@ -193,16 +207,32 @@ const InboundPage = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge className={getStatusColor(order.status)}>
-                              <div className="flex items-center space-x-1">
-                                {getStatusIcon(order.status)}
-                                <span>{getStatusText(order.status)}</span>
-                              </div>
-                            </Badge>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" aria-label="Change status">
+                                  <Badge className={getStatusColor(order.status)}>
+                                    <div className="flex items-center space-x-1">
+                                      {getStatusIcon(order.status)}
+                                      <span>{getStatusText(order.status)}</span>
+                                    </div>
+                                  </Badge>
+                                  <ChevronRight className="ml-1 h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                {["COMPLETED", "IN_PROGRESS", "CANCELLED"].map((status) => (
+                                  <DropdownMenuItem key={status} onSelect={() => handleUpdateStatus(order.id, status as InboundStatus)} disabled={order.status === status}>
+                                    {getStatusText(status as InboundStatus)}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </TableCell>
-                          <TableCell className="text-sm">{order.receivedDate ? new Date(order.receivedDate).toLocaleDateString() : <span className="text-muted-foreground">Not received</span>}</TableCell>
+                          <TableCell className="text-sm">
+                            {order.receivedDate ? new Date(order.receivedDate).toLocaleDateString() : <span className="text-muted-foreground">Not received</span>}
+                          </TableCell>
                           <TableCell>
-                            <div className="flex space-x-2">
+                            <div className="flex items-center space-x-2">
                               <Button variant="outline" size="sm" onClick={() => handleExport(order.id)}>
                                 <Download />
                               </Button>

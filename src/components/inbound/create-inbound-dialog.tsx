@@ -1,12 +1,12 @@
 "use client";
 
-import { FieldArray, Form, Formik, type FormikErrors, type FormikHelpers, type FormikProps } from "formik";
+import { ErrorMessage, FieldArray, Form, Formik, type FormikHelpers, type FormikProps } from "formik";
 import { Package, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ProductSelect } from "@/components";
+import { DatePicker, ProductSelect } from "@/components";
 import { UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -116,25 +116,16 @@ export const CreateInboundDialog = ({ onCreatedSuccess }: CreateInboundDialogPro
                         placeholder="Enter batch number"
                         className={errors.batch?.batchNumber && touched.batch?.batchNumber ? "border-red-500" : ""}
                       />
-                      {errors.batch?.batchNumber && touched.batch?.batchNumber && <p className="text-sm text-red-500">{errors.batch.batchNumber}</p>}
+                      <ErrorMessage name="batch.batchNumber" component="div" className="text-red-500 text-sm" />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="batch.receivedDate">
                         Received Date <span className="text-red-500">*</span>
                       </Label>
-                      <div className="relative">
-                        <Input
-                          id="batch.receivedDate"
-                          name="batch.receivedDate"
-                          type="date"
-                          value={values.batch.receivedDate}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          className={errors.batch?.receivedDate && touched.batch?.receivedDate ? "border-red-500" : ""}
-                        />
-                      </div>
-                      {errors.batch?.receivedDate && touched.batch?.receivedDate && <p className="text-sm text-red-500">{errors.batch.receivedDate}</p>}
+
+                      <DatePicker name="batch.receivedDate" value={values.batch.receivedDate} setFieldValue={setFieldValue} />
+                      <ErrorMessage name="batch.receivedDate" component="div" className="text-red-500 text-sm" />
                     </div>
                   </div>
 
@@ -144,7 +135,7 @@ export const CreateInboundDialog = ({ onCreatedSuccess }: CreateInboundDialogPro
                     </Label>
 
                     <UserSelect role={["INVENTORY_STAFF"]} name="batch.inventoryStaff" setFieldValue={setFieldValue} value={values.batch.inventoryStaff} />
-                    {errors.batch?.inventoryStaff && touched.batch?.inventoryStaff && <p className="text-sm text-red-500">{errors.batch.inventoryStaff}</p>}
+                    <ErrorMessage name="batch.inventoryStaff" component="div" className="text-red-500 text-sm" />
                   </div>
                 </CardContent>
               </Card>
@@ -176,47 +167,15 @@ export const CreateInboundDialog = ({ onCreatedSuccess }: CreateInboundDialogPro
                                 </Label>
 
                                 <ProductSelect setFieldValue={setFieldValue} name={`details.${index}.sku`} value={values.details[index].sku} />
-
-                                {errors.details &&
-                                  Array.isArray(errors.details) &&
-                                  errors.details[index] &&
-                                  typeof errors.details[index] === "object" &&
-                                  (errors.details[index] as FormikErrors<InboundDetail>)?.sku &&
-                                  touched.details?.[index]?.sku && <p className="text-sm text-red-500">{(errors.details[index] as FormikErrors<InboundDetail>).sku}</p>}
+                                <ErrorMessage name={`details.${index}.sku`} component="div" className="text-red-500 text-sm" />
                               </div>
 
                               <div className="space-y-2">
                                 <Label htmlFor={`details.${index}.expiryDate`}>
                                   Expiry Date <span className="text-red-500">*</span>
                                 </Label>
-                                <div className="relative">
-                                  <Input
-                                    id={`details.${index}.expiryDate`}
-                                    name={`details.${index}.expiryDate`}
-                                    type="date"
-                                    value={values.details[index].expiryDate}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    className={
-                                      errors.details &&
-                                      Array.isArray(errors.details) &&
-                                      errors.details[index] &&
-                                      typeof errors.details[index] === "object" &&
-                                      (errors.details[index] as FormikErrors<InboundDetail>)?.expiryDate &&
-                                      touched.details?.[index]?.expiryDate
-                                        ? "border-red-500"
-                                        : ""
-                                    }
-                                  />
-                                </div>
-                                {errors.details &&
-                                  Array.isArray(errors.details) &&
-                                  errors.details[index] &&
-                                  typeof errors.details[index] === "object" &&
-                                  (errors.details[index] as FormikErrors<InboundDetail>)?.expiryDate &&
-                                  touched.details?.[index]?.expiryDate && (
-                                    <p className="text-sm text-red-500">{(errors.details[index] as FormikErrors<InboundDetail>).expiryDate}</p>
-                                  )}
+                                <DatePicker name={`details.${index}.expiryDate`} value={values.details[index].expiryDate} setFieldValue={setFieldValue} />
+                                <ErrorMessage name={`details.${index}.expiryDate`} component="div" className="text-red-500 text-sm" />
                               </div>
 
                               <div className="space-y-2">
@@ -232,23 +191,9 @@ export const CreateInboundDialog = ({ onCreatedSuccess }: CreateInboundDialogPro
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   placeholder="0"
-                                  className={
-                                    errors.details &&
-                                    Array.isArray(errors.details) &&
-                                    errors.details[index] &&
-                                    typeof errors.details[index] === "object" &&
-                                    (errors.details[index] as FormikErrors<InboundDetail>)?.quantity &&
-                                    touched.details?.[index]?.quantity
-                                      ? "border-red-500"
-                                      : ""
-                                  }
                                 />
-                                {errors.details &&
-                                  Array.isArray(errors.details) &&
-                                  errors.details[index] &&
-                                  typeof errors.details[index] === "object" &&
-                                  (errors.details[index] as FormikErrors<InboundDetail>)?.quantity &&
-                                  touched.details?.[index]?.quantity && <p className="text-sm text-red-500">{(errors.details[index] as FormikErrors<InboundDetail>).quantity}</p>}
+
+                                <ErrorMessage name={`details.${index}.quantity`} component="div" className="text-red-500 text-sm" />
                               </div>
                             </div>
                           </div>

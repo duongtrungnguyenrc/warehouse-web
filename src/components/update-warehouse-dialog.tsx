@@ -51,7 +51,7 @@ export function UpdateWarehouseDialog({ warehouse, children, onUpdatedSuccess }:
     address: warehouse.address,
     areaSize: warehouse.areaSize,
     status: warehouse.status,
-    manager: warehouse.managerUser || "",
+    manager: warehouse.manager || "",
     type: warehouse.type,
   };
 

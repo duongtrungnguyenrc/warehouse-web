@@ -92,8 +92,8 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
                 return (
                   <Card key={room.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
                     <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between" onClick={() => onRoomSelect(room)}>
-                        <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1" onClick={() => onRoomSelect(room)}>
                           <h4 className="font-semibold text-lg">{room.name}</h4>
                           <p className="text-sm text-gray-500">{room.storageType.name}</p>
                         </div>
@@ -132,11 +132,11 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
               })}
         </div>
 
+        {!loading && rooms.length === 0 && <div className="text-center py-8 text-gray-500">No matching room found</div>}
+
         <div className="flex justify-center mt-5">
           <Pagination currentPage={query.page} onChangePage={onPageChange} pageCount={data?.totalPages ?? 1} />
         </div>
-
-        {!loading && rooms.length === 0 && <div className="text-center py-8 text-gray-500">No matching room found</div>}
       </CardContent>
     </Card>
   );

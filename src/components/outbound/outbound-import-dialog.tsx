@@ -1,11 +1,11 @@
 "use client";
 
-import { Form, Formik, type FormikHelpers } from "formik";
+import { ErrorMessage, Form, Formik, type FormikHelpers } from "formik";
 import { type FC, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 
-import { ConfirmDialog, ImportDialog, Label, UserSelect } from "@/components";
+import { ConfirmDialog, DatePicker, ImportDialog, Label, UserSelect } from "@/components";
 import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
@@ -60,10 +60,10 @@ export const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ deta
             onClose();
             helpers.resetForm();
             onImportedSuccess?.(newOutboundOrders);
-            return "Outbound order imported successfully!";
+            return "Outbound order uploaded successfully!";
           },
           error: catchError,
-          loading: "Importing outbound orders...",
+          loading: "Uploading outbound orders...",
         });
       };
 
@@ -92,25 +92,25 @@ export const OutboundExtraInfoDialog: FC<OutboundExtraInfoDialogProps> = ({ deta
           </DialogHeader>
 
           <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-            {({ values, errors, touched, handleChange, setFieldValue }) => (
+            {({ values, setFieldValue }) => (
               <Form className="space-y-4">
                 <div className="flex space-x-3">
                   <div className="flex-1 space-y-2">
                     <Label>Batch number *</Label>
                     <Input name="batchNumber" value={values.batchNumber} disabled />
-                    {touched.batchNumber && errors.batchNumber && <p className="text-sm text-red-500">{errors.batchNumber}</p>}
+                    <ErrorMessage name="batchNumber" component="div" className="text-red-500 text-sm" />
                   </div>
                   <div className="flex-1 space-y-2">
                     <Label>Shipped date *</Label>
-                    <Input type="date" name="shippedDate" value={values.shippedDate} onChange={handleChange} />
-                    {touched.shippedDate && errors.shippedDate && <p className="text-sm text-red-500">{errors.shippedDate}</p>}
+                    <DatePicker name="shippedDate" value={values.shippedDate} placeholder="Select shipped date" setFieldValue={setFieldValue} />
+                    <ErrorMessage name="shippedDate" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Inventory staff *</Label>
                   <UserSelect role={["INVENTORY_STAFF"]} name="inventoryStaff" placeholder="Select staff" setFieldValue={setFieldValue} value={values.inventoryStaff} />
-                  {touched.inventoryStaff && errors.inventoryStaff && <p className="text-sm text-red-500">{errors.inventoryStaff}</p>}
+                  <ErrorMessage name="inventoryStaff" component="div" className="text-red-500 text-sm" />
                 </div>
 
                 <DialogFooter>

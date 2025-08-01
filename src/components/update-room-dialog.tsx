@@ -26,14 +26,13 @@ const validationSchema = Yup.object({
   maxCapacity: Yup.number().min(1).required("Max capacity is required"),
   envSettings: Yup.string().required("Environment settings are required"),
   storageTypeId: Yup.string().required("Storage Type is required"),
-  warehouseId: Yup.string().required("Warehouse ID is required"),
 });
 
 export const UpdateRoomDialog = ({ room, onUpdatedSuccess }: UpdateRoomDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const handleSubmit = async (values: UpdateRoomRequest) => {
-    toast.promise(WarehouseService.updateRoom(room.id, values), {
+    return toast.promise(WarehouseService.updateRoom(room.id, values), {
       loading: "Updating room...",
       success: (updatedRoom) => {
         onUpdatedSuccess(updatedRoom);
@@ -49,7 +48,6 @@ export const UpdateRoomDialog = ({ room, onUpdatedSuccess }: UpdateRoomDialogPro
     maxCapacity: room.maxCapacity,
     envSettings: room.envSettings,
     storageTypeId: room.storageType.id,
-    warehouseId: room.warehouse.id,
   };
 
   return (
@@ -88,15 +86,9 @@ export const UpdateRoomDialog = ({ room, onUpdatedSuccess }: UpdateRoomDialogPro
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="storageTypeId">Storage Type ID</Label>
+                <Label htmlFor="storageTypeId">Storage Type</Label>
                 <RoomTypeSelect setFieldValue={setFieldValue} value={values.storageTypeId} />
                 <ErrorMessage name="storageTypeId" component="div" className="text-red-500 text-sm" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="warehouseId">Warehouse ID</Label>
-                <WarehouseSelect setFieldValue={setFieldValue} value={values.warehouseId} />
-                <ErrorMessage name="warehouseId" component="div" className="text-red-500 text-sm" />
               </div>
 
               <DialogFooter className="mt-4">

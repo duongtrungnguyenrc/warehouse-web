@@ -220,10 +220,6 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Warehouse ID</label>
-                      <p className="font-mono">{warehouse.id}</p>
-                    </div>
-                    <div>
                       <label className="text-sm font-medium text-gray-500">Warehouse Name</label>
                       <p>{warehouse.name}</p>
                     </div>
