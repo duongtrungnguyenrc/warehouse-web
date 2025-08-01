@@ -54,6 +54,10 @@ const getImportTemplate = async (): Promise<Blob> => {
   });
 };
 
+const updateStatus = async (request: UpdateInboundRequest): Promise<Inbound> => {
+  return httpClient.put("warehouse/batch/outbound/update/status", request).then((response) => response.data);
+};
+
 export const OutboundService = {
   list,
   exportOrder,
@@ -63,4 +67,5 @@ export const OutboundService = {
   createOrder,
   validateOrders,
   uploadOrders,
+  updateStatus
 };

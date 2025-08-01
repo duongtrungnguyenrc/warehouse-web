@@ -32,7 +32,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/shadcn/input";
 import { useDownloadFile, useListing } from "@/hooks";
 import { catchError, cn } from "@/lib";
-import { InboundService, OutboundService } from "@/services";
+import { OutboundService } from "@/services";
 
 const getStatusText = (status: OutboundStatus) => {
   switch (status) {
@@ -113,7 +113,7 @@ const OutboundPage = () => {
   );
 
   const handleUpdateStatus = async (batchId: string, status: OutboundStatus) => {
-    await toast.promise(InboundService.updateStatus({ batchId, status }), {
+    await toast.promise(OutboundService.updateStatus({ batchId, status }), {
       loading: "Updating status...",
       success: "Status updated!",
       error: catchError,
