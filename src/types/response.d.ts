@@ -55,3 +55,10 @@ declare type StatisticsResponse = {
   inboundCount: number;
   outboundCount: number;
 }[];
+
+declare type TopProductResponse = {
+  id: string;
+  sku: string;
+  name: string;
+  quantity: number;
+}

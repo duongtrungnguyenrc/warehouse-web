@@ -43,7 +43,7 @@ const listManaging = async (params: PaginationQuery<Product>): Promise<Paginatio
   return await httpClient.get<PaginationResponse<Product>>("/warehouse/manager/products", { params }).then((res) => res.data);
 };
 
-const getTopOutboundProducts = async (rangeTime: DateRange): Promise<Product[]> => {
+const getTopOutboundProducts = async (rangeTime: DateRange): Promise<TopProductResponse[]> => {
   const params = {
     startDate: rangeTime.from ? format(rangeTime.from, "yyyy-MM-dd") : undefined,
     endDate: rangeTime.to ? format(rangeTime.to, "yyyy-MM-dd") : undefined,
@@ -53,7 +53,7 @@ const getTopOutboundProducts = async (rangeTime: DateRange): Promise<Product[]> 
   return res.data ?? [];
 };
 
-const getLeastOutboundProducts = async (rangeTime: DateRange): Promise<Product[]> => {
+const getLeastOutboundProducts = async (rangeTime: DateRange): Promise<TopProductResponse[]> => {
   const params = {
     startDate: rangeTime.from ? format(rangeTime.from, "yyyy-MM-dd") : undefined,
     endDate: rangeTime.to ? format(rangeTime.to, "yyyy-MM-dd") : undefined,

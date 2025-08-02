@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { DateRangePicker, StatsCard, WarehouseOperationChart } from "@/components";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
 import { ProductService, WarehouseService } from "@/services";
 
 const StatisticsPage = () => {
   const [chartData, setChartData] = useState<{ date: string; inbound: number; outbound: number }[]>([]);
-  const [topOutbound, setTopOutbound] = useState<Product[]>([]);
-  const [leastOutbound, setLeastOutbound] = useState<Product[]>([]);
+  const [topOutbound, setTopOutbound] = useState<TopProductResponse[]>([]);
+  const [leastOutbound, setLeastOutbound] = useState<TopProductResponse[]>([]);
   const [totalProducts, setTotalProducts] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -76,13 +76,7 @@ const StatisticsPage = () => {
 
       <WarehouseOperationChart data={chartData} />
 
-      <StatsCard
-        title="Total Products"
-        value={totalProducts}
-        description="Items in inventory"
-        loading={loading}
-        color=""
-      />
+      <StatsCard title="Total Products" value={totalProducts} description="Items in inventory" loading={loading} color="" />
 
       <ProductTable title="Top Outbound Products" products={topOutbound} loading={loading} />
       <ProductTable title="Least Outbound Products" products={leastOutbound} loading={loading} />
@@ -92,7 +86,7 @@ const StatisticsPage = () => {
 
 type ProductTableProps = {
   title: string;
-  products: Product[];
+  products: TopProductResponse[];
   loading?: boolean;
 };
 
@@ -108,8 +102,7 @@ const ProductTable = ({ title, products, loading }: ProductTableProps) => (
             <TableHead>#</TableHead>
             <TableHead>SKU</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="text-right">Stock</TableHead>
+            <TableHead>Quantity</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -125,8 +118,7 @@ const ProductTable = ({ title, products, loading }: ProductTableProps) => (
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>{p.sku}</TableCell>
                 <TableCell>{p.name}</TableCell>
-                <TableCell>{p.category?.name || "-"}</TableCell>
-                <TableCell className="text-right">{p.stockQuantity}</TableCell>
+                <TableCell>{p.quantity}</TableCell>
               </TableRow>
             ))
           ) : (
