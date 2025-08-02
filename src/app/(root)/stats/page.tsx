@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { DateRangePicker, StatsCard, WarehouseOperationChart } from "@/components";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { ProductService, WarehouseService } from "@/services";
 
 const StatisticsPage = () => {
   const [chartData, setChartData] = useState<{ date: string; inbound: number; outbound: number }[]>([]);
-  const [topOutbound, setTopOutbound] = useState<number | null>(null);
-  const [leastOutbound, setLeastOutbound] = useState<number | null>(null);
+  const [topOutbound, setTopOutbound] = useState<Product[]>([]);
+  const [leastOutbound, setLeastOutbound] = useState<Product[]>([]);
   const [totalProducts, setTotalProducts] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -39,11 +41,11 @@ const StatisticsPage = () => {
       }
 
       if (topRes.status === "fulfilled") {
-        setTopOutbound(topRes.value.length || 0);
+        setTopOutbound(topRes.value || []);
       }
 
       if (leastRes.status === "fulfilled") {
-        setLeastOutbound(leastRes.value.length || 0);
+        setLeastOutbound(leastRes.value || []);
       }
 
       if (totalRes.status === "fulfilled") {
@@ -63,7 +65,7 @@ const StatisticsPage = () => {
   }, [dateRange]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Warehouse Statistics</h1>
@@ -72,17 +74,72 @@ const StatisticsPage = () => {
         <DateRangePicker onChange={(range) => setDateRange(range)} />
       </div>
 
-      <div>
-        <WarehouseOperationChart data={chartData} />
-      </div>
+      <WarehouseOperationChart data={chartData} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <StatsCard title="Total Products" value={totalProducts} description="Items in inventory" loading={loading} color="" />
-        <StatsCard title="Top Outbound Products" value={topOutbound} description="Best moving products" loading={loading} color="text-green-600" />
-        <StatsCard title="Least Outbound Products" value={leastOutbound} description="Slow moving items" loading={loading} color="text-yellow-600" />
-      </div>
+      <StatsCard
+        title="Total Products"
+        value={totalProducts}
+        description="Items in inventory"
+        loading={loading}
+        color=""
+      />
+
+      <ProductTable title="Top Outbound Products" products={topOutbound} loading={loading} />
+      <ProductTable title="Least Outbound Products" products={leastOutbound} loading={loading} />
     </div>
   );
 };
+
+type ProductTableProps = {
+  title: string;
+  products: Product[];
+  loading?: boolean;
+};
+
+const ProductTable = ({ title, products, loading }: ProductTableProps) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>#</TableHead>
+            <TableHead>SKU</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead className="text-right">Stock</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
+                Loading...
+              </TableCell>
+            </TableRow>
+          ) : products.length > 0 ? (
+            products.map((p, i) => (
+              <TableRow key={p.id}>
+                <TableCell>{i + 1}</TableCell>
+                <TableCell>{p.sku}</TableCell>
+                <TableCell>{p.name}</TableCell>
+                <TableCell>{p.category?.name || "-"}</TableCell>
+                <TableCell className="text-right">{p.stockQuantity}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
+                No data
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+);
 
 export default StatisticsPage;
