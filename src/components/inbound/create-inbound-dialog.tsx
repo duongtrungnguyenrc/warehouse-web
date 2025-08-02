@@ -57,6 +57,7 @@ export const CreateInboundDialog = ({ onCreatedSuccess }: CreateInboundDialogPro
       toast.promise(InboundService.createOrder(values), {
         success: (newOrder) => {
           resetForm();
+          call();
           onCreatedSuccess?.(newOrder);
           return "Inbound order created success.";
         },

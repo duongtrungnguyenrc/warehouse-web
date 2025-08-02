@@ -3,7 +3,7 @@
 import { ArrowLeft, Package, Warehouse } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { EquipmentDetail, RoleProtect, RoomTypeManagementDialog } from "@/components";
+import { CreateEquipmentsDialog, EquipmentDetail, RoleProtect, RoomTypeManagementDialog } from "@/components";
 import { RackDetail } from "@/components";
 import { RoomDetail } from "@/components";
 import { RoomsList } from "@/components";
@@ -214,6 +214,7 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
                     <CardTitle>Warehouse Information</CardTitle>
                     <RoleProtect role={["ADMIN"]}>
                       <RoomTypeManagementDialog />
+                      <CreateEquipmentsDialog />
                     </RoleProtect>
                   </div>
                 </CardHeader>

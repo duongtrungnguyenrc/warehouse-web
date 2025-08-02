@@ -2,6 +2,7 @@ export * from "./category-management-dialog";
 export * from "./category-select";
 export * from "./common";
 export * from "./create-equipments-dialog";
+export * from "./create-equipments-dialog";
 export * from "./create-product-dialog";
 export * from "./create-room-dialog";
 export * from "./create-user-dialog";

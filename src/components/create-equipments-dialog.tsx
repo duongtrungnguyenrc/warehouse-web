@@ -14,7 +14,7 @@ import { catchError } from "@/lib";
 import { WarehouseService } from "@/services";
 
 type AddEquipmentDialogProps = {
-  onSuccess: (equipments: Equipment[]) => void;
+  onSuccess?: (equipments: Equipment[]) => void;
 };
 
 const validationSchema = Yup.object({
@@ -34,7 +34,7 @@ export const CreateEquipmentsDialog = ({ onSuccess }: AddEquipmentDialogProps) =
     await toast.promise(WarehouseService.createEquipments(values), {
       loading: "Creating equipments...",
       success: (equipments) => {
-        onSuccess(equipments);
+        onSuccess?.(equipments);
         setOpen(false);
         return "Equipments created successfully!";
       },

@@ -1,10 +1,8 @@
 "use client";
 
 import { Box, ChevronRight } from "lucide-react";
-import { useCallback } from "react";
 
 import { Pagination, RoleProtect } from "./common";
-import { CreateEquipmentsDialog } from "./create-equipments-dialog";
 
 import { Badge } from "@/components/shadcn/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -19,7 +17,7 @@ interface RackDetailProps {
 }
 
 export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
-  const { data, loading, query, append, setQuery } = useListing({
+  const { data, loading, query, setQuery } = useListing({
     fetcher: WarehouseService.getManagingWarehouseEquipments,
     initialQuery: {
       page: 0,
@@ -30,13 +28,6 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
 
   const equipments = data?.content || [];
   const usagePercentage = Math.round((rack.usedSize / rack.maxSize) * 100);
-
-  const onCreateEquipmentSuccess = useCallback(
-    (newEquipments: Equipment[]) => {
-      append(...newEquipments);
-    },
-    [append],
-  );
 
   const onPageChange = (page: number) => setQuery({ page });
 
@@ -92,19 +83,11 @@ export function RackDetail({ rack, onEquipmentSelect }: RackDetailProps) {
       <RoleProtect role={["MANAGER", "INVENTORY_STAFF"]}>
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Box className="h-5 w-5" />
-                  Equipment List
-                </CardTitle>
-                <CardDescription>Devices stored in this rack</CardDescription>
-              </div>
-
-              <RoleProtect role={["MANAGER"]}>
-                <CreateEquipmentsDialog onSuccess={onCreateEquipmentSuccess} />
-              </RoleProtect>
-            </div>
+            <CardTitle className="flex items-center gap-2">
+              <Box className="h-5 w-5" />
+              Equipment List
+            </CardTitle>
+            <CardDescription>Devices stored in this rack</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
