@@ -9,7 +9,6 @@ export * from "./create-user-dialog";
 export * from "./create-warehouse-dialog";
 export * from "./equipment-detail";
 export * from "./inbound";
-export * from "./inventory-count-dialog";
 export * from "./log-out-button";
 export * from "./outbound";
 export * from "./product-detail-dialog";

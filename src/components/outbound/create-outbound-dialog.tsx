@@ -14,6 +14,7 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { useQuery } from "@/hooks";
 import { OutboundService } from "@/services";
+import { catchError } from "@/lib";
 
 type CreateOutboundDialogProps = {
   onCreatedSuccess?: (newOrder: Outbound) => void;
@@ -110,10 +111,7 @@ export const CreateOutboundDialog = ({ onCreatedSuccess }: CreateOutboundDialogP
 
           return "Outbound order created successfully!";
         },
-        error: (err) => {
-          console.error("Error creating outbound:", err);
-          return "Failed to create outbound order!";
-        },
+        error: catchError,
       });
     },
     [validationResult],

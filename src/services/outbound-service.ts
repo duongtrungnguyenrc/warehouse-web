@@ -36,7 +36,7 @@ const uploadOrders = async (file: File): Promise<Array<OutboundUploadResponse>> 
 };
 
 const createOrder = async (request: ImportOutboundRequest): Promise<Outbound> => {
-  return httpClient.post("/warehouse/batch/outbound", request, {}).then((response) => response.data);
+  return httpClient.post("/warehouse/batch/outbound/upload", request, {}).then((response) => response.data);
 };
 
 const validateOrders = async (request: ImportOutboundRequest): Promise<OutboundValidateResponse> => {
@@ -67,5 +67,5 @@ export const OutboundService = {
   createOrder,
   validateOrders,
   uploadOrders,
-  updateStatus
+  updateStatus,
 };
