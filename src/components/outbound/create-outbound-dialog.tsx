@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { useQuery } from "@/hooks";
-import { InboundService, OutboundService } from "@/services";
+import { OutboundService } from "@/services";
 
 type CreateOutboundDialogProps = {
   onCreatedSuccess?: (newOrder: Outbound) => void;
@@ -46,7 +46,7 @@ export const CreateOutboundDialog = ({ onCreatedSuccess }: CreateOutboundDialogP
   const [isValidating, setIsValidating] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<OutboundFormData | null>(null);
 
-  const { call: generateBatchNumber, result: batchNumber } = useQuery(InboundService.generateBatchNumber);
+  const { call: generateBatchNumber, result: batchNumber } = useQuery(OutboundService.generateBatchNumber);
 
   useEffect(() => {
     if (open && !batchNumber) {

@@ -212,10 +212,14 @@ export const WarehouseDetailPage = ({ slug }: WarehouseDetailPageProps) => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Warehouse Information</CardTitle>
-                    <RoleProtect role={["ADMIN"]}>
-                      <RoomTypeManagementDialog />
-                      <CreateEquipmentsDialog />
-                    </RoleProtect>
+                    <div className="flex space-x-2 items-center">
+                      <RoleProtect role={["ADMIN"]}>
+                        <RoomTypeManagementDialog />
+                      </RoleProtect>
+                      <RoleProtect role={["MANAGER"]}>
+                        <CreateEquipmentsDialog />
+                      </RoleProtect>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
