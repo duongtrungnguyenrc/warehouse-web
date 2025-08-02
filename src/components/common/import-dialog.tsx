@@ -1,7 +1,7 @@
 "use client";
 
 import { File, FileCheck2, FileSpreadsheet, UploadCloud } from "lucide-react";
-import { type ChangeEvent, type DragEvent, type ReactNode, useRef, useState } from "react";
+import { type ChangeEvent, Dispatch, type DragEvent, type ReactNode, SetStateAction, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 
@@ -12,12 +12,22 @@ import { cn } from "@/lib";
 
 type RawTableData = string[][];
 
+type ImportDialogMetadata = {
+  file: File | null;
+  setFile: Dispatch<SetStateAction<File | null>>;
+  previewData: RawTableData;
+  setPreviewData: Dispatch<SetStateAction<RawTableData>>;
+  setExtraData: (data: Record<string, any>) => void;
+  handleUpload: () => void;
+  extraData: Record<string, any>;
+};
+
 type ImportDialogProps<T = any> = {
   title?: string;
   description?: string;
   accept?: string;
-  children?: ReactNode;
-  onUpload: (file: File) => Promise<T>;
+  children?: ReactNode | ((methods: ImportDialogMetadata) => ReactNode);
+  onUpload: (file: File, extraData?: Record<string, any> | any) => Promise<T>;
   onSuccess?: (data: T) => void;
   renderPreview?: (preview: RawTableData) => ReactNode;
   templateDownloader?: () => Promise<any>;
@@ -37,6 +47,7 @@ export const ImportDialog = <T,>({
   const [previewData, setPreviewData] = useState<RawTableData>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [extraData, setExtraDataState] = useState<Record<string, any>>({});
 
   const { download } = useDownloadFile();
 
@@ -77,12 +88,13 @@ export const ImportDialog = <T,>({
 
   const handleUpload = async () => {
     if (!file) return toast.error("Please select a file first.");
-    await toast.promise(onUpload(file), {
+    await toast.promise(onUpload(file, extraData), {
       loading: "Importing...",
       success: (data) => {
         onSuccess?.(data);
         setFile(null);
         setPreviewData([]);
+        setExtraDataState({});
         if (fileInputRef.current) fileInputRef.current.value = "";
         return "Import successful!";
       },
@@ -101,12 +113,10 @@ export const ImportDialog = <T,>({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        {children || (
-          <Button variant="outline">
-            <File className="h-4 w-4" />
-            Import
-          </Button>
-        )}
+        <Button variant="outline">
+          <File className="h-4 w-4" />
+          Import
+        </Button>
       </DialogTrigger>
       <DialogContent className={cn("max-h-[90vh] overflow-y-auto", file ? "sm:max-w-screen md:max-w-5xl" : "")}>
         <DialogHeader>
@@ -121,6 +131,18 @@ export const ImportDialog = <T,>({
             </button>
           </div>
         )}
+
+        {typeof children === "function"
+          ? children({
+              file,
+              setFile,
+              previewData,
+              setPreviewData,
+              setExtraData: setExtraDataState,
+              handleUpload,
+              extraData,
+            })
+          : children}
 
         <div className="grid gap-4 py-4">
           <div

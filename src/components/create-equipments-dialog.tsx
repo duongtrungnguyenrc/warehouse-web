@@ -10,20 +10,21 @@ import { Button } from "@/components/shadcn/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
+import { useDownloadFile } from "@/hooks";
 import { catchError } from "@/lib";
 import { WarehouseService } from "@/services";
 
-type AddEquipmentDialogProps = {
-  onSuccess?: (equipments: Equipment[]) => void;
-};
+type AddEquipmentDialogProps = {};
 
 const validationSchema = Yup.object({
   quantity: Yup.number().min(1).required(),
   maxSize: Yup.number().min(1).required(),
 });
 
-export const CreateEquipmentsDialog = ({ onSuccess }: AddEquipmentDialogProps) => {
+export const CreateEquipmentsDialog = ({}: AddEquipmentDialogProps) => {
   const [open, setOpen] = useState(false);
+
+  const { download } = useDownloadFile();
 
   const initialValues = {
     quantity: 1,
@@ -34,8 +35,9 @@ export const CreateEquipmentsDialog = ({ onSuccess }: AddEquipmentDialogProps) =
     await toast.promise(WarehouseService.createEquipments(values), {
       loading: "Creating equipments...",
       success: (equipments) => {
-        onSuccess?.(equipments);
         setOpen(false);
+        download(() => WarehouseService.exportEquipments(equipments));
+
         return "Equipments created successfully!";
       },
       error: catchError,

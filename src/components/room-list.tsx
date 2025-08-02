@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 import { UpdateRoomDialog } from "./update-room-dialog";
 
-import { CreateRoomDialog, ImportDialog, Pagination } from "@/components";
+import { CreateRoomDialog, ImportDialog, Pagination, RoomTypeSelect } from "@/components";
 import { RoleProtect } from "@/components";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Progress } from "@/components/shadcn/progress";
@@ -31,7 +31,7 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
 
   const rooms = data?.content || [];
 
-  const onImportRooms = useCallback(async (file: File) => WarehouseService.importRooms(warehouseSlug, "", file), []);
+  const onImportRooms = useCallback(async (file: File, extra: { roomTypeId: string }) => WarehouseService.importRooms(warehouseSlug, extra.roomTypeId, file), []);
 
   const onImportSuccess = useCallback((newRooms: Array<Room>) => append(...newRooms), [append]);
 
@@ -63,7 +63,9 @@ export const RoomsList = ({ warehouseId, warehouseSlug, onRoomSelect }: RoomsLis
           <RoleProtect role={["ADMIN"]}>
             <div className="flex space-x-2 items-center">
               <CreateRoomDialog warehouseId={warehouseId} onCreatedSuccess={onCreatedRoomSuccess} />
-              <ImportDialog templateDownloader={WarehouseService.getImportRoomsTemplate} onUpload={onImportRooms} onSuccess={onImportSuccess} />
+              <ImportDialog templateDownloader={WarehouseService.getImportRoomsTemplate} onUpload={onImportRooms} onSuccess={onImportSuccess}>
+                {({ setExtraData, extraData }) => <RoomTypeSelect value={extraData.roomTypeId} setFieldValue={(_, value: string) => setExtraData({ roomTypeId: value })} />}
+              </ImportDialog>
             </div>
           </RoleProtect>
         </div>

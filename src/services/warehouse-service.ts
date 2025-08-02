@@ -118,8 +118,17 @@ const getManagingWarehouseEquipments = async (params: PaginationQuery<Equipment>
     .then((res) => res.data);
 };
 
-const createEquipments = async (request: { quantity: number; maxSize: number }): Promise<Equipment[]> => {
-  return httpClient.post<Equipment[]>("/warehouse/equipments/create", request).then((res) => res.data);
+const createEquipments = async (request: { quantity: number; maxSize: number }): Promise<string[]> => {
+  return httpClient.post<string[]>("/warehouse/equipments/create", request).then((res) => res.data);
+};
+
+const exportEquipments = async (request: string[]) => {
+  return await httpClient.post(`/warehouse/equipments/export`, request, {
+    responseType: "blob",
+    headers: {
+      Accept: "application/octet-stream",
+    },
+  });
 };
 
 // ==========================
@@ -146,6 +155,7 @@ const getWarehouseOperationStats = async (): Promise<WarehouseOperationStats> =>
 const getStatistics = async (): Promise<StatisticsResponse> => {
   return httpClient.get<StatisticsResponse>("/warehouse/manager/summary/by-month").then((res) => res.data);
 };
+
 
 // ==========================
 // EXPORT SERVICE
@@ -175,6 +185,7 @@ export const WarehouseService = {
   // Equipments
   getManagingWarehouseEquipments,
   createEquipments,
+  exportEquipments,
 
   // Products
   getManagingWarehouseProducts,
