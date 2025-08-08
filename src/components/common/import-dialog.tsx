@@ -188,7 +188,7 @@ export const ImportDialog = <T,>({
                       {row.map((cell, cIdx) => {
                         let displayValue = cell;
 
-                        if (cIdx === 2 && typeof cell === "number" && cell > 20000) {
+                        if (cIdx === 2 && typeof cell === "number" && cell > 5000) {
                           const excelEpoch = new Date(1899, 11, 30);
                           const date = new Date(excelEpoch.getTime() + cell * 24 * 60 * 60 * 1000);
                           displayValue = date.toLocaleDateString("vi-VN");
