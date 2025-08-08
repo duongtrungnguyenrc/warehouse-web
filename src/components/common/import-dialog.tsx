@@ -183,15 +183,25 @@ export const ImportDialog = <T,>({
                     </tr>
                   </thead>
                   <tbody>
-                    {previewData.slice(1).map((row, rIdx) => (
-                      <tr key={rIdx} className="hover:bg-muted/30">
-                        {row.map((cell, cIdx) => (
+                  {previewData.slice(1).map((row, rIdx) => (
+                    <tr key={rIdx} className="hover:bg-muted/30">
+                      {row.map((cell, cIdx) => {
+                        let displayValue = cell;
+
+                        if (cIdx === 2 && typeof cell === "number") {
+                          const excelEpoch = new Date(1899, 11, 30);
+                          const date = new Date(excelEpoch.getTime() + cell * 24 * 60 * 60 * 1000);
+                          displayValue = date.toLocaleDateString("vi-VN");
+                        }
+
+                        return (
                           <td key={cIdx} className="border px-3 py-1 text-nowrap">
-                            {cell}
+                            {displayValue}
                           </td>
-                        ))}
-                      </tr>
-                    ))}
+                        );
+                      })}
+                    </tr>
+                  ))}
                   </tbody>
                 </table>
               </div>
