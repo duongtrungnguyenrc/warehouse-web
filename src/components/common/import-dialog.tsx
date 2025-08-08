@@ -185,15 +185,20 @@ export const ImportDialog = <T,>({
                   <tbody>
                   {previewData.slice(1).map((row, rIdx) => (
                     <tr key={rIdx} className="hover:bg-muted/30">
-                      {row.map((cell, cIdx) => {
-                        let displayValue = cell;
+                      {row.map((cellObj, cIdx) => {
+                        let displayValue = cellObj.value;
 
-                        // Cột "Hạn sử dụng" (index 2)
-                        if (cIdx === 2 && typeof cell === "number") {
-                          // Excel epoch: 1899-12-31
-                          const excelEpoch = new Date(1899, 11, 31);
-                          const date = new Date(excelEpoch.getTime() + cell * 24 * 60 * 60 * 1000);
+                        if (cellObj.type === "d") {
+                          // cellObj.value is ISO string
+                          const date = new Date(cellObj.value);
                           displayValue = date.toLocaleDateString("vi-VN");
+                        } else if (cellObj.type === "n") {
+                          // suppose 20000 is serial
+                          if (cellObj.value > 20000 && cellObj.value < 60000) {
+                            const date = new Date(1899, 11, 31);
+                            date.setDate(date.getDate() + cellObj.value);
+                            displayValue = date.toLocaleDateString("vi-VN");
+                          }
                         }
 
                         return (
