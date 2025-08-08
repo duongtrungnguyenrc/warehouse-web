@@ -188,8 +188,10 @@ export const ImportDialog = <T,>({
                       {row.map((cell, cIdx) => {
                         let displayValue = cell;
 
+                        // Cột "Hạn sử dụng" (index 2)
                         if (cIdx === 2 && typeof cell === "number") {
-                          const excelEpoch = new Date(1899, 11, 30);
+                          // Excel epoch: 1899-12-31
+                          const excelEpoch = new Date(1899, 11, 31);
                           const date = new Date(excelEpoch.getTime() + cell * 24 * 60 * 60 * 1000);
                           displayValue = date.toLocaleDateString("vi-VN");
                         }
