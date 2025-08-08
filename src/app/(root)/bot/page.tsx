@@ -97,7 +97,7 @@ const ChatbotPage = () => {
       <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
         <CardTitle className="flex items-center gap-2">
           <Bot className="h-6 w-6 text-blue-600" />
-          WMS Bot
+          AI Assistant
           <div className="ml-auto flex items-center gap-2 text-sm">
             {isConnected ? (
               <>
