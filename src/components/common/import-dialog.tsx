@@ -106,7 +106,7 @@ export const ImportDialog = <T,>({
     if (templateDownloader) {
       await download(templateDownloader);
     } else {
-      toast.error("Template download function not provided.");
+      toast.error("Template download function not provided");
     }
   };
 
